@@ -250,6 +250,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .footer{text-align:center;padding:28px 0 12px;font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--text-light)}
 @media(max-width:700px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+  .routine-header{padding:12px 16px 10px}
+  .rh-icon{width:36px;height:36px;font-size:1.1rem}
+  .rh-title{font-size:.92rem}
+  .rh-sub{font-size:.67rem}
+  .rh-frac{font-size:1.1rem}
+  .rh-bar{width:64px}
+  .rh-plabel{font-size:.6rem}
+}
 </style>
 </head>
 <body>
@@ -1108,14 +1117,19 @@ async function registerSW() {
 }
 
 // ── Notification permission ───────────────────────────────────────────────────
+const NOTIF_DISMISSED_KEY = 'enid_notif_dismissed';
+
 function checkNotifBanner() {
   if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
-    // Show banner after 3 seconds so it doesn't immediately interrupt load
-    setTimeout(()=>{ document.getElementById('notifBanner').style.display='block'; }, 3000);
-  } else if (Notification.permission === 'granted') {
+  // Never show if already granted or user explicitly dismissed before
+  if (Notification.permission === 'granted') {
     scheduleNotifications();
+    return;
   }
+  if (Notification.permission === 'denied') return;
+  if (localStorage.getItem(NOTIF_DISMISSED_KEY)) return;
+  // Only show if truly default and never dismissed
+  setTimeout(()=>{ document.getElementById('notifBanner').style.display='block'; }, 3000);
 }
 
 async function requestNotifPermission() {
@@ -1129,6 +1143,8 @@ async function requestNotifPermission() {
 
 function dismissNotifBanner() {
   document.getElementById('notifBanner').style.display='none';
+  // Remember that the user dismissed so we never show again
+  localStorage.setItem(NOTIF_DISMISSED_KEY, '1');
 }
 
 function showToast(msg) {
@@ -1433,6 +1449,22 @@ async function init() {
   showLoading(false);
   render();
   buildDayNav();
+
+  // ── Cross-device sync: re-fetch when app regains focus ────────────────────
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') {
+      await Promise.all([loadDayData(), loadStreaks()]);
+      render();
+      buildDayNav();
+      updateHeader();
+    }
+  });
+  window.addEventListener('focus', async () => {
+    await Promise.all([loadDayData(), loadStreaks()]);
+    render();
+    buildDayNav();
+    updateHeader();
+  });
 }
 init();
 </script>

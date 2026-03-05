@@ -172,6 +172,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .evening .time-badge{background:rgba(139,92,246,.12);color:#6D28D9}
 .streak-badge{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;background:rgba(232,78,160,.1);color:var(--pink)}
 .streak-badge.streak-zero{background:rgba(168,85,247,.08);color:var(--text-light);font-weight:500}
+.streak-badge.streak-resurrected{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(232,78,160,.12));color:#D97706;border:1px solid rgba(251,191,36,.3);animation:resurrectPulse 2s ease 3}
+@keyframes resurrectPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 8px rgba(251,191,36,.5)}}
 
 /* OR group (yoga/walk) */
 .or-group-label{display:flex;align-items:center;gap:8px;padding:7px 22px 3px;font-size:.7rem;font-weight:700;color:var(--text-light);letter-spacing:.05em;background:var(--card-bg)}
@@ -402,6 +404,7 @@ let ktPostwork   = false;
 let ktWeekend    = false;
 let customHabits = {morning:[],postwork:[],weekend:[],evening:[]};
 let streakCache  = {};             // habit_id → streak count (computed from DB)
+let resurrectCache = new Set();    // habit_ids whose streak was just resurrected
 let isLoading    = false;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -457,25 +460,103 @@ async function loadDayData() {
 }
 
 async function loadStreaks() {
-  // Count consecutive days each habit was completed ending today
   const rows = await sb('GET','habit_completions',null,
     `?user_id=eq.${USER_ID}&select=habit_id,completed_date&order=completed_date.desc`);
   if (!rows) return;
+
   const byHabit = {};
   rows.forEach(r=>{
     if (!byHabit[r.habit_id]) byHabit[r.habit_id]=[];
     byHabit[r.habit_id].push(r.completed_date);
   });
-  const todayStr = fmtDate(NOW);
+
+  const todayStr     = fmtDate(NOW);
+  const yesterdayStr = fmtDate(new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate()-1));
+
+  // Grace window: still open if we haven't passed midnight tonight
+  // i.e. it's still today — so any backlog of yesterday logged today counts
+  const graceOpen = true; // always open during the current calendar day
+
+  resurrectCache = new Set();
+
   Object.keys(byHabit).forEach(hid=>{
-    const dates = byHabit[hid].sort().reverse();
-    let streak=0, check=new Date(todayStr);
-    for (const d of dates) {
-      if (d===fmtDate(check)) { streak++; check.setDate(check.getDate()-1); }
-      else break;
+    const dates = [...new Set(byHabit[hid])].sort().reverse();
+    const dateSet = new Set(dates);
+
+    let streak = 0;
+    const check = new Date(NOW);
+
+    // Walk backwards from today counting consecutive days
+    while (true) {
+      const dk = fmtDate(check);
+      if (dateSet.has(dk)) {
+        streak++;
+        check.setDate(check.getDate()-1);
+      } else {
+        break;
+      }
     }
-    streakCache[hid]=streak;
+
+    // Resurrection check:
+    // If today has NO completion but yesterday DOES, streak is intact (not broken yet)
+    // If today has NO completion AND yesterday has NO completion — streak is broken
+    // BUT — if yesterday has NO completion and the day before yesterday DOES,
+    // AND the grace window is open (still today), flag as resurrectable via backlog
+    if (streak === 0 && graceOpen) {
+      // Check if logging yesterday would resurrect a prior streak
+      if (!dateSet.has(todayStr) && !dateSet.has(yesterdayStr)) {
+        // Find the most recent completion to see if there WAS a streak before yesterday
+        const mostRecent = dates[0]; // already sorted desc
+        if (mostRecent) {
+          const dayBeforeYesterday = fmtDate(new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate()-2));
+          // If the most recent completion was day-before-yesterday or earlier,
+          // the streak died yesterday — grace window would revive it if they log yesterday NOW
+          if (mostRecent <= dayBeforeYesterday) {
+            // Compute what the streak WOULD be if yesterday were logged
+            let wouldBeStreak = 0;
+            const wouldCheck = new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate()-1);
+            while (true) {
+              const dk = fmtDate(wouldCheck);
+              if (dateSet.has(dk)) { wouldBeStreak++; wouldCheck.setDate(wouldCheck.getDate()-1); }
+              else break;
+            }
+            // Mark as resurrection candidate if they had a meaningful streak
+            if (wouldBeStreak > 0) {
+              streakCache[hid] = 0; // broken right now
+              return; // don't set resurrectCache — that's for AFTER they backlog
+            }
+          }
+        }
+      }
+
+      // If today has no completion but yesterday does — streak is ongoing, not broken
+      if (!dateSet.has(todayStr) && dateSet.has(yesterdayStr)) {
+        // Recount from yesterday
+        let s = 0; const c = new Date(yesterdayStr+'T12:00:00');
+        while (dateSet.has(fmtDate(c))) { s++; c.setDate(c.getDate()-1); }
+        streakCache[hid] = s;
+        return;
+      }
+    }
+
+    streakCache[hid] = streak;
   });
+}
+
+// Called after backlogging a past day — check if this habit's streak just got resurrected
+function checkResurrection(habitId) {
+  const todayStr     = fmtDate(NOW);
+  const yesterdayStr = fmtDate(new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate()-1));
+  const viewStr      = fmtDate(viewDate);
+
+  // Only matters if we just logged yesterday (within grace window = same calendar day)
+  if (viewStr !== yesterdayStr) return false;
+  if (fmtDate(NOW) !== todayStr) return false;
+
+  // Recompute streak for this habit from DB cache
+  // We'll mark it as resurrected and recompute properly on next loadStreaks
+  resurrectCache.add(habitId);
+  return true;
 }
 
 async function loadDayNavData() {
@@ -512,6 +593,8 @@ async function toggleHabitDB(habitId, section) {
       await sb('POST','habit_completions',{user_id:USER_ID,habit_id:habitId,completed_date:dateStr});
       dayCompletions.add(habitId);
       streakCache[habitId]=(streakCache[habitId]||0)+1;
+      // Check if this backlog resurrected a broken streak
+      checkResurrection(habitId);
     }
   }
 }
@@ -733,7 +816,8 @@ function appendHabitItem(listEl,h,blockClass,section) {
   const isWeekly = section==='weekly';
   const done     = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
   const isKTOff  = (section==='postwork'&&ktPostwork)||(section==='weekend'&&ktWeekend);
-  const streak   = streakCache[h.id]||0;
+  const streak      = streakCache[h.id]||0;
+  const resurrected = resurrectCache.has(h.id);
 
   const div=document.createElement('div');
   div.className=`habit-item${done?' done':''}${isKTOff?' kt-disabled':''}`;
@@ -746,7 +830,11 @@ function appendHabitItem(listEl,h,blockClass,section) {
     </div>
     <div class="h-right">
       <span class="time-badge ${blockClass}">${h.time}</span>
-      ${streak>0?`<span class="streak-badge">${streak} day${streak===1?'':'s'} 🔥</span>`:`<span class="streak-badge streak-zero">Start today! ✨</span>`}
+      ${resurrected
+        ? `<span class="streak-badge streak-resurrected">⚡ ${streak} day${streak===1?'':'s'} resurrected!</span>`
+        : streak>0
+          ? `<span class="streak-badge">${streak} day${streak===1?'':'s'} 🔥</span>`
+          : `<span class="streak-badge streak-zero">Start today! ✨</span>`}
     </div>`;
   div.onclick=async ()=>{
     if (isKTOff) return;
@@ -755,13 +843,19 @@ function appendHabitItem(listEl,h,blockClass,section) {
     const nowDone = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
     if (nowDone) {
       div.classList.add('done','just-done');
-      spawnCelebration(div);
+      // Special ⚡ celebration if this was a resurrection backlog
+      if (resurrectCache.has(h.id)) {
+        spawnResurrection(div);
+      } else {
+        spawnCelebration(div);
+      }
       setTimeout(()=>div.classList.remove('just-done'),500);
-      // Show note prompt after a brief celebratory pause
       setTimeout(()=>openNotePrompt(h.id, section), 600);
     }
     else div.classList.remove('done');
     div.style.pointerEvents='';
+    // Reload streaks so resurrection is reflected immediately
+    await loadStreaks();
     render();
     buildDayNav();
   };
@@ -783,6 +877,22 @@ function spawnCelebration(el) {
   span.style.top=(rect.top+window.scrollY-10)+'px';
   document.body.appendChild(span);
   setTimeout(()=>span.remove(),1300);
+}
+
+function spawnResurrection(el) {
+  // Fire multiple ⚡ emojis fanning out for the resurrection moment
+  const emojis=['⚡','⚡','🔥','💜','⚡'];
+  const rect=el.getBoundingClientRect();
+  emojis.forEach((e,i)=>{
+    const span=document.createElement('span');
+    span.className='celebrate';
+    span.textContent=e;
+    span.style.left=(rect.left+rect.width/2-16+(i-2)*22)+'px';
+    span.style.top=(rect.top+window.scrollY-10)+'px';
+    span.style.animationDelay=`${i*0.08}s`;
+    document.body.appendChild(span);
+    setTimeout(()=>span.remove(),1500);
+  });
 }
 
 function updateSummary() {

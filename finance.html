@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💰 Enid's Finance Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D08;--bg2:#0A1510;--bg3:#0F1E14;
+  --green:#1DB954;--green2:#4ADE80;--green-dim:rgba(29,185,84,.1);--green-glow:rgba(29,185,84,.2);
+  --brass:#C9943A;--brass2:#F4C842;--brass-dim:rgba(201,148,58,.1);
+  --red:#EF4444;--red-dim:rgba(239,68,68,.1);
+  --amber:#FCD34D;--amber-dim:rgba(252,211,77,.08);
+  --pink:#E84EA0;--pink-dim:rgba(232,78,160,.1);
+  --text:#E8F5E8;--text2:#9DC49D;--text3:#4A6B4A;
+  --border:rgba(255,255,255,.07);--border2:rgba(29,185,84,.2);
+  --card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 5% 5%,  rgba(29,185,84,.12) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 95% 15%,  rgba(201,148,58,.08) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 95%,  rgba(29,185,84,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 35% at 80% 50%,  rgba(201,148,58,.05) 0%,transparent 45%),
+    linear-gradient(160deg,#060D08 0%,#08120A 50%,#040908 100%);
+  pointer-events:none;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 100px}
+
+/* ── Nav ── */
+.header-nav{display:flex;align-items:center;justify-content:space-between;padding:28px 0 0;animation:fadeDown .6s ease both}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--green-dim);color:var(--green2);font-size:.78rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.back-btn:hover{background:var(--green-glow);transform:translateY(-1px)}
+.nav-links{display:flex;gap:8px}
+.nav-lnk{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.75rem;font-weight:500;text-decoration:none;transition:all .2s}
+.nav-lnk:hover{border-color:var(--border2);color:var(--green2)}
+
+/* ── Hero ── */
+.hero{padding:40px 0 32px;animation:fadeDown .7s .05s ease both}
+.hero-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin-bottom:8px;font-family:'DM Mono',monospace}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,5.5vw,3.4rem);font-weight:800;color:var(--text);line-height:1.05}
+.hero-title span{color:var(--green2)}
+.hero-sub{font-size:.88rem;color:var(--text2);margin-top:8px}
+.last-updated{display:inline-flex;align-items:center;gap:7px;background:var(--green-dim);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-family:var(--mono);font-size:.7rem;color:var(--green2);margin-top:10px}
+
+/* ── Big stats ── */
+.big-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;animation:fadeUp .6s .1s ease both}
+.big-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.big-stat:hover{border-color:var(--border2)}
+.big-stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.big-stat.s-total::before{background:linear-gradient(90deg,var(--red),transparent)}
+.big-stat.s-interest::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.big-stat.s-free::before{background:linear-gradient(90deg,var(--green2),transparent)}
+.big-stat.s-sinking::before{background:linear-gradient(90deg,var(--brass2),transparent)}
+.bs-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px;font-family:var(--mono)}
+.bs-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text);line-height:1}
+.bs-val.danger{color:var(--red)}
+.bs-val.warn{color:var(--amber)}
+.bs-val.good{color:var(--green2)}
+.bs-val.gold{color:var(--brass2)}
+.bs-sub{font-size:.68rem;color:var(--text3);margin-top:5px;font-family:var(--mono)}
+
+/* ── Sinking fund thermometer ── */
+.sinking-therm{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:32px;animation:fadeUp .5s .15s ease both}
+.therm-label{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);flex-shrink:0}
+.therm-bar-wrap{flex:1;position:relative}
+.therm-track{height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.therm-fill{height:100%;background:linear-gradient(90deg,var(--brass),var(--brass2));border-radius:999px;transition:width 1.5s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(201,148,58,.3)}
+.therm-markers{display:flex;justify-content:space-between;margin-top:4px}
+.therm-mark{font-size:.6rem;color:var(--text3);font-family:var(--mono)}
+.therm-val{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--brass2);flex-shrink:0}
+.therm-edit{background:transparent;border:1px solid rgba(201,148,58,.25);color:var(--brass);border-radius:6px;padding:4px 10px;font-size:.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;flex-shrink:0}
+.therm-edit:hover{background:var(--brass-dim);border-color:var(--brass)}
+
+/* ── Section headers ── */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-title{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text2)}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.section-sub{font-size:.68rem;color:var(--text3);font-family:var(--mono)}
+
+/* ── Avalanche attack card ── */
+.attack-zone{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(201,148,58,.05));border:1.5px solid rgba(239,68,68,.25);border-radius:14px;padding:20px;margin-bottom:32px;animation:fadeUp .5s .12s ease both}
+.attack-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--red);font-family:var(--mono);margin-bottom:8px}
+.attack-name{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.attack-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.attack-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:6px;font-size:.72rem;font-weight:700;font-family:var(--mono)}
+.attack-chip.apr{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.attack-chip.bal{background:rgba(201,148,58,.1);color:var(--brass2);border:1px solid rgba(201,148,58,.2)}
+.attack-chip.min{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)}
+.attack-progress{margin-top:14px}
+.attack-prog-label{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);font-family:var(--mono);margin-bottom:5px}
+.attack-prog-track{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.attack-prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(239,68,68,.3)}
+.attack-enid{font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--text2);margin-top:10px;font-style:italic}
+
+/* ── Debt grid ── */
+.debt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:40px}
+.debt-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 18px 16px;transition:all .22s ease;position:relative;overflow:hidden;animation:fadeUp .5s ease both}
+.debt-card:hover{border-color:rgba(29,185,84,.25);transform:translateY(-2px);box-shadow:var(--shadow)}
+.debt-card.is-dead{border-color:rgba(29,185,84,.4);background:rgba(29,185,84,.05);opacity:.7}
+.debt-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.apr-critical .debt-card::after{background:linear-gradient(90deg,var(--red),#F97316)}
+.apr-high .debt-card::after{background:linear-gradient(90deg,#F97316,var(--amber))}
+.apr-mid .debt-card::after{background:linear-gradient(90deg,var(--amber),#84CC16)}
+.apr-low .debt-card::after{background:linear-gradient(90deg,#84CC16,var(--green2))}
+.apr-zero .debt-card::after{background:linear-gradient(90deg,var(--green2),#34D399)}
+.dc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.dc-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text)}
+.dc-type{font-size:.62rem;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+.dc-apr-badge{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
+.apr-critical .dc-apr-badge{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.apr-high    .dc-apr-badge{background:rgba(249,115,22,.12);color:#FB923C;border:1px solid rgba(249,115,22,.2)}
+.apr-mid     .dc-apr-badge{background:rgba(252,211,77,.1);color:var(--amber);border:1px solid rgba(252,211,77,.2)}
+.apr-low     .dc-apr-badge{background:rgba(132,204,22,.1);color:#A3E635;border:1px solid rgba(132,204,22,.2)}
+.apr-zero    .dc-apr-badge{background:var(--green-dim);color:var(--green2);border:1px solid var(--border2)}
+.dc-balance-row{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.dc-balance{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
+.dc-balance.paid{color:var(--green2)}
+.dc-original{font-size:.7rem;color:var(--text3);font-family:var(--mono)}
+.dc-progress{height:5px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-bottom:10px}
+.dc-progress-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.apr-critical .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
+.apr-high     .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
+.apr-mid      .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
+.apr-low      .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
+.apr-zero     .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
+.dc-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.dc-stat{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
+.dc-stat span{color:var(--text2);font-weight:500}
+.dc-actions{display:flex;gap:8px;align-items:center}
+.dc-input{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:.78rem;color:var(--text);outline:none;transition:border-color .2s}
+.dc-input:focus{border-color:var(--border2)}
+.dc-input::placeholder{color:var(--text3)}
+.dc-save{background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.dc-save:hover{background:var(--green-glow)}
+.dc-kill{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(232,78,160,.1));border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.dc-kill:hover{background:rgba(239,68,68,.25)}
+.dc-dead-badge{background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;font-family:'DM Sans',sans-serif;text-align:center}
+.avalanche-rank{position:absolute;bottom:14px;right:14px;font-family:var(--mono);font-size:.6rem;color:var(--text3)}
+
+/* ── Affirm section ── */
+.affirm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:40px}
+.affirm-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:all .18s;animation:fadeUp .4s ease both}
+.affirm-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.affirm-card.affirm-done{opacity:.4;border-style:dashed}
+.ac-name{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.ac-due{font-size:.62rem;color:var(--green2);font-family:var(--mono);margin-bottom:8px}
+.ac-due.urgent{color:var(--amber)}
+.ac-bal-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.ac-bal{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text)}
+.ac-min{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
+.ac-prog{height:4px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.ac-prog-fill{height:100%;background:linear-gradient(90deg,var(--green2),#34D399);border-radius:999px;transition:width 1s ease}
+
+/* ── Obituary wall ── */
+.obit-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:40px}
+.obit-card{background:linear-gradient(145deg,rgba(29,185,84,.08),rgba(29,185,84,.03));border:1.5px solid rgba(29,185,84,.25);border-radius:14px;padding:20px;text-align:center;animation:obitIn .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes obitIn{from{opacity:0;transform:scale(.85) rotate(-3deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.obit-tombstone{font-size:2.5rem;margin-bottom:8px;display:block;filter:grayscale(.3)}
+.obit-rip{font-family:var(--mono);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--green2);margin-bottom:4px}
+.obit-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.obit-amount{font-family:var(--mono);font-size:.75rem;color:var(--green2)}
+.obit-date{font-size:.62rem;color:var(--text3);font-family:var(--mono);margin-top:4px}
+.obit-enid{font-family:'Dancing Script',cursive;font-size:.78rem;color:var(--text2);margin-top:6px;line-height:1.4}
+.obit-empty{text-align:center;padding:40px;grid-column:1/-1}
+.obit-empty-icon{font-size:2.5rem;display:block;opacity:.3;margin-bottom:8px}
+.obit-empty-text{font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
+
+/* ── Confetti ── */
+.confetti-piece{position:fixed;top:-10px;z-index:1000;pointer-events:none;animation:confettiFall linear forwards}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── Kill modal ── */
+.kill-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.kill-modal{background:var(--bg3);border:2px solid var(--green2);border-radius:22px;padding:32px;width:100%;max-width:440px;text-align:center;box-shadow:0 0 60px rgba(29,185,84,.3);animation:modalPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.km-tombstone{font-size:3.5rem;margin-bottom:12px;display:block;animation:wiggle 1s ease infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.km-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--green2);margin-bottom:6px}
+.km-sub{font-size:.85rem;color:var(--text2);margin-bottom:20px;line-height:1.5;font-family:'Dancing Script',cursive;font-size:1rem}
+.km-name{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--amber);margin-bottom:20px}
+.km-actions{display:flex;gap:10px;justify-content:center}
+.km-cancel{padding:10px 22px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.km-cancel:hover{border-color:var(--text2)}
+.km-confirm{padding:10px 28px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#000;font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;transition:all .18s;box-shadow:0 4px 16px var(--green-glow)}
+.km-confirm:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(29,185,84,.4)}
+
+/* ── Update modal ── */
+.update-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease}
+.update-modal{background:var(--bg3);border:1.5px solid var(--border2);border-radius:18px;padding:26px;width:100%;max-width:400px;box-shadow:var(--shadow);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
+.um-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.um-sub{font-size:.75rem;color:var(--text2);margin-bottom:16px}
+.um-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px}
+.um-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px var(--green-dim)}
+.um-actions{display:flex;gap:10px;justify-content:flex-end}
+.um-cancel{padding:9px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.um-save{padding:9px 22px;border-radius:8px;border:none;background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.um-save:hover{background:var(--green-glow)}
+
+/* ── Sinking fund modal ── */
+.sf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease}
+.sf-modal{background:var(--bg3);border:1.5px solid rgba(201,148,58,.3);border-radius:18px;padding:26px;width:100%;max-width:400px;box-shadow:var(--shadow);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
+.sf-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--brass2);margin-bottom:4px}
+.sf-sub{font-size:.75rem;color:var(--text2);margin-bottom:16px}
+.sf-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(201,148,58,.2);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px}
+.sf-input:focus{border-color:rgba(201,148,58,.5);box-shadow:0 0 0 3px var(--brass-dim)}
+.sf-actions{display:flex;gap:10px;justify-content:flex-end}
+.sf-cancel{padding:9px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sf-save{padding:9px 22px;border-radius:8px;border:1px solid rgba(201,148,58,.3);background:var(--brass-dim);color:var(--brass2);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.sf-save:hover{background:rgba(201,148,58,.2)}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+.footer{text-align:center;padding:32px 0 12px;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
+
+@media(max-width:700px){.big-stats{grid-template-columns:repeat(2,1fr)}.debt-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- Kill confirmation modal -->
+<div class="kill-overlay" id="killOverlay" style="display:none">
+  <div class="kill-modal">
+    <span class="km-tombstone">🪦</span>
+    <div class="km-title">Debt Eliminated!!</div>
+    <div class="km-sub" id="kmSub">You actually did it. This debt is DEAD. Let's make it official and add it to your obituary wall forever. 💀🎉</div>
+    <div class="km-name" id="kmName"></div>
+    <div class="km-actions">
+      <button class="km-cancel" onclick="closeKill()">Wait, not yet</button>
+      <button class="km-confirm" onclick="confirmKill()">💀 KILL IT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Balance update modal -->
+<div class="update-overlay" id="updateOverlay" style="display:none" onclick="closeUpdateIfBg(event)">
+  <div class="update-modal">
+    <div class="um-title">Update Balance 💰</div>
+    <div class="um-sub" id="umSub"></div>
+    <input class="um-input" id="umInput" type="number" step="0.01" min="0" placeholder="New balance e.g. 847.22">
+    <div class="um-actions">
+      <button class="um-cancel" onclick="closeUpdate()">Cancel</button>
+      <button class="um-save" onclick="saveUpdate()">Save ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sinking fund update modal -->
+<div class="sf-overlay" id="sfOverlay" style="display:none" onclick="closeSFIfBg(event)">
+  <div class="sf-modal">
+    <div class="sf-title">Update Sinking Fund 🏦</div>
+    <div class="sf-sub">How much have you saved so far? Goal: $1,000</div>
+    <input class="sf-input" id="sfInput" type="number" step="0.01" min="0" placeholder="e.g. 225.00">
+    <div class="sf-actions">
+      <button class="sf-cancel" onclick="closeSF()">Cancel</button>
+      <button class="sf-save" onclick="saveSF()">Save 💛</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <div class="header-nav">
+    <a href="index.html" class="back-btn">← Tracker</a>
+    <div class="nav-links">
+      <a href="analytics.html" target="_blank" class="nav-lnk">📊 Analytics</a>
+      <a href="badges.html" target="_blank" class="nav-lnk">🏆 Badges</a>
+      <a href="journal.html" target="_blank" class="nav-lnk">📓 Journal</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">// FINANCIAL COMMAND CENTER</div>
+    <h1 class="hero-title">Your <span>Debt War Room</span></h1>
+    <div class="hero-sub">Real balances. Real APRs. Real progress. Every dollar is a battle won. 💜</div>
+    <div class="last-updated">⟳ Last updated: <span id="lastUpdatedLabel">never</span></div>
+  </div>
+
+  <div class="big-stats" id="bigStats"></div>
+
+  <div class="sinking-therm">
+    <div class="therm-label">🏦 Sinking Fund</div>
+    <div class="therm-bar-wrap">
+      <div class="therm-track"><div class="therm-fill" id="thermFill" style="width:0%"></div></div>
+      <div class="therm-markers">
+        <span class="therm-mark">$0</span>
+        <span class="therm-mark">$250</span>
+        <span class="therm-mark">$500</span>
+        <span class="therm-mark">$750</span>
+        <span class="therm-mark">$1,000</span>
+      </div>
+    </div>
+    <div class="therm-val" id="thermVal">$0</div>
+    <button class="therm-edit" onclick="openSF()">Edit</button>
+  </div>
+
+  <!-- Attack zone -->
+  <div id="attackZone"></div>
+
+  <!-- Credit cards -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-title">💳 Credit Cards</span>
+    <div class="section-line"></div>
+    <span class="section-sub">avalanche order — highest APR first</span>
+  </div>
+  <div class="debt-grid" id="ccGrid"></div>
+
+  <!-- Loans -->
+  <div class="section-header">
+    <span class="section-title">🏦 Loans</span>
+    <div class="section-line"></div>
+    <span class="section-sub">minimums + BestEgg attack when CCs clear</span>
+  </div>
+  <div class="debt-grid" id="loanGrid"></div>
+
+  <!-- Affirm -->
+  <div class="section-header">
+    <span class="section-title">🛒 Affirm BNPL</span>
+    <div class="section-line"></div>
+    <span class="section-sub">all 0% — just don't miss a payment</span>
+  </div>
+  <div class="affirm-grid" id="affirmGrid"></div>
+
+  <!-- Obituary wall -->
+  <div class="section-header">
+    <span class="section-title">🪦 Debt Obituary</span>
+    <div class="section-line"></div>
+    <span class="section-sub">killed debts rest here forever 💀</span>
+  </div>
+  <div class="obit-wall" id="obitWall"></div>
+
+  <div class="footer">every dollar you pay down is a vote for your freedom 🐺💜</div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+// Loaded from localStorage — initial values from spreadsheet
+
+const STORAGE_KEY = 'enid_finance_v1';
+const SINKING_KEY = 'enid_sinking_v1';
+const OBIT_KEY    = 'enid_obituary_v1';
+const UPDATED_KEY = 'enid_finance_updated';
+
+const INITIAL_DEBTS = [
+  // Credit Cards — avalanche order
+  { id:'dell_cc',       name:'Dell CC',        type:'cc',   originalBalance:1388.53, apr:0.3099, minPayment:42,  dueDate:'2nd',   avalancheRank:1 },
+  { id:'amazon_cc',     name:'Amazon CC',      type:'cc',   originalBalance:2068.47, apr:0.2949, minPayment:69,  dueDate:'23rd',  avalancheRank:2 },
+  { id:'amex_cc',       name:'Amex CC',        type:'cc',   originalBalance:953.51,  apr:0.2849, minPayment:40,  dueDate:'1st',   avalancheRank:3 },
+  { id:'platinum_cc',   name:'Platinum CC',    type:'cc',   originalBalance:1937.97, apr:0.2774, minPayment:60,  dueDate:'1st',   avalancheRank:4 },
+  { id:'target_cc',     name:'Target CC',      type:'cc',   originalBalance:658.92,  apr:0.2665, minPayment:63,  dueDate:'8th',   avalancheRank:5 },
+  { id:'discover_cc',   name:'Discover CC',    type:'cc',   originalBalance:1372.15, apr:0.2649, minPayment:47,  dueDate:'6th',   avalancheRank:6 },
+  { id:'quicksilver_cc',name:'Quicksilver CC', type:'cc',   originalBalance:1677.92, apr:0.2640, minPayment:53,  dueDate:'22nd',  avalancheRank:7 },
+  { id:'citi_cc',       name:'Citi CC',        type:'cc',   originalBalance:5590.00, apr:0.2549, minPayment:96,  dueDate:'24th',  avalancheRank:8 },
+  { id:'journey_cc',    name:'Journey CC',     type:'cc',   originalBalance:746.74,  apr:0.2349, minPayment:25,  dueDate:'5th',   avalancheRank:9 },
+  { id:'visa_connexus', name:'Visa Connexus',  type:'cc',   originalBalance:495.70,  apr:0.0,    minPayment:40,  dueDate:'11th',  avalancheRank:10, note:'0% Promo — monitor end date!' },
+  // Loans
+  { id:'onemain',       name:'OneMain Loan',   type:'loan', originalBalance:1677.48, apr:0.3599, minPayment:96,  dueDate:'7th',   avalancheRank:0,  note:'🔴 PAID OFF — marked dead in initial allocation' },
+  { id:'bestegg',       name:'BestEgg Loan',   type:'loan', originalBalance:21849.23,apr:0.2499, minPayment:661, dueDate:'27th',  avalancheRank:11 },
+  { id:'car_loan',      name:'Car Loan',       type:'loan', originalBalance:36444.00,apr:0.1099, minPayment:691, dueDate:'19th',  avalancheRank:12, note:'Lowest APR — minimums only' },
+];
+
+const AFFIRM_DEBTS = [
+  { id:'aff_valvoline',    name:'Valvoline',          minPayment:12.05,  originalBalance:11.28,  dueDate:'7th',   endsMonth:'Mar 2026',  done:true  },
+  { id:'aff_a24',          name:'A24 Shop',           minPayment:22.69,  originalBalance:22.69,  dueDate:'8th',   endsMonth:'Mar 2026',  done:true  },
+  { id:'aff_hrblock',      name:'H&R Block',          minPayment:40.18,  originalBalance:38.49,  dueDate:'16th',  endsMonth:'Mar 2026',  done:true  },
+  { id:'aff_merchoid',     name:'Merchoid',           minPayment:33.33,  originalBalance:96.97,  dueDate:'18th',  endsMonth:'May 2026'   },
+  { id:'aff_boudry',       name:'Boudry',             minPayment:66.67,  originalBalance:174.99, dueDate:'19th',  endsMonth:'May 2026'   },
+  { id:'aff_amzjun1',      name:'Amazon (Jun \'26)',  minPayment:24.13,  originalBalance:96.51,  dueDate:'10th',  endsMonth:'Jun 2026'   },
+  { id:'aff_seatgeek',     name:'SeatGeek',           minPayment:19.81,  originalBalance:79.27,  dueDate:'16th',  endsMonth:'Jun 2026'   },
+  { id:'aff_amzjun2',      name:'Amazon (Jun \'26) #2',minPayment:20.80, originalBalance:83.21,  dueDate:'20th',  endsMonth:'Jun 2026'   },
+  { id:'aff_boxlunchjul',  name:'BoxLunch (Jul)',     minPayment:19.48,  originalBalance:97.37,  dueDate:'13th',  endsMonth:'Jul 2026'   },
+  { id:'aff_steam',        name:'Steam',              minPayment:33.15,  originalBalance:226.82, dueDate:'22nd',  endsMonth:'Sep 2026'   },
+  { id:'aff_hansens',      name:'Hansens',            minPayment:38.67,  originalBalance:252.11, dueDate:'28th',  endsMonth:'Sep 2026'   },
+  { id:'aff_amznov1',      name:'Amazon (Nov \'26)',  minPayment:19.23,  originalBalance:147.76, dueDate:'3rd',   endsMonth:'Nov 2026'   },
+  { id:'aff_amznov2',      name:'Amazon (Nov \'26) #2',minPayment:27.37, originalBalance:219.03, dueDate:'3rd',   endsMonth:'Nov 2026'   },
+  { id:'aff_boxlunchnov',  name:'BoxLunch (Nov)',     minPayment:14.71,  originalBalance:132.42, dueDate:'13th',  endsMonth:'Nov 2026'   },
+  { id:'aff_matthewsnov',  name:'Matthews Tires #2',  minPayment:19.09,  originalBalance:164.82, dueDate:'28th',  endsMonth:'Nov 2026'   },
+  { id:'aff_matthewsdec',  name:'Matthews Tires',     minPayment:80.36,  originalBalance:725.51, dueDate:'23rd',  endsMonth:'Dec 2026'   },
+  { id:'aff_amzdec1',      name:'Amazon (Dec \'26)',  minPayment:38.00,  originalBalance:379.86, dueDate:'24th',  endsMonth:'Dec 2026'   },
+  { id:'aff_amzdec2',      name:'Amazon (Dec \'26) #2',minPayment:51.72, originalBalance:515.57, dueDate:'28th',  endsMonth:'Dec 2026'   },
+  { id:'aff_amzjul27',     name:'Amazon (Jul \'27)',  minPayment:28.79,  originalBalance:489.41, dueDate:'12th',  endsMonth:'Jul 2027'   },
+];
+
+const OBIT_MESSAGES = [
+  'gone and NEVER coming back. rest in absolute pieces. 💀',
+  'eliminated. deleted. deceased. done. 🎉',
+  'this debt tried to define you. you buried it instead. 🐺',
+  'murdered by consistency and a really solid budget. rip. 💅',
+  'dead and gone. you are so much stronger than this number ever was. 💜',
+  'you said "not today" and then also not any other day. 🔥',
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+function loadState() {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+  // Merge with initial — saved balances override initial
+  return INITIAL_DEBTS.map(d => ({
+    ...d,
+    currentBalance: saved[d.id] !== undefined ? saved[d.id] : d.originalBalance,
+    dead: saved[d.id+'_dead'] || (d.id==='onemain') || false,
+  }));
+}
+
+function saveState(debts) {
+  const obj = {};
+  debts.forEach(d => {
+    obj[d.id] = d.currentBalance;
+    obj[d.id+'_dead'] = d.dead;
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+  localStorage.setItem(UPDATED_KEY, new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}));
+}
+
+function loadObituaries() {
+  return JSON.parse(localStorage.getItem(OBIT_KEY)||'[]');
+}
+function saveObituaries(list) {
+  localStorage.setItem(OBIT_KEY, JSON.stringify(list));
+}
+
+function getSinkingFund() {
+  return parseFloat(localStorage.getItem(SINKING_KEY)||'0');
+}
+function setSinkingFund(val) {
+  localStorage.setItem(SINKING_KEY, val.toString());
+}
+
+let STATE = loadState();
+let pendingKillId = null;
+let pendingUpdateId = null;
+
+// ── Calculations ──────────────────────────────────────────────────────────────
+function monthlyInterest(balance, apr) {
+  return balance * (apr / 12);
+}
+
+function aprClass(apr) {
+  if (apr >= 0.30) return 'apr-critical';
+  if (apr >= 0.27) return 'apr-high';
+  if (apr >= 0.20) return 'apr-mid';
+  if (apr >  0.00) return 'apr-low';
+  return 'apr-zero';
+}
+
+function aprLabel(apr) {
+  return apr === 0 ? '0% PROMO' : (apr*100).toFixed(2)+'% APR';
+}
+
+function fmtDollar(n) {
+  return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function pctPaid(original, current) {
+  if (original <= 0) return 100;
+  const paid = original - Math.max(current, 0);
+  return Math.min(100, Math.max(0, Math.round(paid/original*100)));
+}
+
+// ── Compute totals ─────────────────────────────────────────────────────────────
+function computeTotals() {
+  const alive = STATE.filter(d => !d.dead);
+  const totalDebt = alive.reduce((a,d) => a + Math.max(d.currentBalance,0), 0);
+  const totalInterest = alive.reduce((a,d) => a + monthlyInterest(Math.max(d.currentBalance,0), d.apr), 0);
+  // Days until debt free estimate (rough: $450/month extra on top of minimums)
+  const nonCarAlive = alive.filter(d => d.id !== 'car_loan');
+  const nonCarTotal = nonCarAlive.reduce((a,d) => a + Math.max(d.currentBalance,0), 0);
+  const monthsEst = nonCarTotal > 0 ? Math.ceil(nonCarTotal / 450) : 0;
+  return { totalDebt, totalInterest, monthsEst, nonCarTotal };
+}
+
+// ── Render big stats ──────────────────────────────────────────────────────────
+function renderBigStats() {
+  const { totalDebt, totalInterest, monthsEst, nonCarTotal } = computeTotals();
+  const sf = getSinkingFund();
+  document.getElementById('bigStats').innerHTML = `
+    <div class="big-stat s-total">
+      <div class="bs-label">Total Debt</div>
+      <div class="bs-val danger">${fmtDollar(totalDebt)}</div>
+      <div class="bs-sub">incl. car loan</div>
+    </div>
+    <div class="big-stat s-interest">
+      <div class="bs-label">Monthly Interest</div>
+      <div class="bs-val warn">${fmtDollar(totalInterest)}</div>
+      <div class="bs-sub">burned every month</div>
+    </div>
+    <div class="big-stat s-free">
+      <div class="bs-label">~Months to Free</div>
+      <div class="bs-val good">${monthsEst}</div>
+      <div class="bs-sub">non-car debt @ $450 extra/mo</div>
+    </div>
+    <div class="big-stat s-sinking">
+      <div class="bs-label">Sinking Fund</div>
+      <div class="bs-val gold">${fmtDollar(sf)}</div>
+      <div class="bs-sub">goal: $1,000</div>
+    </div>`;
+}
+
+// ── Sinking fund thermometer ──────────────────────────────────────────────────
+function renderSinkingFund() {
+  const sf = getSinkingFund();
+  const goal = 1000;
+  const pct = Math.min(100, (sf/goal)*100);
+  document.getElementById('thermFill').style.width = pct+'%';
+  document.getElementById('thermVal').textContent = fmtDollar(sf);
+}
+
+// ── Attack zone ───────────────────────────────────────────────────────────────
+function renderAttackZone() {
+  const alive = STATE.filter(d => !d.dead).sort((a,b) => b.apr - a.apr);
+  const current = alive[0];
+  if (!current) {
+    document.getElementById('attackZone').innerHTML = `
+      <div style="text-align:center;padding:30px;font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--green2);margin-bottom:24px">
+        ALL DEBTS ELIMINATED!! YOU ARE FREE!! 🎉🐺💜
+      </div>`;
+    return;
+  }
+  const monthInt = monthlyInterest(current.currentBalance, current.apr);
+  const pct = pctPaid(current.originalBalance, current.currentBalance);
+  const enidLines = [
+    `Every extra dollar you throw at ${current.name} saves you ${fmtDollar(monthInt/30)} per day in interest. THROW THE DOLLARS. 🐺🔥`,
+    `${current.name} is the highest APR debt standing. It is the villain of your story. Time to end it. 💀`,
+    `${fmtDollar(monthInt)} in interest every month while this one lives. That's money burning. Attack it. ⚡`,
+    `This is the one. Every surplus dollar, every side hustle dollar — it goes HERE first. You've got this. 💜`,
+  ];
+  const enidLine = enidLines[new Date().getDate() % enidLines.length];
+  document.getElementById('attackZone').innerHTML = `
+    <div class="attack-zone">
+      <div class="attack-label">⚔️ CURRENT TARGET — AVALANCHE ATTACK</div>
+      <div class="attack-name">${current.name}</div>
+      <div class="attack-meta">
+        <span class="attack-chip apr">🔴 ${aprLabel(current.apr)}</span>
+        <span class="attack-chip bal">Balance: ${fmtDollar(current.currentBalance)}</span>
+        <span class="attack-chip min">Min: ${fmtDollar(current.minPayment)}/mo</span>
+        <span class="attack-chip min">Interest: ${fmtDollar(monthInt)}/mo</span>
+      </div>
+      <div class="attack-progress">
+        <div class="attack-prog-label">
+          <span>${fmtDollar(current.originalBalance - current.currentBalance)} paid off</span>
+          <span>${pct}% eliminated</span>
+        </div>
+        <div class="attack-prog-track"><div class="attack-prog-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="attack-enid">"${enidLine}"</div>
+    </div>`;
+}
+
+// ── Debt card ─────────────────────────────────────────────────────────────────
+function debtCardHTML(d, idx) {
+  const pct  = pctPaid(d.originalBalance, d.currentBalance);
+  const cls  = aprClass(d.apr);
+  const mint = monthlyInterest(Math.max(d.currentBalance,0), d.apr);
+  if (d.dead) {
+    return `
+      <div class="${cls}">
+        <div class="debt-card is-dead" style="animation-delay:${idx*.04}s">
+          <div class="dc-top">
+            <div><div class="dc-name">💀 ${d.name}</div><div class="dc-type">${d.type==='cc'?'Credit Card':'Loan'} · ${aprLabel(d.apr)}</div></div>
+            <div class="dc-apr-badge">${aprLabel(d.apr)}</div>
+          </div>
+          <div class="dc-dead-badge">✅ ELIMINATED — RIP</div>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="${cls}">
+      <div class="debt-card" id="card-${d.id}" style="animation-delay:${idx*.04}s">
+        <div class="avalanche-rank">#${d.avalancheRank||'—'} avalanche</div>
+        <div class="dc-top">
+          <div>
+            <div class="dc-name">${d.name}</div>
+            <div class="dc-type">${d.type==='cc'?'Credit Card':'Loan'} · due ${d.dueDate}</div>
+          </div>
+          <div class="dc-apr-badge">${aprLabel(d.apr)}</div>
+        </div>
+        <div class="dc-balance-row">
+          <div class="dc-balance">${fmtDollar(d.currentBalance)}</div>
+          <div class="dc-original">of ${fmtDollar(d.originalBalance)}</div>
+        </div>
+        <div class="dc-progress"><div class="dc-progress-fill" style="width:${pct}%"></div></div>
+        <div class="dc-stats">
+          <div class="dc-stat">Paid <span>${pct}%</span></div>
+          <div class="dc-stat">Min <span>${fmtDollar(d.minPayment)}/mo</span></div>
+          ${d.apr > 0 ? `<div class="dc-stat">Interest <span>${fmtDollar(mint)}/mo</span></div>` : '<div class="dc-stat">Interest <span>$0 🎉</span></div>'}
+          ${d.note ? `<div class="dc-stat" style="color:var(--amber);grid-column:1/-1">${d.note}</div>` : ''}
+        </div>
+        <div class="dc-actions">
+          <input class="dc-input" type="number" step="0.01" min="0"
+            placeholder="New balance"
+            id="input-${d.id}"
+            onkeydown="if(event.key==='Enter')openUpdate('${d.id}')">
+          <button class="dc-save" onclick="openUpdate('${d.id}')">Update</button>
+          <button class="dc-kill" onclick="openKill('${d.id}')">💀 Kill</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderDebtGrids() {
+  const ccs   = STATE.filter(d=>d.type==='cc').sort((a,b)=>b.apr-a.apr);
+  const loans = STATE.filter(d=>d.type==='loan').sort((a,b)=>b.apr-a.apr);
+  document.getElementById('ccGrid').innerHTML   = ccs.map((d,i)=>debtCardHTML(d,i)).join('');
+  document.getElementById('loanGrid').innerHTML = loans.map((d,i)=>debtCardHTML(d,i)).join('');
+}
+
+// ── Affirm grid ───────────────────────────────────────────────────────────────
+function renderAffirmGrid() {
+  const now = new Date();
+  document.getElementById('affirmGrid').innerHTML = AFFIRM_DEBTS.map((a,i) => {
+    const isDone = a.done;
+    const endsDate = new Date(a.endsMonth+' 1');
+    const monthsLeft = (endsDate.getFullYear()-now.getFullYear())*12 + (endsDate.getMonth()-now.getMonth());
+    const urgent = monthsLeft <= 1;
+    return `
+      <div class="affirm-card ${isDone?'affirm-done':''}" style="animation-delay:${i*.03}s">
+        <div class="ac-name">${isDone?'💀 ':''}{${a.name}}</div>
+        <div class="ac-due ${urgent&&!isDone?'urgent':''}">${isDone?'PAID OFF':'Ends '+a.endsMonth+' · due '+a.dueDate}</div>
+        <div class="ac-bal-row">
+          <div class="ac-bal">${fmtDollar(a.originalBalance)}</div>
+          <div class="ac-min">${fmtDollar(a.minPayment)}/mo</div>
+        </div>
+        <div class="ac-prog"><div class="ac-prog-fill" style="width:${isDone?100:50}%"></div></div>
+      </div>`;
+  }).join('').replace(/\{/g,'').replace(/\}/g,'');
+}
+
+// ── Obituary wall ─────────────────────────────────────────────────────────────
+function renderObitWall() {
+  const obits = loadObituaries();
+  const deadFromState = STATE.filter(d=>d.dead&&d.id!=='onemain');
+  // OneMain was killed on load with the loan
+  const onemainObit = {
+    id:'onemain', name:'OneMain Loan',
+    amount:1677.48, apr:'35.99%',
+    date:'Mar 4, 2026',
+    msg: OBIT_MESSAGES[0],
+  };
+
+  const allObits = [onemainObit, ...obits];
+  if (allObits.length === 0) {
+    document.getElementById('obitWall').innerHTML=`
+      <div class="obit-empty">
+        <span class="obit-empty-icon">🪦</span>
+        <div class="obit-empty-text">No debts killed yet — but the first one is coming. Keep going. 🐺💜</div>
+      </div>`;
+    return;
+  }
+  document.getElementById('obitWall').innerHTML = allObits.map((o,i) => `
+    <div class="obit-card" style="animation-delay:${i*.08}s">
+      <span class="obit-tombstone">🪦</span>
+      <div class="obit-rip">R.I.P.</div>
+      <div class="obit-name">${o.name}</div>
+      <div class="obit-amount">${fmtDollar(o.amount)} @ ${o.apr}</div>
+      <div class="obit-date">Killed: ${o.date}</div>
+      <div class="obit-enid">${o.msg}</div>
+    </div>`).join('');
+}
+
+// ── Last updated ──────────────────────────────────────────────────────────────
+function renderLastUpdated() {
+  const ts = localStorage.getItem(UPDATED_KEY);
+  document.getElementById('lastUpdatedLabel').textContent = ts || 'never — update a balance to start!';
+}
+
+// ── Kill flow ─────────────────────────────────────────────────────────────────
+function openKill(id) {
+  const d = STATE.find(x=>x.id===id);
+  if (!d) return;
+  pendingKillId = id;
+  document.getElementById('kmName').textContent = `${d.name} — ${fmtDollar(d.currentBalance)} remaining`;
+  document.getElementById('killOverlay').style.display = 'flex';
+}
+function closeKill() {
+  document.getElementById('killOverlay').style.display = 'none';
+  pendingKillId = null;
+}
+function confirmKill() {
+  const d = STATE.find(x=>x.id===pendingKillId);
+  if (!d) return;
+  d.dead = true;
+  d.currentBalance = 0;
+  const obits = loadObituaries();
+  obits.push({
+    id: d.id, name: d.name,
+    amount: d.originalBalance,
+    apr: aprLabel(d.apr),
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    msg: OBIT_MESSAGES[obits.length % OBIT_MESSAGES.length],
+  });
+  saveObituaries(obits);
+  saveState(STATE);
+  closeKill();
+  launchConfetti();
+  renderAll();
+}
+
+// ── Update flow ───────────────────────────────────────────────────────────────
+function openUpdate(id) {
+  const d = STATE.find(x=>x.id===id);
+  if (!d) return;
+  const inputVal = document.getElementById('input-'+id)?.value;
+  pendingUpdateId = id;
+  document.getElementById('umSub').textContent = `${d.name} — current balance: ${fmtDollar(d.currentBalance)}`;
+  const um = document.getElementById('umInput');
+  um.value = inputVal || '';
+  document.getElementById('updateOverlay').style.display = 'flex';
+  setTimeout(()=>um.focus(),100);
+}
+function closeUpdate() {
+  document.getElementById('updateOverlay').style.display = 'none';
+  pendingUpdateId = null;
+}
+function closeUpdateIfBg(e) { if(e.target.id==='updateOverlay') closeUpdate(); }
+function saveUpdate() {
+  const val = parseFloat(document.getElementById('umInput').value);
+  if (isNaN(val) || val < 0) return;
+  const d = STATE.find(x=>x.id===pendingUpdateId);
+  if (!d) return;
+  d.currentBalance = val;
+  saveState(STATE);
+  closeUpdate();
+  renderAll();
+}
+
+// ── Sinking fund flow ─────────────────────────────────────────────────────────
+function openSF() { document.getElementById('sfInput').value=getSinkingFund()||''; document.getElementById('sfOverlay').style.display='flex'; setTimeout(()=>document.getElementById('sfInput').focus(),100); }
+function closeSF() { document.getElementById('sfOverlay').style.display='none'; }
+function closeSFIfBg(e) { if(e.target.id==='sfOverlay') closeSF(); }
+function saveSF() {
+  const val = parseFloat(document.getElementById('sfInput').value);
+  if (isNaN(val)||val<0) return;
+  setSinkingFund(val); closeSF(); renderAll();
+}
+
+// ── Confetti 🎉 ───────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#1DB954','#4ADE80','#FCD34D','#E84EA0','#A855F7','#38BDF8','#F4C842'];
+  const shapes = ['🎉','💀','🐺','💜','✨','🔥','🌟'];
+  for (let i=0;i<80;i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}vw;
+      font-size:${Math.random()*18+10}px;
+      animation-duration:${Math.random()*2+2}s;
+      animation-delay:${Math.random()*1.5}s;
+    `;
+    el.textContent = Math.random() > 0.5 ? shapes[Math.floor(Math.random()*shapes.length)] : '■';
+    if (el.textContent === '■') el.style.color = colors[Math.floor(Math.random()*colors.length)];
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 5000);
+  }
+}
+
+// ── Master render ─────────────────────────────────────────────────────────────
+function renderAll() {
+  renderBigStats();
+  renderSinkingFund();
+  renderAttackZone();
+  renderDebtGrids();
+  renderAffirmGrid();
+  renderObitWall();
+  renderLastUpdated();
+}
+
+renderAll();
+</script>
+</body>
+</html>

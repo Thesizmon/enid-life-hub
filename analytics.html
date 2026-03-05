@@ -203,6 +203,94 @@ body::after{
 @media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr}}
 @media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}.bar-habit-name{width:130px}}
 @media(max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Best You Report ── */
+.best-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:4px}
+.bw-day{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;transition:all .2s}
+.bw-day.bw-perfect{border-color:rgba(110,231,183,.4);background:rgba(110,231,183,.07)}
+.bw-day.bw-great{border-color:rgba(232,78,160,.3);background:rgba(232,78,160,.06)}
+.bw-day-name{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.bw-day-date{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:var(--text);margin-bottom:8px}
+.bw-habits{display:flex;flex-direction:column;gap:3px}
+.bw-habit{display:flex;align-items:center;gap:4px;font-size:.62rem;padding:2px 4px;border-radius:6px}
+.bw-habit.done{background:rgba(110,231,183,.12);color:var(--mint)}
+.bw-habit.miss{opacity:.22;color:var(--text3)}
+.bw-habit-emoji{font-size:.7rem;flex-shrink:0}
+.bw-day-score{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;margin-top:8px}
+.bw-day-score.perfect{color:var(--mint)}
+.bw-day-score.great{color:var(--pink)}
+.bw-day-score.okay{color:var(--yellow)}
+.bw-week-total{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px;background:rgba(255,255,255,.03);border-radius:14px;margin-top:12px;flex-wrap:wrap}
+.bw-total-stat{text-align:center}
+.bw-total-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--text)}
+.bw-total-label{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+/* ── Correlation Map ── */
+.corr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.corr-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:16px 18px;transition:all .2s}
+.corr-card:hover{background:rgba(255,255,255,.07);border-color:rgba(232,78,160,.2);transform:translateX(3px)}
+.corr-card.corr-positive{border-left:3px solid var(--mint)}
+.corr-card.corr-negative{border-left:3px solid var(--pink)}
+.corr-card.corr-neutral{border-left:3px solid var(--text3)}
+.corr-habits{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.corr-habit-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600;color:var(--text2)}
+.corr-arrow{font-size:.8rem;color:var(--text3)}
+.corr-insight{font-family:'Playfair Display',serif;font-size:.88rem;font-style:italic;color:var(--text);line-height:1.55}
+.corr-delta{font-size:.75rem;font-weight:700;margin-top:6px}
+.corr-delta.pos{color:var(--mint)}
+.corr-delta.neg{color:var(--pink2)}
+.corr-delta.neu{color:var(--text3)}
+.corr-sample{font-size:.68rem;color:var(--text3);margin-top:3px}
+/* ── This Time Last Month ── */
+.ttlm-col{background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:18px;padding:20px;position:relative;overflow:hidden}
+.ttlm-col.ttlm-now{border-color:rgba(232,78,160,.25)}
+.ttlm-col.ttlm-then{border-color:rgba(168,85,247,.15)}
+.ttlm-col-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:4px}
+.ttlm-col-dates{font-family:'Playfair Display',serif;font-size:.88rem;color:var(--text2);margin-bottom:16px;font-style:italic}
+.ttlm-habit-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.ttlm-habit-row:last-child{border-bottom:none}
+.ttlm-habit-emoji{font-size:.9rem;flex-shrink:0;width:20px;text-align:center}
+.ttlm-habit-name{font-size:.78rem;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttlm-habit-bar{width:60px;height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;flex-shrink:0}
+.ttlm-habit-bar-fill{height:100%;border-radius:999px;transition:width 1s ease}
+.ttlm-habit-pct{font-size:.72rem;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+.ttlm-delta-col{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:0 4px}
+.ttlm-delta-row{font-size:.75rem;font-weight:700;height:33px;display:flex;align-items:center}
+.ttlm-delta-row.up{color:var(--mint)}
+.ttlm-delta-row.down{color:var(--pink2)}
+.ttlm-delta-row.same{color:var(--text3)}
+.ttlm-summary{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.ttlm-sum-chip{flex:1;text-align:center;padding:10px 8px;background:rgba(255,255,255,.04);border-radius:12px;min-width:80px}
+.ttlm-sum-val{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;color:var(--text)}
+.ttlm-sum-label{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+/* ── Weekly Review ── */
+.weekly-review{background:linear-gradient(135deg,rgba(232,78,160,.08),rgba(168,85,247,.06));border:1.5px solid rgba(232,78,160,.2);border-radius:20px;padding:28px}
+.wr-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.wr-eyebrow{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--pink);margin-bottom:5px}
+.wr-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--text)}
+.wr-dates{font-size:.78rem;color:var(--text3);margin-top:3px;font-style:italic}
+.wr-actions{display:flex;gap:8px;flex-wrap:wrap}
+.wr-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;border:1.5px solid}
+.wr-btn-email{background:var(--pink-dim);border-color:var(--border2);color:var(--pink)}
+.wr-btn-email:hover{background:rgba(232,78,160,.25);transform:translateY(-1px)}
+.wr-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.wr-stat{background:rgba(255,255,255,.05);border-radius:14px;padding:14px 12px;text-align:center}
+.wr-stat-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--text)}
+.wr-stat-label{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+.wr-section-breakdown{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+.wr-section-row{background:rgba(255,255,255,.04);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.wr-section-icon{font-size:1.1rem;flex-shrink:0}
+.wr-section-name{font-size:.78rem;font-weight:600;color:var(--text2);flex:1}
+.wr-section-bar-wrap{width:60px}
+.wr-section-bar-track{height:4px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.wr-section-bar-fill{height:100%;border-radius:999px}
+.wr-section-pct{font-size:.72rem;font-weight:700;color:var(--text);margin-left:6px;flex-shrink:0}
+.wr-enid-note{background:rgba(255,255,255,.04);border-radius:14px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.wr-enid-av{font-size:1.4rem;flex-shrink:0}
+.wr-enid-text{font-family:'Playfair Display',serif;font-size:.9rem;font-style:italic;color:var(--text);line-height:1.6}
+.wr-enid-sig{font-size:.72rem;color:var(--text3);margin-top:5px}
+.wr-best-habit{display:inline-flex;align-items:center;gap:6px;background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:999px;padding:4px 12px;font-size:.75rem;font-weight:700;color:var(--mint);margin-top:10px}
+.wr-struggle-habit{display:inline-flex;align-items:center;gap:6px;background:rgba(232,78,160,.1);border:1px solid rgba(232,78,160,.2);border-radius:999px;padding:4px 12px;font-size:.75rem;font-weight:700;color:var(--pink2);margin-top:6px;margin-left:8px}
+@media(max-width:700px){.best-week-grid{grid-template-columns:repeat(4,1fr)}.corr-grid{grid-template-columns:1fr}.wr-stats-row{grid-template-columns:repeat(2,1fr)}.wr-section-breakdown{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -516,6 +604,31 @@ function renderAll() {
       <div class="trend-grid" id="trendGrid"></div>
     </div>`;
 
+  // ── Best You Report ───────────────────────────────────────────────────────
+  html += `<div class="section-title">🏆 Your Best Week Ever</div>
+    <div class="card" style="animation-delay:.18s">
+      <div class="card-title">Peak performance — every habit, every day. This is what you're chasing. 🐺</div>
+      <div id="bestWeekGrid"></div>
+    </div>`;
+
+  // ── Correlation Map ───────────────────────────────────────────────────────
+  html += `<div class="section-title">🧠 Habit Correlation Map</div>
+    <div class="card" style="animation-delay:.21s">
+      <div class="card-title">When you do one thing, what else happens? The patterns behind your patterns.</div>
+      <div class="corr-grid" id="corrGrid"></div>
+    </div>`;
+
+  // ── This Time Last Month ──────────────────────────────────────────────────
+  html += `<div class="section-title">⚡ This Time Last Month</div>
+    <div class="card" style="animation-delay:.24s">
+      <div class="card-title">This week vs the same week 30 days ago — tangible proof of growth.</div>
+      <div id="ttlmContainer"></div>
+    </div>`;
+
+  // ── Weekly Review ─────────────────────────────────────────────────────────
+  html += `<div class="section-title">🌟 Weekly Review</div>
+    <div id="weeklyReviewContainer" style="animation-delay:.27s"></div>`;
+
   content.innerHTML = html;
 
   // Now populate dynamic sections
@@ -523,6 +636,17 @@ function renderAll() {
   renderBarChart(habitStats);
   renderStreakBoard(habitStats);
   renderTrend(monthTrend);
+
+  // ── New sections ──────────────────────────────────────────────────────────
+  const bestWeek   = computeBestWeek(rows);
+  const corrs      = computeCorrelations(rows);
+  const ttlm       = computeThisTimeLastMonth(rows);
+  const weekReview = computeWeeklyReview(rows);
+
+  renderBestWeek(bestWeek);
+  renderCorrelations(corrs);
+  renderThisTimeLastMonth(ttlm);
+  renderWeeklyReview(weekReview);
 }
 
 // ── Heatmap render ────────────────────────────────────────────────────────────
@@ -687,6 +811,499 @@ function setRange(range, btn) {
   rangeLabel = range === 'all' ? 'All Time' : `Last ${range} Days`;
   renderAll();
 }
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ── 1. BEST YOU REPORT ───────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+function computeBestWeek(rows) {
+  if (rows.length === 0) return null;
+
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.completed_date]) byDate[r.completed_date] = new Set();
+    byDate[r.completed_date].add(r.habit_id);
+  });
+
+  const dates = Object.keys(byDate).sort();
+  if (dates.length < 2) return null;
+
+  // Slide a 7-day window across all dates, find peak total completions
+  let bestStart = null, bestTotal = 0;
+
+  for (let i = 0; i < dates.length; i++) {
+    const windowStart = dates[i];
+    const windowEnd   = fmtDate(new Date(new Date(windowStart+'T12:00:00').getTime() + 6*86400000));
+    let total = 0;
+    const windowDates = [];
+    for (let d = 0; d < 7; d++) {
+      const dk = fmtDate(new Date(new Date(windowStart+'T12:00:00').getTime() + d*86400000));
+      total += byDate[dk]?.size || 0;
+      windowDates.push(dk);
+    }
+    if (total > bestTotal) { bestTotal = total; bestStart = windowStart; }
+  }
+
+  if (!bestStart) return null;
+
+  // Build the 7 days
+  const days = [];
+  for (let d = 0; d < 7; d++) {
+    const dk = fmtDate(new Date(new Date(bestStart+'T12:00:00').getTime() + d*86400000));
+    const dt = new Date(dk+'T12:00:00');
+    days.push({
+      date: dk, dt,
+      dow: dt.toLocaleDateString('en-US',{weekday:'short'}),
+      dayNum: dt.getDate(),
+      month: dt.toLocaleDateString('en-US',{month:'short'}),
+      done: byDate[dk] || new Set(),
+      count: byDate[dk]?.size || 0,
+    });
+  }
+
+  const avgPerDay = bestTotal / 7;
+  return { days, bestTotal, avgPerDay, startDate: bestStart };
+}
+
+function renderBestWeek(data) {
+  const el = document.getElementById('bestWeekGrid');
+  if (!el) return;
+  if (!data) { el.innerHTML='<div class="empty">Not enough data yet — keep building! 🌸</div>'; return; }
+
+  const DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const maxDay = Math.max(...data.days.map(d=>d.count), 1);
+
+  let html = `<div class="best-week-grid">`;
+  data.days.forEach(day => {
+    const pct = Math.round(day.count / ALL_HABITS.length * 100);
+    const cls  = pct >= 90 ? 'bw-perfect' : pct >= 60 ? 'bw-great' : '';
+    const scoreColor = pct >= 90 ? 'perfect' : pct >= 60 ? 'great' : 'okay';
+    html += `
+      <div class="bw-day ${cls}">
+        <div class="bw-day-name">${day.dow}</div>
+        <div class="bw-day-date">${day.month} ${day.dayNum}</div>
+        <div class="bw-habits">
+          ${ALL_HABITS.map(h => `
+            <div class="bw-habit ${day.done.has(h.id)?'done':'miss'}">
+              <span class="bw-habit-emoji">${h.emoji}</span>
+            </div>`).join('')}
+        </div>
+        <div class="bw-day-score ${scoreColor}">${day.count}/${ALL_HABITS.length}</div>
+      </div>`;
+  });
+  html += `</div>`;
+
+  // Week totals bar
+  const startDt = new Date(data.startDate+'T12:00:00');
+  const endDt   = new Date(data.startDate+'T12:00:00'); endDt.setDate(endDt.getDate()+6);
+  const MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  html += `
+    <div class="bw-week-total">
+      <div class="bw-total-stat">
+        <div class="bw-total-val">${data.bestTotal}</div>
+        <div class="bw-total-label">Total check-ins</div>
+      </div>
+      <div class="bw-total-stat">
+        <div class="bw-total-val">${data.avgPerDay.toFixed(1)}</div>
+        <div class="bw-total-label">Avg per day</div>
+      </div>
+      <div class="bw-total-stat">
+        <div class="bw-total-val">${Math.round(data.bestTotal/(ALL_HABITS.length*7)*100)}%</div>
+        <div class="bw-total-label">Week completion</div>
+      </div>
+      <div class="bw-total-stat">
+        <div class="bw-total-val" style="font-size:.9rem;font-family:'DM Sans',sans-serif">${MONTHS[startDt.getMonth()]} ${startDt.getDate()} – ${MONTHS[endDt.getMonth()]} ${endDt.getDate()}</div>
+        <div class="bw-total-label">Week of</div>
+      </div>
+    </div>`;
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ── 2. HABIT CORRELATION MAP ─────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+function computeCorrelations(rows) {
+  if (rows.length === 0) return [];
+
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.completed_date]) byDate[r.completed_date] = new Set();
+    byDate[r.completed_date].add(r.habit_id);
+  });
+
+  const dates    = Object.keys(byDate);
+  const totalDays = dates.length;
+  if (totalDays < 5) return []; // need minimum data
+
+  // For meaningful correlations, only look at habits present in the data
+  const habitIds = [...new Set(rows.map(r=>r.habit_id))];
+
+  const correlations = [];
+
+  // For each pair: when habit A is done, what % of days is habit B also done?
+  // Compare against baseline % of habit B overall
+  for (let i = 0; i < habitIds.length; i++) {
+    for (let j = 0; j < habitIds.length; j++) {
+      if (i === j) continue;
+      const hA = habitIds[i];
+      const hB = habitIds[j];
+
+      const daysWithA     = dates.filter(d => byDate[d].has(hA));
+      const daysWithAandB = daysWithA.filter(d => byDate[d].has(hB));
+      const daysWithB     = dates.filter(d => byDate[d].has(hB));
+
+      if (daysWithA.length < 3) continue; // not enough data for A
+      const baselineB  = daysWithB.length / totalDays;
+      const conditionalB = daysWithAandB.length / daysWithA.length;
+      const delta = conditionalB - baselineB;
+
+      // Only surface correlations with meaningful delta (>15%)
+      if (Math.abs(delta) >= 0.15) {
+        correlations.push({
+          habitA: HABIT_MAP[hA] || {emoji:'⭐',name:hA,section:'custom'},
+          habitB: HABIT_MAP[hB] || {emoji:'⭐',name:hB,section:'custom'},
+          baselineB:    Math.round(baselineB * 100),
+          conditionalB: Math.round(conditionalB * 100),
+          delta:        Math.round(delta * 100),
+          sampleSize:   daysWithA.length,
+        });
+      }
+    }
+  }
+
+  // Sort by absolute delta, deduplicate by keeping only the strongest per pair
+  const seen = new Set();
+  return correlations
+    .sort((a,b) => Math.abs(b.delta) - Math.abs(a.delta))
+    .filter(c => {
+      const key = [c.habitA.name, c.habitB.name].sort().join('|');
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    })
+    .slice(0, 8); // top 8 correlations
+}
+
+function renderCorrelations(correlations) {
+  const el = document.getElementById('corrGrid');
+  if (!el) return;
+  if (correlations.length === 0) {
+    el.innerHTML='<div class="empty" style="grid-column:1/-1">Keep logging habits — correlations appear after a few weeks of data! 🐺</div>';
+    return;
+  }
+
+  let html = '';
+  correlations.forEach((c,i) => {
+    const isPos = c.delta > 0;
+    const cls   = Math.abs(c.delta) >= 30 ? (isPos?'corr-positive':'corr-negative') : 'corr-neutral';
+    const arrow = isPos ? '↑' : '↓';
+    const deltaColor = isPos ? 'pos' : 'neg';
+
+    const insight = isPos
+      ? `On days you complete ${c.habitA.name}, you're <strong>${c.conditionalB}%</strong> likely to also do ${c.habitB.name} — vs ${c.baselineB}% on other days.`
+      : `On days you skip ${c.habitA.name}, you're only <strong>${c.conditionalB}%</strong> likely to do ${c.habitB.name} — vs ${c.baselineB}% normally.`;
+
+    html += `
+      <div class="corr-card ${cls}" style="animation-delay:${i*.04}s">
+        <div class="corr-habits">
+          <span class="corr-habit-chip">${c.habitA.emoji} ${c.habitA.name}</span>
+          <span class="corr-arrow">→</span>
+          <span class="corr-habit-chip">${c.habitB.emoji} ${c.habitB.name}</span>
+        </div>
+        <div class="corr-insight">${insight}</div>
+        <div class="corr-delta ${deltaColor}">${arrow} ${Math.abs(c.delta)}% ${isPos?'more likely':'less likely'} when paired</div>
+        <div class="corr-sample">Based on ${c.sampleSize} days of data</div>
+      </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ── 3. THIS TIME LAST MONTH ───────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+function computeThisTimeLastMonth(rows) {
+  const today = new Date();
+
+  // This week: Mon–Sun of current week
+  const thisMon = new Date(today);
+  const dow = thisMon.getDay();
+  thisMon.setDate(thisMon.getDate() - (dow === 0 ? 6 : dow - 1));
+  thisMon.setHours(0,0,0,0);
+
+  const thisSun = new Date(thisMon); thisSun.setDate(thisSun.getDate()+6);
+
+  // Last month same week: shift back 30 days
+  const lastMon = new Date(thisMon); lastMon.setDate(lastMon.getDate()-30);
+  const lastSun = new Date(thisSun); lastSun.setDate(lastSun.getDate()-30);
+
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.completed_date]) byDate[r.completed_date] = new Set();
+    byDate[r.completed_date].add(r.habit_id);
+  });
+
+  function getWeekStats(monDate, sunDate) {
+    const days = [];
+    for (let d = 0; d < 7; d++) {
+      const dt = new Date(monDate); dt.setDate(dt.getDate()+d);
+      const dk = fmtDate(dt);
+      days.push({ dk, done: byDate[dk] || new Set() });
+    }
+    const totalChecks = days.reduce((a,d)=>a+d.done.size,0);
+    const activeDays  = days.filter(d=>d.done.size>0).length;
+
+    // Per habit completion
+    const habitPcts = {};
+    ALL_HABITS.forEach(h => {
+      const doneDays = days.filter(d=>d.done.has(h.id)).length;
+      habitPcts[h.id] = Math.round(doneDays/7*100);
+    });
+    return { days, totalChecks, activeDays, habitPcts, monDate, sunDate };
+  }
+
+  const now  = getWeekStats(thisMon, thisSun);
+  const then = getWeekStats(lastMon, lastSun);
+
+  return { now, then };
+}
+
+function renderThisTimeLastMonth(data) {
+  const el = document.getElementById('ttlmContainer');
+  if (!el) return;
+
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function dateRange(mon, sun) {
+    return `${MONTHS[mon.getMonth()]} ${mon.getDate()} – ${MONTHS[sun.getMonth()]} ${sun.getDate()}`;
+  }
+
+  // Filter to habits that appear in either period
+  const relevantHabits = ALL_HABITS.filter(h =>
+    data.now.habitPcts[h.id] > 0 || data.then.habitPcts[h.id] > 0
+  ).slice(0, 16); // cap at 16 for readability
+
+  function colHtml(stats, label, cls) {
+    const pctColor = (pct) => pct >= 80 ? 'var(--mint)' : pct >= 50 ? 'var(--sky)' : pct >= 25 ? 'var(--yellow)' : 'var(--pink)';
+    return `
+      <div class="ttlm-col ${cls}">
+        <div class="ttlm-col-label">${label}</div>
+        <div class="ttlm-col-dates">${dateRange(stats.monDate, stats.sunDate)}</div>
+        ${relevantHabits.map(h => {
+          const pct = stats.habitPcts[h.id]||0;
+          return `
+            <div class="ttlm-habit-row">
+              <div class="ttlm-habit-emoji">${h.emoji}</div>
+              <div class="ttlm-habit-name">${h.name}</div>
+              <div class="ttlm-habit-bar">
+                <div class="ttlm-habit-bar-fill" style="width:${pct}%;background:${pctColor(pct)}"></div>
+              </div>
+              <div class="ttlm-habit-pct" style="color:${pctColor(pct)}">${pct}%</div>
+            </div>`;
+        }).join('')}
+        <div class="ttlm-summary">
+          <div class="ttlm-sum-chip">
+            <div class="ttlm-sum-val">${stats.totalChecks}</div>
+            <div class="ttlm-sum-label">Check-ins</div>
+          </div>
+          <div class="ttlm-sum-chip">
+            <div class="ttlm-sum-val">${stats.activeDays}/7</div>
+            <div class="ttlm-sum-label">Active days</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Delta column between the two
+  const overallDelta = data.now.totalChecks - data.then.totalChecks;
+  const deltaSign = overallDelta > 0 ? '+' : '';
+  const deltaColor = overallDelta > 0 ? 'var(--mint)' : overallDelta < 0 ? 'var(--pink2)' : 'var(--text3)';
+
+  let html = `<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:start">`;
+  html += colHtml(data.then, '📅 Same Week Last Month', 'ttlm-then');
+
+  // Delta middle column
+  html += `<div class="ttlm-delta-col">
+    <div style="font-family:'Playfair Display',serif;font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:4px;writing-mode:initial">vs</div>
+    ${relevantHabits.map(h => {
+      const d = (data.now.habitPcts[h.id]||0) - (data.then.habitPcts[h.id]||0);
+      const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'same';
+      const sym = d > 0 ? `+${d}` : d < 0 ? `${d}` : '—';
+      return `<div class="ttlm-delta-row ${cls}">${sym}%</div>`;
+    }).join('')}
+    <div style="margin-top:14px;text-align:center;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:${deltaColor}">${deltaSign}${overallDelta}</div>
+    <div style="font-size:.6rem;color:var(--text3);text-align:center;text-transform:uppercase;letter-spacing:.06em">total</div>
+  </div>`;
+
+  html += colHtml(data.now, '⚡ This Week', 'ttlm-now');
+  html += `</div>`;
+
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ── 4. WEEKLY REVIEW ─────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+
+const WEEKLY_REVIEW_NOTES = [
+  { fn: (s) => `You logged ${s.totalChecks} check-ins this week. That's ${s.totalChecks >= 100 ? 'absolutely UNHINGED in the best way possible 🔥' : s.totalChecks >= 60 ? 'genuinely impressive consistency 💜' : s.totalChecks >= 30 ? 'a solid foundation — build on it next week 🌸' : 'a start, and every journey starts with one. Keep going 🐺'}.` },
+  { fn: (s) => `${s.bestSection ? `Your ${s.bestSection} routine was your strongest this week at ${s.bestSectionPct}% completion. THAT is your superpower right now. 🌟` : `You showed up across all your routines this week. That kind of consistency is rare and you should be proud of it. 💜`}` },
+  { fn: (s) => `${s.activeDays === 7 ? `SEVEN days. You logged habits every single day this week. That is a perfect week and you need to sit with that for a second. 🐺🔥` : `You showed up ${s.activeDays} out of 7 days. ${s.activeDays >= 5 ? "That's more days on than off — you're winning." : "Next week let's try to add one more day. Just one."} 💜`}` },
+  { fn: (s) => `${s.struggleHabit ? `${s.struggleHabit.emoji} ${s.struggleHabit.name} was the hardest one this week. That's your target for next week — just that one habit. Make it a personal challenge. 💪` : `No major struggles this week — you're locked in!! 🌈🐺`}` },
+];
+
+function computeWeeklyReview(rows) {
+  const today = new Date();
+  const mon = new Date(today);
+  const dow = mon.getDay();
+  mon.setDate(mon.getDate() - (dow === 0 ? 6 : dow - 1));
+  mon.setHours(0,0,0,0);
+
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.completed_date]) byDate[r.completed_date] = new Set();
+    byDate[r.completed_date].add(r.habit_id);
+  });
+
+  const weekDates = [];
+  for (let d = 0; d < 7; d++) {
+    const dt = new Date(mon); dt.setDate(dt.getDate()+d);
+    weekDates.push(fmtDate(dt));
+  }
+
+  const weekRows = rows.filter(r => weekDates.includes(r.completed_date));
+  const totalChecks = weekRows.length;
+  const activeDays  = new Set(weekRows.map(r=>r.completed_date)).size;
+
+  // Per section breakdown
+  const sections = {
+    morning:   { label:'Morning', icon:'☀️', habits:ALL_HABITS.filter(h=>h.section==='morning') },
+    afterwork: { label:'After Work', icon:'💼', habits:ALL_HABITS.filter(h=>h.section==='afterwork') },
+    weekend:   { label:'Weekend', icon:'🌸', habits:ALL_HABITS.filter(h=>h.section==='weekend') },
+    evening:   { label:'Evening', icon:'🌙', habits:ALL_HABITS.filter(h=>h.section==='evening') },
+  };
+
+  const sectionStats = Object.entries(sections).map(([key,s]) => {
+    const possible = s.habits.length * 7;
+    const done = weekRows.filter(r => s.habits.find(h=>h.id===r.habit_id)).length;
+    const pct  = possible > 0 ? Math.round(done/possible*100) : 0;
+    return { key, label:s.label, icon:s.icon, done, possible, pct };
+  }).sort((a,b)=>b.pct-a.pct);
+
+  const bestSection  = sectionStats[0];
+  const habitCounts  = {};
+  weekRows.forEach(r=>{ habitCounts[r.habit_id]=(habitCounts[r.habit_id]||0)+1; });
+  const habitArr = ALL_HABITS.map(h=>({ ...h, count:habitCounts[h.id]||0, pct:Math.round((habitCounts[h.id]||0)/7*100) }));
+  const bestHabit     = [...habitArr].sort((a,b)=>b.count-a.count)[0];
+  const struggleHabit = habitArr.filter(h=>h.count>0).sort((a,b)=>a.count-b.count)[0];
+
+  // Enid note
+  const noteIdx = today.getDate() % WEEKLY_REVIEW_NOTES.length;
+  const noteText = WEEKLY_REVIEW_NOTES[noteIdx].fn({
+    totalChecks, activeDays,
+    bestSection: bestSection?.pct > 0 ? bestSection.label : null,
+    bestSectionPct: bestSection?.pct,
+    struggleHabit: struggleHabit?.count > 0 && struggleHabit?.count < 4 ? struggleHabit : null,
+  });
+
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const sun = new Date(mon); sun.setDate(sun.getDate()+6);
+  const weekLabel = `${MONTHS[mon.getMonth()]} ${mon.getDate()} – ${MONTHS[sun.getMonth()]} ${sun.getDate()}, ${sun.getFullYear()}`;
+
+  return { totalChecks, activeDays, sectionStats, bestHabit, struggleHabit, noteText, weekLabel, mon, sun };
+}
+
+function buildMailtoLink(data) {
+  const subject = `🐺 Enid's Weekly Review — ${data.weekLabel}`;
+  const body = [
+    `MY WEEKLY HABIT REVIEW 🐺💜`,
+    `Week of ${data.weekLabel}`,
+    ``,
+    `OVERVIEW`,
+    `Total check-ins: ${data.totalChecks}`,
+    `Active days: ${data.activeDays}/7`,
+    ``,
+    `BY SECTION`,
+    ...data.sectionStats.map(s => `${s.icon} ${s.label}: ${s.pct}% (${s.done}/${s.possible})`),
+    ``,
+    `HIGHLIGHTS`,
+    data.bestHabit ? `🌟 Best habit: ${data.bestHabit.emoji} ${data.bestHabit.name} (${data.bestHabit.count}/7 days)` : '',
+    data.struggleHabit ? `💪 To work on: ${data.struggleHabit.emoji} ${data.struggleHabit.name} (${data.struggleHabit.count}/7 days)` : '',
+    ``,
+    `ENID'S NOTE`,
+    data.noteText.replace(/<[^>]*>/g,''),
+    ``,
+    `— generated by your Enid Life Hub 🐺 thesizmon.github.io/enid-life-hub/analytics.html`,
+  ].filter(l=>l!==undefined).join('\n');
+
+  return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function renderWeeklyReview(data) {
+  const el = document.getElementById('weeklyReviewContainer');
+  if (!el) return;
+
+  const barColor = (pct) => pct >= 80 ? 'var(--mint)' : pct >= 50 ? 'var(--sky)' : pct >= 25 ? 'var(--yellow)' : 'var(--pink)';
+
+  el.innerHTML = `
+    <div class="weekly-review">
+      <div class="wr-header">
+        <div class="wr-title-block">
+          <div class="wr-eyebrow">Weekly Review ✨</div>
+          <div class="wr-title">How did this week go? 🐺</div>
+          <div class="wr-dates">${data.weekLabel}</div>
+        </div>
+        <div class="wr-actions">
+          <a href="${buildMailtoLink(data)}" class="wr-btn wr-btn-email">📧 Email to myself</a>
+        </div>
+      </div>
+
+      <div class="wr-stats-row">
+        <div class="wr-stat">
+          <div class="wr-stat-val">${data.totalChecks}</div>
+          <div class="wr-stat-label">Check-ins</div>
+        </div>
+        <div class="wr-stat">
+          <div class="wr-stat-val">${data.activeDays}/7</div>
+          <div class="wr-stat-label">Active Days</div>
+        </div>
+        <div class="wr-stat">
+          <div class="wr-stat-val">${Math.round(data.totalChecks/(ALL_HABITS.length*7)*100)}%</div>
+          <div class="wr-stat-label">Week Rate</div>
+        </div>
+        <div class="wr-stat">
+          <div class="wr-stat-val">${data.bestHabit?.count||0}/7</div>
+          <div class="wr-stat-label">Best Habit</div>
+        </div>
+      </div>
+
+      <div class="wr-section-breakdown">
+        ${data.sectionStats.map(s => `
+          <div class="wr-section-row">
+            <div class="wr-section-icon">${s.icon}</div>
+            <div class="wr-section-name">${s.label}</div>
+            <div class="wr-section-bar-wrap">
+              <div class="wr-section-bar-track">
+                <div class="wr-section-bar-fill" style="width:${s.pct}%;background:${barColor(s.pct)}"></div>
+              </div>
+            </div>
+            <div class="wr-section-pct">${s.pct}%</div>
+          </div>`).join('')}
+      </div>
+
+      ${data.bestHabit ? `<div class="wr-best-habit">🌟 Best: ${data.bestHabit.emoji} ${data.bestHabit.name} — ${data.bestHabit.count}/7 days</div>` : ''}
+      ${data.struggleHabit && data.struggleHabit.count < 4 ? `<div class="wr-struggle-habit">💪 Target next week: ${data.struggleHabit.emoji} ${data.struggleHabit.name}</div>` : ''}
+
+      <div class="wr-enid-note" style="margin-top:16px">
+        <div class="wr-enid-av">🐺</div>
+        <div>
+          <div class="wr-enid-text">${data.noteText}</div>
+          <div class="wr-enid-sig">— Enid, your forever hype person 💜</div>
+        </div>
+      </div>
+    </div>`;
+}
+
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {

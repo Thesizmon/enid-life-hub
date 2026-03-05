@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 Enid's Movie List</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A080F;--bg2:#100D18;--bg3:#160F22;
+  --red:#E8232A;--red2:#FF5555;--red-dim:rgba(232,35,42,.1);--red-glow:rgba(232,35,42,.22);
+  --gold:#F5C842;--gold2:#FFE08A;--gold-dim:rgba(245,200,66,.1);
+  --cream:#F0E6D3;--cream2:#C9B99A;
+  --pink:#E84EA0;--pink-dim:rgba(232,78,160,.1);
+  --purple:#A855F7;
+  --text:#F0E6FF;--text2:#A899BB;--text3:#5A4A72;
+  --border:rgba(255,255,255,.07);--border2:rgba(232,35,42,.2);
+  --card:rgba(255,255,255,.04);
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 65% 50% at 8% 8%,   rgba(232,35,42,.14) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 92% 12%,  rgba(245,200,66,.08) 0%,transparent 50%),
+    radial-gradient(ellipse 55% 45% at 50% 94%,  rgba(168,85,247,.08) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 35% at 78% 55%,  rgba(232,78,160,.06) 0%,transparent 45%),
+    linear-gradient(160deg,#0A080F 0%,#0D0A16 50%,#080610 100%);
+  pointer-events:none;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 100px}
+
+/* ── Nav ── */
+.header-nav{display:flex;align-items:center;justify-content:space-between;padding:28px 0 0;flex-wrap:wrap;gap:10px;animation:fadeDown .5s ease both}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--red-dim);color:var(--red2);font-size:.78rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.back-btn:hover{background:var(--red-glow);transform:translateY(-1px)}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.nav-lnk{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.74rem;font-weight:500;text-decoration:none;transition:all .2s}
+.nav-lnk:hover{border-color:var(--border2);color:var(--red2)}
+
+/* ── Hero ── */
+.hero{padding:36px 0 28px;animation:fadeDown .6s .05s ease both}
+.hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red);margin-bottom:8px;font-family:var(--mono)}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,6rem);font-weight:400;color:var(--cream);line-height:.95;letter-spacing:.03em}
+.hero-title span{color:var(--red2);text-shadow:0 0 30px rgba(232,35,42,.4)}
+.hero-sub{font-size:.88rem;color:var(--text2);margin-top:10px;font-family:'Dancing Script',cursive;font-size:1.05rem}
+
+/* ── Search bar ── */
+.search-zone{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:20px;margin-bottom:32px;animation:fadeUp .5s .1s ease both}
+.search-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--red);font-family:var(--mono);margin-bottom:10px}
+.search-row{display:flex;gap:10px}
+.search-input{flex:1;background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:10px;padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none;transition:all .2s}
+.search-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px var(--red-dim)}
+.search-input::placeholder{color:var(--text3)}
+.search-btn{background:linear-gradient(135deg,var(--red),#C01820);border:none;border-radius:10px;padding:11px 22px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--red-glow)}
+.search-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Search results */
+.search-results{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.sr-card{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;animation:fadeUp .3s ease both}
+.sr-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,35,42,.15)}
+.sr-poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#1a1520}
+.sr-poster-placeholder{width:100%;aspect-ratio:2/3;background:linear-gradient(135deg,#1a1520,#0d0a16);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.sr-info{padding:10px}
+.sr-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.04em;color:var(--cream);line-height:1.2;margin-bottom:3px}
+.sr-date{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
+.sr-add-btn{width:100%;background:var(--red-dim);border:1px solid var(--border2);color:var(--red2);border-radius:0 0 12px 12px;padding:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:none}
+.sr-card:hover .sr-add-btn{display:block}
+.sr-add-btn:hover{background:var(--red-glow)}
+.sr-added{font-size:.65rem;color:var(--gold);text-align:center;padding:5px;font-family:var(--mono)}
+
+/* ── Upcoming section ── */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--cream2)}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(232,35,42,.3),transparent)}
+.section-count{font-family:var(--mono);font-size:.65rem;color:var(--text3);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+
+/* ── Discover strip ── */
+.discover-strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:32px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.discover-strip::-webkit-scrollbar{height:4px}
+.discover-strip::-webkit-scrollbar-track{background:transparent}
+.discover-strip::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px}
+.ds-card{flex-shrink:0;width:130px;cursor:pointer;transition:all .2s;animation:fadeUp .4s ease both}
+.ds-card:hover{transform:translateY(-4px)}
+.ds-poster{width:130px;height:195px;object-fit:cover;border-radius:10px;display:block;background:#1a1520;border:1.5px solid var(--border)}
+.ds-poster-ph{width:130px;height:195px;background:linear-gradient(135deg,#1a1520,#0d0a16);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;border:1.5px solid var(--border)}
+.ds-card:hover .ds-poster,.ds-card:hover .ds-poster-ph{border-color:var(--border2);box-shadow:0 8px 24px rgba(232,35,42,.2)}
+.ds-title{font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:.04em;color:var(--cream);margin-top:6px;line-height:1.2;text-align:center}
+.ds-date{font-size:.6rem;color:var(--text3);font-family:var(--mono);text-align:center;margin-top:2px}
+.ds-watchlist{font-size:.62rem;color:var(--gold);text-align:center;margin-top:3px;font-family:var(--mono)}
+
+/* ── My list grid ── */
+.my-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px}
+
+/* Movie card */
+.movie-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;transition:all .22s;animation:fadeUp .4s ease both;position:relative}
+.movie-card:hover{border-color:rgba(232,35,42,.3);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.4)}
+.movie-card.mc-watched{opacity:.6;border-style:dashed}
+.mc-poster-wrap{position:relative;height:180px;overflow:hidden;background:#100d18}
+.mc-poster{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.movie-card:hover .mc-poster{transform:scale(1.04)}
+.mc-poster-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:linear-gradient(135deg,#1a1520,#0d0a16)}
+.mc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,8,15,.95) 0%,rgba(10,8,15,.2) 50%,transparent 100%)}
+.mc-rating{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);border:1px solid rgba(245,200,66,.3);border-radius:6px;padding:3px 8px;font-family:var(--mono);font-size:.68rem;color:var(--gold);backdrop-filter:blur(4px)}
+.mc-watched-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,rgba(29,185,84,.8),rgba(29,185,84,.6));border-radius:6px;padding:4px 10px;font-size:.65rem;font-weight:700;color:#000;font-family:'DM Sans',sans-serif;backdrop-filter:blur(4px)}
+.mc-body{padding:16px}
+.mc-title{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.05em;color:var(--cream);line-height:1.1;margin-bottom:6px}
+.mc-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mc-chip{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-family:var(--mono);padding:3px 9px;border-radius:6px;white-space:nowrap}
+.mc-chip.release{background:var(--red-dim);color:var(--red2);border:1px solid var(--border2)}
+.mc-chip.showing{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(245,200,66,.2)}
+.mc-chip.theatre{background:rgba(168,85,247,.1);color:#C084FC;border:1px solid rgba(168,85,247,.2)}
+.mc-chip.hype{background:rgba(232,78,160,.1);color:var(--pink);border:1px solid rgba(232,78,160,.2)}
+.mc-notes{font-size:.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px;font-style:italic;border-left:2px solid var(--border2);padding-left:8px}
+.mc-actions{display:flex;gap:8px}
+.mc-btn{flex:1;padding:7px;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;border:1px solid}
+.mc-btn-watch{background:rgba(29,185,84,.1);border-color:rgba(29,185,84,.25);color:#4ADE80}
+.mc-btn-watch:hover{background:rgba(29,185,84,.2)}
+.mc-btn-edit{background:var(--gold-dim);border-color:rgba(245,200,66,.2);color:var(--gold)}
+.mc-btn-edit:hover{background:rgba(245,200,66,.15)}
+.mc-btn-delete{background:var(--red-dim);border-color:var(--border2);color:var(--red2)}
+.mc-btn-delete:hover{background:var(--red-glow)}
+
+/* hype stars */
+.hype-stars{display:inline-flex;gap:2px}
+.hype-star{font-size:.7rem;opacity:.3;cursor:pointer;transition:opacity .15s}
+.hype-star.filled{opacity:1}
+
+/* ── Add/Edit modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg3);border:1.5px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(232,35,42,.15);animation:modalPop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalPop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-poster-preview{width:80px;height:120px;object-fit:cover;border-radius:8px;float:right;margin-left:14px;border:1px solid var(--border)}
+.modal-poster-ph{width:80px;height:120px;background:#1a1520;border-radius:8px;float:right;margin-left:14px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:1px solid var(--border)}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;color:var(--cream);margin-bottom:3px}
+.modal-movie-name{font-size:.8rem;color:var(--text2);margin-bottom:18px;clear:both}
+.form-group{margin-bottom:14px}
+.form-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:var(--mono);display:block;margin-bottom:5px}
+.form-input,.form-textarea{width:100%;background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border-color .2s}
+.form-input:focus,.form-textarea:focus{border-color:var(--border2);box-shadow:0 0 0 3px var(--red-dim)}
+.form-textarea{resize:vertical;min-height:70px;font-family:'Dancing Script',cursive;font-size:.95rem}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3)}
+.hype-group{display:flex;align-items:center;gap:8px}
+.hype-group .form-label{margin-bottom:0}
+.modal-hype-stars{display:flex;gap:4px}
+.modal-hype-star{font-size:1.2rem;opacity:.25;cursor:pointer;transition:all .15s}
+.modal-hype-star.filled{opacity:1;transform:scale(1.1)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.modal-cancel{padding:9px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.modal-save{padding:9px 24px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--red),#C01820);color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.modal-save:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--red-glow)}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:48px 20px;grid-column:1/-1}
+.empty-icon{font-size:3rem;display:block;margin-bottom:12px;opacity:.3}
+.empty-text{font-family:'Dancing Script',cursive;font-size:1.1rem;color:var(--text3)}
+
+/* ── Loading ── */
+.loading-text{font-family:'Dancing Script',cursive;font-size:1rem;color:var(--red);text-align:center;padding:20px;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+.footer{text-align:center;padding:32px 0 12px;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
+
+@media(max-width:600px){.my-list{grid-template-columns:1fr}.search-results{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- Add / Edit modal -->
+<div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeModalIfBg(event)">
+  <div class="modal">
+    <div id="modalPosterPreview"></div>
+    <div class="modal-title" id="modalHeading">Add Movie</div>
+    <div class="modal-movie-name" id="modalMovieName"></div>
+
+    <div class="form-group">
+      <label class="form-label">Release Date</label>
+      <input class="form-input" id="fRelease" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Showing — Date & Time</label>
+      <input class="form-input" id="fShowing" type="datetime-local">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Theatre / Where you're seeing it</label>
+      <input class="form-input" id="fTheatre" type="text" placeholder="e.g. Marcus Fond du Lac Cinema">
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="margin-bottom:8px">Hype Level</label>
+      <div class="modal-hype-stars" id="modalHypeStars">
+        <span class="modal-hype-star" onclick="setHype(1)">🍿</span>
+        <span class="modal-hype-star" onclick="setHype(2)">🍿</span>
+        <span class="modal-hype-star" onclick="setHype(3)">🍿</span>
+        <span class="modal-hype-star" onclick="setHype(4)">🍿</span>
+        <span class="modal-hype-star" onclick="setHype(5)">🍿</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes / thoughts</label>
+      <textarea class="form-textarea" id="fNotes" placeholder="Why you're excited, who told you about it, anything..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveModal()">🎬 Save to My List</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <div class="header-nav">
+    <a href="index.html" class="back-btn">← Tracker</a>
+    <div class="nav-links">
+      <a href="analytics.html" target="_blank" class="nav-lnk">📊 Analytics</a>
+      <a href="finance.html" target="_blank" class="nav-lnk">💰 Finance</a>
+      <a href="badges.html" target="_blank" class="nav-lnk">🏆 Badges</a>
+      <a href="journal.html" target="_blank" class="nav-lnk">📓 Journal</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">// PERSONAL CINEMA LOG</div>
+    <h1 class="hero-title">ENID'S<br><span>MOVIE LIST</span></h1>
+    <div class="hero-sub">the watchlist, the hype, the whole cinematic experience 🎬💜</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-zone">
+    <div class="search-label">🔍 Search for a movie to add</div>
+    <div class="search-row">
+      <input class="search-input" id="searchInput" type="text" placeholder="Search any movie title..."
+        onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="search-btn" id="searchBtn" onclick="doSearch()">Search</button>
+    </div>
+    <div id="searchResults"></div>
+  </div>
+
+  <!-- Discover upcoming -->
+  <div class="section-header">
+    <span class="section-title">🎞 NOW PLAYING & COMING SOON</span>
+    <div class="section-line"></div>
+    <span class="section-count" id="discoverCount">loading...</span>
+  </div>
+  <div id="discoverLoading" class="loading-text">Fetching what's in theatres... 🎬</div>
+  <div class="discover-strip" id="discoverStrip" style="display:none"></div>
+
+  <!-- My list -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-title">🍿 MY LIST</span>
+    <div class="section-line"></div>
+    <span class="section-count" id="myListCount">0 movies</span>
+  </div>
+  <div class="my-list" id="myList"></div>
+
+  <div class="footer">every great movie starts in the dark, with the curtain rising 🎬🐺💜</div>
+</div>
+
+<script>
+// ── TMDB ──────────────────────────────────────────────────────────────────────
+const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjMxMTZjNTlhYjQ4ZDEzOGQ5NGQzYjMyMDAzMmExNSIsIm5iZiI6MTc3MjczNTgzNS4zNDMwMDAyLCJzdWIiOiI2OWE5Y2Q1YmQxMjk0YTZhMTllMjNhYjkiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.3w0Y48WIA5pA6gmO_WpsIuIaKoWaEyk7Em8MQ4e8QWU';
+const TMDB = 'https://api.themoviedb.org/3';
+const IMG  = 'https://image.tmdb.org/t/p/';
+
+const tmdbHeaders = {
+  'Authorization': `Bearer ${TMDB_TOKEN}`,
+  'Content-Type': 'application/json',
+};
+
+async function tmdbGet(path) {
+  const res = await fetch(TMDB + path, { headers: tmdbHeaders });
+  return res.json();
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+const MY_LIST_KEY = 'enid_movies_v1';
+
+function loadMyList() {
+  return JSON.parse(localStorage.getItem(MY_LIST_KEY)||'[]');
+}
+function saveMyList(list) {
+  localStorage.setItem(MY_LIST_KEY, JSON.stringify(list));
+  // Also write a simplified version for the tracker widget to read
+  const widget = list.filter(m => !m.watched).map(m => ({
+    id: m.id,
+    title: m.title,
+    posterPath: m.posterPath,
+    showingDate: m.showingDate,
+    theatre: m.theatre,
+    releaseDate: m.releaseDate,
+    hype: m.hype,
+  }));
+  localStorage.setItem('enid_movies_widget', JSON.stringify(widget));
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let myList = loadMyList();
+let pendingMovie = null;   // movie object being added/edited
+let editingId    = null;   // id of movie being edited
+let modalHype    = 3;
+
+// ── Discover strip ────────────────────────────────────────────────────────────
+async function loadDiscover() {
+  try {
+    // Fetch now playing + upcoming in parallel
+    const [nowPlaying, upcoming] = await Promise.all([
+      tmdbGet('/movie/now_playing?language=en-US&region=US&page=1'),
+      tmdbGet('/movie/upcoming?language=en-US&region=US&page=1'),
+    ]);
+    const seen = new Set();
+    const combined = [...(nowPlaying.results||[]), ...(upcoming.results||[])]
+      .filter(m => { if(seen.has(m.id)){return false;} seen.add(m.id); return true; })
+      .sort((a,b) => new Date(a.release_date) - new Date(b.release_date))
+      .slice(0, 30);
+
+    document.getElementById('discoverLoading').style.display = 'none';
+    document.getElementById('discoverCount').textContent = combined.length + ' titles';
+    const strip = document.getElementById('discoverStrip');
+    strip.style.display = 'flex';
+
+    const myIds = new Set(myList.map(m=>m.tmdbId));
+
+    strip.innerHTML = combined.map((m,i) => {
+      const poster = m.poster_path
+        ? `<img class="ds-poster" src="${IMG}w185${m.poster_path}" alt="${escHtml(m.title)}" loading="lazy">`
+        : `<div class="ds-poster-ph">🎬</div>`;
+      const inList = myIds.has(m.id);
+      return `
+        <div class="ds-card" style="animation-delay:${i*.03}s" onclick="openAddFromDiscover(${m.id})">
+          ${poster}
+          <div class="ds-title">${escHtml(m.title)}</div>
+          <div class="ds-date">${fmtRelease(m.release_date)}</div>
+          ${inList ? `<div class="ds-watchlist">✓ on my list</div>` : ''}
+        </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('discoverLoading').textContent = 'Could not load — check your connection 🎬';
+  }
+}
+
+// ── Search ────────────────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true; btn.textContent = 'Searching...';
+  document.getElementById('searchResults').innerHTML = '<div class="loading-text">Finding movies... 🎬</div>';
+  try {
+    const data = await tmdbGet(`/search/movie?query=${encodeURIComponent(q)}&language=en-US&page=1&include_adult=false`);
+    renderSearchResults(data.results||[]);
+  } catch(e) {
+    document.getElementById('searchResults').innerHTML = '<div class="loading-text">Search failed — try again!</div>';
+  }
+  btn.disabled = false; btn.textContent = 'Search';
+}
+
+function renderSearchResults(results) {
+  const myIds = new Set(myList.map(m=>m.tmdbId));
+  if (results.length === 0) {
+    document.getElementById('searchResults').innerHTML = '<div style="font-size:.8rem;color:var(--text3);padding:8px 0;text-align:center">No results found 🎬</div>';
+    return;
+  }
+  document.getElementById('searchResults').innerHTML = `
+    <div class="search-results">
+      ${results.slice(0,8).map((m,i) => {
+        const poster = m.poster_path
+          ? `<img class="sr-poster" src="${IMG}w185${m.poster_path}" alt="${escHtml(m.title)}" loading="lazy">`
+          : `<div class="sr-poster-placeholder">🎬</div>`;
+        const inList = myIds.has(m.id);
+        return `
+          <div class="sr-card" style="animation-delay:${i*.04}s">
+            ${poster}
+            <div class="sr-info">
+              <div class="sr-title">${escHtml(m.title)}</div>
+              <div class="sr-date">${fmtRelease(m.release_date)}</div>
+            </div>
+            ${inList
+              ? `<div class="sr-added">✓ Already on your list!</div>`
+              : `<button class="sr-add-btn" onclick="openAddFromSearch(${m.id},event)">+ Add to My List</button>`}
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ── Open modal ────────────────────────────────────────────────────────────────
+async function openAddFromDiscover(tmdbId) {
+  const details = await tmdbGet(`/movie/${tmdbId}?language=en-US`);
+  openModal(details, null);
+}
+
+async function openAddFromSearch(tmdbId, e) {
+  e?.stopPropagation();
+  const details = await tmdbGet(`/movie/${tmdbId}?language=en-US`);
+  openModal(details, null);
+}
+
+function openModal(tmdbMovie, existingEntry) {
+  pendingMovie = tmdbMovie;
+  editingId    = existingEntry?.id || null;
+  modalHype    = existingEntry?.hype || 3;
+
+  // Poster
+  const pp = document.getElementById('modalPosterPreview');
+  pp.innerHTML = tmdbMovie.poster_path
+    ? `<img class="modal-poster-preview" src="${IMG}w185${tmdbMovie.poster_path}" alt="">`
+    : `<div class="modal-poster-ph">🎬</div>`;
+
+  document.getElementById('modalHeading').textContent  = editingId ? 'Edit Movie' : 'Add to My List';
+  document.getElementById('modalMovieName').textContent = tmdbMovie.title + (tmdbMovie.release_date ? ` (${tmdbMovie.release_date.slice(0,4)})` : '');
+
+  // Pre-fill fields
+  document.getElementById('fRelease').value  = existingEntry?.releaseDate  || tmdbMovie.release_date || '';
+  document.getElementById('fShowing').value  = existingEntry?.showingDate  || '';
+  document.getElementById('fTheatre').value  = existingEntry?.theatre      || '';
+  document.getElementById('fNotes').value    = existingEntry?.notes        || '';
+
+  renderModalHype();
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+function openEditModal(id) {
+  const entry = myList.find(m=>m.id===id);
+  if (!entry) return;
+  // Rebuild a minimal tmdbMovie object from stored data
+  openModal({
+    id: entry.tmdbId,
+    title: entry.title,
+    poster_path: entry.posterPath,
+    release_date: entry.releaseDate,
+  }, entry);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+  pendingMovie = null; editingId = null;
+}
+function closeModalIfBg(e) { if(e.target.id==='modalOverlay') closeModal(); }
+
+function setHype(n) { modalHype = n; renderModalHype(); }
+function renderModalHype() {
+  document.querySelectorAll('.modal-hype-star').forEach((s,i) => {
+    s.classList.toggle('filled', i < modalHype);
+  });
+}
+
+function saveModal() {
+  const m = pendingMovie;
+  if (!m) return;
+
+  const entry = {
+    id:          editingId || ('mv_'+Date.now()),
+    tmdbId:      m.id,
+    title:       m.title,
+    posterPath:  m.poster_path || null,
+    releaseDate: document.getElementById('fRelease').value,
+    showingDate: document.getElementById('fShowing').value,
+    theatre:     document.getElementById('fTheatre').value.trim(),
+    notes:       document.getElementById('fNotes').value.trim(),
+    hype:        modalHype,
+    watched:     editingId ? (myList.find(x=>x.id===editingId)?.watched||false) : false,
+    addedAt:     editingId ? (myList.find(x=>x.id===editingId)?.addedAt||Date.now()) : Date.now(),
+  };
+
+  if (editingId) {
+    const idx = myList.findIndex(x=>x.id===editingId);
+    if (idx !== -1) myList[idx] = entry;
+  } else {
+    myList.unshift(entry);
+  }
+
+  saveMyList(myList);
+  closeModal();
+  renderMyList();
+  loadDiscover(); // refresh discover to show updated watchlist flags
+}
+
+// ── Toggle watched ────────────────────────────────────────────────────────────
+function toggleWatched(id) {
+  const m = myList.find(x=>x.id===id);
+  if (!m) return;
+  m.watched = !m.watched;
+  saveMyList(myList);
+  renderMyList();
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+function deleteMovie(id) {
+  if (!confirm('Remove this movie from your list?')) return;
+  myList = myList.filter(m=>m.id!==id);
+  saveMyList(myList);
+  renderMyList();
+}
+
+// ── Render my list ────────────────────────────────────────────────────────────
+function renderMyList() {
+  document.getElementById('myListCount').textContent = myList.length + ' movie' + (myList.length!==1?'s':'');
+  if (myList.length === 0) {
+    document.getElementById('myList').innerHTML = `
+      <div class="empty">
+        <span class="empty-icon">🎬</span>
+        <div class="empty-text">Your list is empty — search for a movie above or pick one from the strip!! 🐺💜</div>
+      </div>`;
+    return;
+  }
+
+  // Sort: unwatched upcoming first, then by showing date, then watched at end
+  const sorted = [...myList].sort((a,b) => {
+    if (a.watched !== b.watched) return a.watched ? 1 : -1;
+    const da = a.showingDate || a.releaseDate || '9999';
+    const db = b.showingDate || b.releaseDate || '9999';
+    return da.localeCompare(db);
+  });
+
+  document.getElementById('myList').innerHTML = sorted.map((m,i) => {
+    const poster = m.posterPath
+      ? `<img class="mc-poster" src="${IMG}w342${m.posterPath}" alt="${escHtml(m.title)}" loading="lazy">`
+      : `<div class="mc-poster-ph">🎬</div>`;
+
+    const hypeHtml = m.hype ? `<span class="mc-chip hype">${'🍿'.repeat(m.hype)}</span>` : '';
+    const releaseHtml = m.releaseDate ? `<span class="mc-chip release">📅 ${fmtRelease(m.releaseDate)}</span>` : '';
+    const showingHtml = m.showingDate ? `<span class="mc-chip showing">🎟 ${fmtShowing(m.showingDate)}</span>` : '';
+    const theatreHtml = m.theatre    ? `<span class="mc-chip theatre">📍 ${escHtml(m.theatre)}</span>` : '';
+    const notesHtml   = m.notes      ? `<div class="mc-notes">${escHtml(m.notes)}</div>` : '';
+    const watchedBadge = m.watched   ? `<div class="mc-watched-badge">✅ Watched!</div>` : '';
+    const daysUntil = getDaysUntil(m.showingDate || m.releaseDate);
+    const daysHtml = !m.watched && daysUntil !== null
+      ? `<span class="mc-chip" style="background:rgba(168,85,247,.1);color:#C084FC;border:1px solid rgba(168,85,247,.2)">${daysUntil === 0 ? '🎬 TODAY!!' : daysUntil < 0 ? `${Math.abs(daysUntil)}d ago` : `⏳ ${daysUntil}d away`}</span>`
+      : '';
+
+    return `
+      <div class="movie-card ${m.watched?'mc-watched':''}" style="animation-delay:${i*.05}s">
+        <div class="mc-poster-wrap">
+          ${poster}
+          <div class="mc-overlay"></div>
+          ${watchedBadge}
+          <div class="mc-rating">⭐ ${m.hype ? '🍿'.repeat(m.hype) : '—'}</div>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">${escHtml(m.title)}</div>
+          <div class="mc-meta">
+            ${releaseHtml}${showingHtml}${theatreHtml}${daysHtml}
+          </div>
+          ${notesHtml}
+          <div class="mc-actions">
+            <button class="mc-btn mc-btn-watch" onclick="toggleWatched('${m.id}')">
+              ${m.watched ? '↩ Unwatch' : '✅ Mark Watched'}
+            </button>
+            <button class="mc-btn mc-btn-edit" onclick="openEditModal('${m.id}')">✏️ Edit</button>
+            <button class="mc-btn mc-btn-delete" onclick="deleteMovie('${m.id}')">🗑</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtRelease(d) {
+  if (!d) return '—';
+  const dt = new Date(d+'T12:00:00');
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function fmtShowing(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' ' +
+         dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+function getDaysUntil(dateStr) {
+  if (!dateStr) return null;
+  const target = new Date(dateStr);
+  const today  = new Date(); today.setHours(0,0,0,0);
+  target.setHours(0,0,0,0);
+  return Math.round((target-today)/86400000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderMyList();
+loadDiscover();
+</script>
+</body>
+</html>

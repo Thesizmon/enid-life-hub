@@ -85,8 +85,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .nm-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,78,160,.35)}
 
 /* Daily pep quote */
-.pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}
-.pep-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}.pep-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.movie-widget{background:linear-gradient(135deg,rgba(232,35,42,.08),rgba(168,85,247,.05));border:1.5px solid rgba(232,35,42,.2);border-radius:18px;padding:18px 20px;margin-bottom:18px;animation:fadeUp .4s ease both}
+.mw-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mw-title{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--text)}
+.mw-sub{font-size:.72rem;color:var(--text-soft);margin-left:auto}
+.mw-list{display:flex;flex-direction:column;gap:10px}
+.mw-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border-radius:12px;padding:10px 12px;text-decoration:none;transition:all .18s;border:1px solid rgba(232,35,42,.1)}
+.mw-item:hover{background:rgba(232,35,42,.08);border-color:rgba(232,35,42,.25);transform:translateX(3px)}
+.mw-poster{width:36px;height:54px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#1a0f1f}
+.mw-poster-ph{width:36px;height:54px;background:#1a0f1f;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.mw-info{flex:1;min-width:0}
+.mw-movie-title{font-weight:700;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mw-when{font-size:.68rem;color:rgba(232,35,42,.9);margin-top:2px}
+.mw-where{font-size:.65rem;color:var(--text-soft);margin-top:1px}
+.mw-hype{font-size:.75rem;flex-shrink:0}
 .pep-avatar{font-size:1.6rem;flex-shrink:0;animation:pepbounce 4s ease-in-out infinite}
 @keyframes pepbounce{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.12)}}
 .pep-body{flex:1}
@@ -263,6 +276,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <a href="journal.html" target="_blank" class="journal-btn">
         📓 Journal
       </a>
+      <a href="badges.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(244,200,66,.3);background:rgba(244,200,66,.08);color:#B8860B;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(244,200,66,.18)';this.style.borderColor='rgba(244,200,66,.5)'" onmouseout="this.style.background='rgba(244,200,66,.08)';this.style.borderColor='rgba(244,200,66,.3)'">🏆 Badges</a>
+      <a href="finance.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(29,185,84,.25);background:rgba(29,185,84,.08);color:#4ADE80;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(29,185,84,.18)';this.style.borderColor='rgba(29,185,84,.5)'" onmouseout="this.style.background='rgba(29,185,84,.08)';this.style.borderColor='rgba(29,185,84,.25)'">💰 Finance</a>
+      <a href="movies.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(232,35,42,.25);background:rgba(232,35,42,.08);color:#FF5555;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(232,35,42,.18)';this.style.borderColor='rgba(232,35,42,.5)'" onmouseout="this.style.background='rgba(232,35,42,.08)';this.style.borderColor='rgba(232,35,42,.25)'">🎬 Movies</a>
+      <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(200,133,58,.25);background:rgba(200,133,58,.08);color:#E8A855;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(200,133,58,.18)';this.style.borderColor='rgba(200,133,58,.5)'" onmouseout="this.style.background='rgba(200,133,58,.08)';this.style.borderColor='rgba(200,133,58,.25)'">📚 Books</a>
       <button onclick="openNotifSettings()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:rgba(168,85,247,.07);color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--purple-soft)';this.style.color='var(--purple-soft)'" onmouseout="this.style.borderColor='rgba(168,85,247,.2)';this.style.color='var(--text-soft)'">🔔</button>
       <div class="date-chip" id="dateChip"></div>
       <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
@@ -277,6 +294,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <div class="pep-sig" id="pepSig"></div>
     </div>
   </div>
+
+  <!-- Movie widget — only shows on days with a flagged movie -->
+  <div id="movieWidget"></div>
+
+  <!-- Book widget — shows currently reading books -->
+  <div id="bookWidget"></div>
 
   <div class="day-nav" id="dayNav"></div>
 
@@ -850,18 +873,21 @@ function appendHabitItem(listEl,h,blockClass,section) {
     const nowDone = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
     if (nowDone) {
       div.classList.add('done','just-done');
-      // Special ⚡ celebration if this was a resurrection backlog
       if (resurrectCache.has(h.id)) {
         spawnResurrection(div);
       } else {
         spawnCelebration(div);
       }
       setTimeout(()=>div.classList.remove('just-done'),500);
-      setTimeout(()=>openNotePrompt(h.id, section), 600);
+      // If reading habit — open book log modal instead of note prompt
+      if (h.id === 'w_read') {
+        setTimeout(()=>openReadingLogModal(), 600);
+      } else {
+        setTimeout(()=>openNotePrompt(h.id, section), 600);
+      }
     }
     else div.classList.remove('done');
     div.style.pointerEvents='';
-    // Reload streaks so resurrection is reflected immediately
     await loadStreaks();
     render();
     buildDayNav();
@@ -1200,10 +1226,204 @@ function openNotifSettings() {
   alert(msg);
 }
 
+// ── Movie Widget ──────────────────────────────────────────────────────────────
+// Reads from localStorage written by movies.html
+// Only renders on days that have a showing or release date matching viewDate
+
+function renderMovieWidget() {
+  const el = document.getElementById('movieWidget');
+  if (!el) return;
+
+  const list = JSON.parse(localStorage.getItem('enid_movies_widget')||'[]');
+  if (list.length === 0) { el.innerHTML=''; return; }
+
+  const viewStr = fmtDate(viewDate); // YYYY-MM-DD
+
+  // Match movies whose showing date OR release date is today (viewDate)
+  const todayMovies = list.filter(m => {
+    const showDay = m.showingDate ? m.showingDate.slice(0,10) : null;
+    const relDay  = m.releaseDate ? m.releaseDate.slice(0,10) : null;
+    return showDay === viewStr || relDay === viewStr;
+  });
+
+  // Also show movies in the next 3 days as "coming soon" on today's view
+  const today = fmtDate(new Date());
+  const soonMovies = viewStr === today ? list.filter(m => {
+    const showDay = m.showingDate ? m.showingDate.slice(0,10) : null;
+    const relDay  = m.releaseDate ? m.releaseDate.slice(0,10) : null;
+    const targetDay = showDay || relDay;
+    if (!targetDay || targetDay === today) return false;
+    const diff = (new Date(targetDay) - new Date(today)) / 86400000;
+    return diff > 0 && diff <= 3;
+  }) : [];
+
+  const allMovies = [...todayMovies, ...soonMovies];
+  if (allMovies.length === 0) { el.innerHTML=''; return; }
+
+  const IMG = 'https://image.tmdb.org/t/p/';
+
+  const itemsHtml = allMovies.map(m => {
+    const showDay = m.showingDate ? m.showingDate.slice(0,10) : null;
+    const relDay  = m.releaseDate ? m.releaseDate.slice(0,10) : null;
+    const isToday = showDay === viewStr || relDay === viewStr;
+    const isSoon  = !isToday;
+
+    const whenLabel = isToday
+      ? (m.showingDate ? '🎬 Your showing is TODAY!!' : '📅 Opens in theatres TODAY!!')
+      : (() => {
+          const target = showDay || relDay;
+          const diff = Math.round((new Date(target) - new Date(today)) / 86400000);
+          return `⏳ ${diff} day${diff!==1?'s':''} away`;
+        })();
+
+    const poster = m.posterPath
+      ? `<img class="mw-poster" src="${IMG}w92${m.posterPath}" alt="">`
+      : `<div class="mw-poster-ph">🎬</div>`;
+
+    return `
+      <a class="mw-item" href="movies.html" target="_blank">
+        ${poster}
+        <div class="mw-info">
+          <div class="mw-movie-title">${m.title}</div>
+          <div class="mw-when">${whenLabel}</div>
+          ${m.theatre ? `<div class="mw-where">📍 ${m.theatre}</div>` : ''}
+        </div>
+        <div class="mw-hype">${m.hype ? '🍿'.repeat(m.hype) : ''}</div>
+      </a>`;
+  }).join('');
+
+  const hasToday = todayMovies.length > 0;
+  el.innerHTML = `
+    <div class="movie-widget">
+      <div class="mw-header">
+        <span style="font-size:1.2rem">🎬</span>
+        <span class="mw-title">${hasToday ? 'Movie day roomie!!' : 'Coming up soon!!'}</span>
+        <span class="mw-sub">tap to open your list</span>
+      </div>
+      <div class="mw-list">${itemsHtml}</div>
+    </div>`;
+}
+
+// ── Reading Log Modal (fires when 15 Min Reading habit is checked) ────────────
+const SUPA_URL_T = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY_T = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+
+function openReadingLogModal() {
+  const books = JSON.parse(localStorage.getItem('enid_books_widget')||'[]');
+  const sel   = document.getElementById('rlBookSelect');
+  const noBooks = document.getElementById('rlNoBooks');
+  const nameEl  = document.getElementById('rlBookName');
+
+  document.getElementById('rlPages').value = '';
+  document.getElementById('rlNote').value  = '';
+
+  if (books.length === 0) {
+    noBooks.style.display = 'block';
+    sel.style.display     = 'none';
+    nameEl.textContent    = 'Which book did you read?';
+  } else {
+    noBooks.style.display = 'none';
+    sel.style.display     = 'block';
+    sel.innerHTML = books.map(b =>
+      `<option value="${b.id}">${b.title}${b.pagesRead ? ' ('+b.pagesRead+' pp read)' : ''}</option>`
+    ).join('');
+    nameEl.textContent = books.length === 1 ? books[0].title : 'Pick your book below';
+  }
+
+  document.getElementById('readingLogOverlay').style.display = 'flex';
+}
+
+function closeReadingLog() {
+  document.getElementById('readingLogOverlay').style.display = 'none';
+}
+
+async function saveReadingLog() {
+  const books  = JSON.parse(localStorage.getItem('enid_books_widget')||'[]');
+  if (books.length === 0) { closeReadingLog(); return; }
+
+  const sel    = document.getElementById('rlBookSelect');
+  const bookId = sel.value || books[0]?.id;
+  const pages  = parseInt(document.getElementById('rlPages').value) || 0;
+  const note   = document.getElementById('rlNote').value.trim();
+
+  // Post to Supabase reading_sessions
+  try {
+    await fetch(`${SUPA_URL_T}/rest/v1/reading_sessions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY_T,
+        'Authorization': `Bearer ${SUPA_KEY_T}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: getUserId(),
+        book_id: bookId,
+        session_date: fmtDate(viewDate),
+        pages_read: pages,
+        note: note || null,
+      }),
+    });
+
+    // Also update pagesRead on the book in localStorage
+    const allBooks = JSON.parse(localStorage.getItem('enid_books_v1')||'[]');
+    const bk = allBooks.find(b => b.id === bookId);
+    if (bk && pages > 0) {
+      bk.pagesRead = (bk.pagesRead || 0) + pages;
+      localStorage.setItem('enid_books_v1', JSON.stringify(allBooks));
+      // Refresh widget
+      const widget = allBooks.filter(b=>b.status==='reading').map(b=>({
+        id:b.id, title:b.title, author:b.author,
+        coverId:b.coverId, pagesRead:b.pagesRead, totalPages:b.totalPages,
+      }));
+      localStorage.setItem('enid_books_widget', JSON.stringify(widget));
+    }
+  } catch(e) { console.error('Reading log save failed', e); }
+
+  closeReadingLog();
+  renderBookWidget();
+}
+
+// ── Book Widget ───────────────────────────────────────────────────────────────
+function renderBookWidget() {
+  const el = document.getElementById('bookWidget');
+  if (!el) return;
+  const books = JSON.parse(localStorage.getItem('enid_books_widget')||'[]');
+  if (books.length === 0) { el.innerHTML=''; return; }
+
+  const OL_COVERS = 'https://covers.openlibrary.org/b/id/';
+  el.innerHTML = `
+    <div class="movie-widget" style="border-color:rgba(200,133,58,.25);background:linear-gradient(135deg,rgba(200,133,58,.07),rgba(124,92,191,.04))">
+      <div class="mw-header">
+        <span style="font-size:1.2rem">📚</span>
+        <span class="mw-title" style="font-family:'Dancing Script',cursive;font-size:1rem">Currently Reading</span>
+        <a href="books.html" target="_blank" class="mw-sub" style="text-decoration:none;color:var(--text-soft)">open library →</a>
+      </div>
+      <div class="mw-list">
+        ${books.slice(0,3).map(b => {
+          const coverUrl = b.coverId ? `${OL_COVERS}${b.coverId}-S.jpg` : null;
+          const pct = b.totalPages ? Math.round((b.pagesRead||0)/b.totalPages*100) : null;
+          return `
+            <a class="mw-item" href="books.html" target="_blank" style="border-color:rgba(200,133,58,.15)">
+              ${coverUrl
+                ? `<img class="mw-poster" src="${coverUrl}" alt="" style="border-radius:5px">`
+                : `<div class="mw-poster-ph">📚</div>`}
+              <div class="mw-info">
+                <div class="mw-movie-title">${b.title}</div>
+                <div class="mw-when" style="color:rgba(200,133,58,.85)">${b.author}</div>
+                ${pct !== null ? `<div class="mw-where">${b.pagesRead||0} / ${b.totalPages} pages · ${pct}%</div>` : ''}
+              </div>
+            </a>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   updateHeader();
   setPepQuote();
+  renderMovieWidget();
+  renderBookWidget();
   registerSW();
   checkNotifBanner();
   showLoading(true);
@@ -1299,6 +1519,31 @@ const EVENING_HABITS = [
     <div class="nm-actions">
       <button class="nm-cancel" onclick="closeNote()">Skip</button>
       <button class="nm-save" onclick="saveNote()">Save note 💜</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reading log modal -->
+<div class="note-overlay" id="readingLogOverlay" style="display:none" onclick="if(event.target.id==='readingLogOverlay')closeReadingLog()">
+  <div class="note-modal" style="max-width:400px">
+    <div class="nm-header">
+      <div class="nm-emoji">📖</div>
+      <div>
+        <div class="nm-title">Log reading session!</div>
+        <div class="nm-habit" id="rlBookName">Which book did you read?</div>
+      </div>
+    </div>
+    <div id="rlNoBooks" style="display:none;font-size:.8rem;color:var(--text-soft);margin-bottom:12px;font-family:'Dancing Script',cursive">
+      No current books found — <a href="books.html" target="_blank" style="color:var(--pink-soft)">add one in your library!!</a> 🐺📚
+    </div>
+    <select id="rlBookSelect" style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(168,85,247,.2);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;margin-bottom:10px;display:none">
+    </select>
+    <input id="rlPages" type="number" min="0" placeholder="Pages read (optional)"
+      style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(168,85,247,.2);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;margin-bottom:10px;box-sizing:border-box">
+    <textarea id="rlNote" placeholder="What happened? What did you think?" class="nm-textarea"></textarea>
+    <div class="nm-actions">
+      <button class="nm-cancel" onclick="closeReadingLog()">Skip</button>
+      <button class="nm-save" onclick="saveReadingLog()">Log it 📖</button>
     </div>
   </div>
 </div>

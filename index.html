@@ -1450,60 +1450,6 @@ async function init() {
     updateHeader();
   });
 }
-  { text:"Rise and grind, sparklepup!! The version of you who has her life together does these things every morning. Be her today.", sig:"— your roomie, fully caffeinated 🌅🐺" },
-  { text:"Every morning you complete this list is a vote for the life you're building. Cast that vote today. Even if it's hard. Especially then.", sig:"— Enid, sunrise hype squad 🌸✨" },
-  { text:"Good morning!! You don't have to be a morning person to OWN the morning. Just start. One thing. Then another. That's the whole secret.", sig:"— your roomie who believes in you 🐾💜" },
-  { text:"Rise & shine glowbug!! Today has literally never happened before. You get to decide what kind of day it becomes. Start here.", sig:"— Enid, aggressively optimistic 🌈🐺" },
-  { text:"The morning routine isn't punishment — it's you choosing yourself before the world gets a chance to choose for you.", sig:"— your roomie with the real talk 💜🔥" },
-];
-
-const MORNING_HABITS_WEEKDAY = [
-  {id:'m_wakeup',  emoji:'⏰', name:'Wake up at 8AM',              note:'Start the day with intention — weekdays only', time:'8:00 AM', weekdayOnly:true},
-  {id:'m_nophone', emoji:'📵', name:'No phone before leaving bed',  note:'Your brain deserves a gentle start', time:'Immediately', weekdayOnly:true},
-  {id:'m_makebed', emoji:'🛏️',  name:'Make bed as soon as you wake up', note:'First win of the day — takes 2 minutes', time:'Right away', weekdayOnly:false},
-  {id:'m_stretch', emoji:'🧘', name:'Quick morning stretch',         note:'Loosen up before the day gets going', time:'Morning', weekdayOnly:false},
-  {id:'m_washface',emoji:'💧', name:'Wash face',                    note:'Wake your skin up too', time:'Morning', weekdayOnly:false},
-  {id:'m_teeth',   emoji:'🦷', name:'Brush teeth',                  note:'Non-negotiable, sparklepup', time:'Morning', weekdayOnly:false},
-  {id:'m_hamper',  emoji:'👕', name:'Old clothes in hamper',        note:'Future you will be grateful', time:'Morning', weekdayOnly:false},
-  {id:'m_deodor',  emoji:'✨', name:'Deodorant',                    note:'Always 😄', time:'Morning', weekdayOnly:false},
-  {id:'m_outfit',  emoji:'👗', name:'Fresh outfit',                 note:'Dress for the day you want', time:'Morning', weekdayOnly:false},
-  {id:'m_planner', emoji:'📅', name:'Planner / Calendar check',     note:'Know what\'s coming before it hits you', time:'Before leaving', weekdayOnly:false},
-  {id:'m_granola', emoji:'🥣', name:'Granola bar / Quick breakfast', note:'Feed the machine, even something small counts', time:'Before leaving', weekdayOnly:false},
-];
-
-const POSTWORK_HABITS = [
-  {id:'w_clothes', emoji:'👟', name:'Change out of work clothes immediately', note:'Signal to your brain: work mode OFF', time:'Right home'},
-  {id:'w_yoga',    emoji:'🧘', name:'Yoga',    note:'Check this OR Walk — just one counts for today ✅', time:'Evening', orGroup:'w_move'},
-  {id:'w_walk',    emoji:'🚶', name:'Walk',    note:'Check this OR Yoga — just one counts for today ✅', time:'Evening', orGroup:'w_move'},
-  {id:'w_scc',     emoji:'📱', name:'Check & respond to SCC / AoT messages', note:'Then put the phone down', time:'Evening'},
-  {id:'w_work',    emoji:'💼', name:'1 Hour Work Block',  note:'SCC, AoT, Personal Cleanup — just 1 productive hour', time:'Evening'},
-  {id:'w_read',    emoji:'📖', name:'15 Minutes of Reading', note:'Wind your brain down the good way', time:'Before bed'},
-];
-
-const WEEKEND_HABITS = [
-  {id:'wd_bfast',  emoji:'🍳', name:'Breakfast with the family',   note:'Start the day connected', time:'Morning'},
-  {id:'wd_work',   emoji:'💼', name:'1 Hour Work Block',           note:'SCC / AoT / Personal Work', time:'Daytime'},
-  {id:'wd_clean',  emoji:'🧹', name:'1 Hour Cleanup / Organization Block', note:'Future you needs a tidy space', time:'Daytime'},
-  {id:'wd_yoga',   emoji:'🧘', name:'30 Minute Yoga',              note:'Give your body some love', time:'Daytime'},
-  {id:'wd_read',   emoji:'📖', name:'20 Minutes Reading',          note:'Your brain will thank you', time:'Daytime'},
-];
-
-const WEEKLY_SHARED = [
-  {id:'wk_finance', emoji:'💰', name:'Full financial review & reset', note:'Make sure all bills are paid for the week', time:'This weekend'},
-  {id:'wk_cal',     emoji:'📅', name:'Full calendar review & reset',  note:'Make sure you\'re planned for everything this week', time:'This weekend'},
-  {id:'wk_laundry', emoji:'🧺', name:'Laundry',                       note:'Full cycle — wash, dry, put away', time:'This weekend'},
-  {id:'wk_semper',  emoji:'🐕', name:'Walk Semper',                   note:'Good boy deserves his walk 🐶', time:'This weekend'},
-];
-
-const EVENING_HABITS = [
-  {id:'e_head',   emoji:'🚗', name:'Begin to head home at 10:45PM',  note:'Leave wherever you are — the night routine starts NOW', time:'10:45 PM'},
-  {id:'e_home',   emoji:'🏠', name:'Home by 11PM',                   note:'Get yourself home, sparklepup', time:'11:00 PM'},
-  {id:'e_wash',   emoji:'💧', name:'Wash face',                      note:'Rinse the day away', time:'11:00 PM'},
-  {id:'e_teeth',  emoji:'🦷', name:'Brush teeth',                    note:'Every single night, no exceptions', time:'11:00 PM'},
-  {id:'e_tvoff',  emoji:'📺', name:'TV off by 11:20PM',              note:'Your brain needs the buffer', time:'11:20 PM'},
-  {id:'e_relax',  emoji:'📚', name:'Read or relax in bed until 11:45PM', note:'Earned rest — enjoy it', time:'11:20–11:45 PM'},
-  {id:'e_lights', emoji:'🌙', name:'Lights out at 11:45PM',          note:'You did the day. Now rest.', time:'11:45 PM'},
-];
 
 init();
 </script>

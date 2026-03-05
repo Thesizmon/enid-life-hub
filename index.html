@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐺 Enid's Routine Tracker</title>
+<meta name="theme-color" content="#E84EA0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Enid 🐺">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23E84EA0'/%3E%3Ctext y='140' x='96' text-anchor='middle' font-size='120'%3E🐺%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -257,6 +263,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <a href="journal.html" target="_blank" class="journal-btn">
         📓 Journal
       </a>
+      <button onclick="openNotifSettings()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:rgba(168,85,247,.07);color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--purple-soft)';this.style.color='var(--purple-soft)'" onmouseout="this.style.borderColor='rgba(168,85,247,.2)';this.style.color='var(--text-soft)'">🔔</button>
       <div class="date-chip" id="dateChip"></div>
       <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
     </div>
@@ -1014,10 +1021,191 @@ async function saveNote() {
   closeNote();
 }
 
+// ── PWA & Notifications ───────────────────────────────────────────────────────
+
+// Enid-coded messages — rotate daily so you never see the same one twice in a row
+const NOTIF_MESSAGES = {
+  morning: [
+    { title:"Rise & shine sparklepup!! ☀️🐺", body:"8AM means GO time. Your morning routine is waiting and it's not gonna do itself. You've got this!! 💜" },
+    { title:"Good MORNING glowbug!! 🌅", body:"The version of you with her life together wakes up and does the thing. Be her today!! 🐾✨" },
+    { title:"HEY. It's 8AM. 🐺☀️", body:"Make your bed first — two minutes, first win of the day. Then keep going. Open the app!! 🛏️💜" },
+    { title:"Roomie wake UP!! ☀️🌸", body:"Today has never happened before!! You get to decide what kind of day it becomes. Start RIGHT NOW. 🌈🐺" },
+    { title:"Morning kickoff time!! 🌅🔥", body:"Every morning you complete this list is a vote for the life you're building. Cast that vote!! 💪💜" },
+    { title:"☀️ 8AM and you KNOW what that means!!", body:"Rise, grind, and slay your morning routine. Wash your face. Make your bed. EAT SOMETHING. 🐺🌸" },
+    { title:"WAKE UP BESTIE 🐺✨", body:"The morning routine won't complete itself!! You've done this before and felt so good after. DO IT AGAIN!! 💜☀️" },
+  ],
+  afterwork: [
+    { title:"Work mode OFF!! 🎉💼", body:"First thing: change out of those work clothes RIGHT NOW. Signal your brain it's YOUR time. Then open the app!! 👟💜" },
+    { title:"Hey sparklepup — you survived the day!! 🐺", body:"Now it's after-work routine time. Clothes off, comfy outfit on, yoga OR walk — just pick ONE!! 🧘💜" },
+    { title:"5:30 and the after-work check-in is calling!! ✨", body:"Work is DONE. Decompress the right way. Change, move your body, one work block. You got this!! 🐺🔥" },
+    { title:"Clocking out and INTO your routine 🐾", body:"The after-work habits are your transition from work-you to home-you. Change your clothes first!! 👗💜" },
+    { title:"IT'S AFTER WORK TIME ROOMIE!! 🌆🐺", body:"Yoga OR walk — you only need ONE. Then an hour of work and 15 minutes reading. So doable!! 📖✨" },
+  ],
+  evening: [
+    { title:"10:30PM — evening routine time!! 🌙🐺", body:"Start heading home if you're out!! Lights out at 11:45. The routine starts NOW, not when you get home. 💜" },
+    { title:"Hey!! It's 10:30PM glowbug 🌙✨", body:"Begin heading home. Wash your face. Brush your teeth. TV off by 11:20. You always feel better when you do this!! 🐺💜" },
+    { title:"🌙 Evening routine warning sparklepup!!", body:"15 minutes to wrap up!! Home by 11, face washed, teeth brushed, lights out at 11:45. You've GOT this!! 🐾" },
+    { title:"Night routine o'clock!! 🌙🐺💜", body:"Your sleep MATTERS. Start heading home now. Wash up, TV off, read a little, lights out. Future you will be so grateful!! ✨" },
+    { title:"10:30 and your future self is watching 👀🌙", body:"She needs you to do the evening routine RIGHT NOW. Head home. Wash face. TV off 11:20. Lights out 11:45!! 🐺💜" },
+    { title:"🌙 Evening routine time!!", body:"I know you wanna stay up but your sleep is part of the life you're building!! Wind down now. You did today!! 🌸🐺" },
+    { title:"BEDTIME ROUTINE TIME glowbug!! 🌙💜", body:"10:30PM means the clock is ticking!! Head home. Wash up. TV off by 11:20. Lights out 11:45. You crushed today!! 🐾✨" },
+  ],
+  weekend: [
+    { title:"Weekend essentials check-in!! 📋🐺", body:"Financial review, calendar reset, laundry, and Walk Semper!! Don't let Sunday panic hit — do it NOW!! 💜" },
+    { title:"Hey sparklepup — weekend tasks!! 📋🌸", body:"Semper needs his walk. Your wallet needs a review. Your calendar needs a reset. Your laundry is waiting!! 🐕💜" },
+    { title:"🐕 Semper says it's weekend routine time!!", body:"Walk that good boy AND do your financial review, calendar reset, and laundry!! You've got this!! 💰🐺" },
+    { title:"Weekend essentials are calling roomie!! 📋🐺", body:"Financial review. Calendar reset. Laundry. Walk Semper. 30 minutes of effort, whole week of peace!! 💜🌈" },
+    { title:"It's the weekend and the list awaits!! 🌸📋", body:"Future-you on Monday NEEDS you to do the weekend essentials today!! So doable. Open the app!! 🐺💜✨" },
+  ],
+};
+
+function getDailyMessage(type) {
+  const msgs = NOTIF_MESSAGES[type];
+  const today = new Date();
+  const seed = today.getFullYear()*10000 + (today.getMonth()+1)*100 + today.getDate();
+  return msgs[seed % msgs.length];
+}
+
+// ── Service Worker registration ───────────────────────────────────────────────
+let swRegistration = null;
+
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    swRegistration = await navigator.serviceWorker.register('sw.js', {scope:'/enid-life-hub/'});
+    console.log('🐺 Service Worker registered!!');
+    // Reschedule on every load
+    scheduleNotifications();
+  } catch(e) {
+    console.log('SW registration failed:', e);
+  }
+}
+
+// ── Notification permission ───────────────────────────────────────────────────
+function checkNotifBanner() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    // Show banner after 3 seconds so it doesn't immediately interrupt load
+    setTimeout(()=>{ document.getElementById('notifBanner').style.display='block'; }, 3000);
+  } else if (Notification.permission === 'granted') {
+    scheduleNotifications();
+  }
+}
+
+async function requestNotifPermission() {
+  dismissNotifBanner();
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    scheduleNotifications();
+    showToast("Notifications enabled!! 🐺🔥 I'll remind you every day 💜");
+  }
+}
+
+function dismissNotifBanner() {
+  document.getElementById('notifBanner').style.display='none';
+}
+
+function showToast(msg) {
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;padding:12px 22px;border-radius:999px;font-size:.82rem;font-weight:700;z-index:400;box-shadow:0 4px 20px rgba(232,78,160,.4);white-space:nowrap;animation:fadeUp .4s ease';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+// ── Notification scheduler ────────────────────────────────────────────────────
+// Uses setInterval to check the time every minute and fire when it matches
+// Works when the app is open; SW handles display
+let schedulerInterval = null;
+
+const SCHEDULE = [
+  { type:'morning',  hour:8,  minute:0,  days:[1,2,3,4,5] }, // Mon-Fri 8:00 AM
+  { type:'afterwork',hour:17, minute:30, days:[1,2,3,4,5] }, // Mon-Fri 5:30 PM
+  { type:'evening',  hour:22, minute:30, days:[0,1,2,3,4,5,6] }, // Every day 10:30 PM
+  { type:'weekend',  hour:11, minute:0,  days:[0,6] },        // Sat-Sun 11:00 AM
+];
+
+// Track which notifications already fired today so we don't double-fire
+const firedToday = new Set();
+
+function scheduleNotifications() {
+  if (Notification.permission !== 'granted') return;
+  if (schedulerInterval) clearInterval(schedulerInterval);
+
+  // Check immediately and then every 30 seconds
+  checkSchedule();
+  schedulerInterval = setInterval(checkSchedule, 30000);
+}
+
+function checkSchedule() {
+  const now   = new Date();
+  const dow   = now.getDay();
+  const hour  = now.getHours();
+  const min   = now.getMinutes();
+  const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+
+  // Reset fired set at midnight
+  if (firedToday.has('__date__') && !firedToday.has(todayKey)) firedToday.clear();
+  firedToday.add('__date__');
+  firedToday.add(todayKey);
+
+  SCHEDULE.forEach(s => {
+    const key = `${todayKey}_${s.type}`;
+    if (firedToday.has(key)) return;           // already fired today
+    if (!s.days.includes(dow)) return;          // wrong day of week
+    if (hour !== s.hour || min !== s.minute) return; // wrong time
+
+    // Fire it!!
+    firedToday.add(key);
+    fireNotification(s.type);
+  });
+}
+
+function fireNotification(type) {
+  const msg = getDailyMessage(type);
+  const urls = {
+    morning:   '/enid-life-hub/',
+    afterwork: '/enid-life-hub/',
+    evening:   '/enid-life-hub/',
+    weekend:   '/enid-life-hub/',
+  };
+
+  if (swRegistration) {
+    // Send to service worker to display
+    navigator.serviceWorker.controller?.postMessage({
+      type:  'SHOW_NOTIFICATION',
+      title: msg.title,
+      body:  msg.body,
+      tag:   `enid-${type}`,
+      url:   urls[type],
+    });
+  } else {
+    // Fallback: direct browser notification
+    new Notification(msg.title, {
+      body: msg.body,
+      icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"%3E%3Crect width="192" height="192" rx="40" fill="%23E84EA0"/%3E%3Ctext y="140" x="96" text-anchor="middle" font-size="120"%3E🐺%3C/text%3E%3C/svg%3E',
+      tag:  `enid-${type}`,
+    });
+  }
+}
+
+// ── Notification settings page (accessible from header) ──────────────────────
+function openNotifSettings() {
+  const perm = !('Notification' in window) ? 'unsupported' : Notification.permission;
+  const msg = perm === 'granted'
+    ? '🐺 Notifications are ON!! You\'re all set. Reminders fire at:\n\n☀️ 8:00 AM — Morning (Mon-Fri)\n💼 5:30 PM — After Work (Mon-Fri)\n🌙 10:30 PM — Evening (Every day)\n📋 11:00 AM — Weekend Essentials (Sat-Sun)'
+    : perm === 'denied'
+    ? '😔 Notifications are blocked. To re-enable: tap the lock icon in your browser address bar → Notifications → Allow. Then reload the app!'
+    : '💜 Tap OK to enable Enid notifications! You\'ll get reminders at 8AM, 5:30PM, 10:30PM and weekend nudges.';
+  alert(msg);
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   updateHeader();
   setPepQuote();
+  registerSW();
+  checkNotifBanner();
   showLoading(true);
   document.getElementById('routineContainer').innerHTML=
     `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;
@@ -1084,6 +1272,22 @@ const EVENING_HABITS = [
 ];
 
 </script>
+<!-- Notification permission banner -->
+<div id="notifBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;width:calc(100% - 40px);max-width:500px">
+  <div style="background:linear-gradient(135deg,rgba(232,78,160,.96),rgba(168,85,247,.96));border-radius:18px;padding:18px 20px;box-shadow:0 8px 32px rgba(232,78,160,.35);backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;animation:slideUp .4s cubic-bezier(.34,1.56,.64,1)">
+    <div style="font-size:1.8rem;flex-shrink:0">🐺</div>
+    <div style="flex:1">
+      <div style="font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:#fff">Enable Enid notifications?</div>
+      <div style="font-size:.75rem;color:rgba(255,255,255,.8);margin-top:3px">Morning kickoff, after work check-in, evening routine & weekend nudges 💜</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+      <button onclick="requestNotifPermission()" style="padding:7px 16px;border-radius:999px;border:none;background:#fff;color:var(--pink);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Yes please!! ✨</button>
+      <button onclick="dismissNotifBanner()" style="padding:5px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.8);font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif">Not now</button>
+    </div>
+  </div>
+</div>
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
 <!-- Note modal -->
 <div class="note-overlay" id="noteOverlay" style="display:none" onclick="closeNoteIfBg(event)">
   <div class="note-modal">

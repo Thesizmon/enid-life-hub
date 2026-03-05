@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐺 Enid's Routine Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#E84EA0; --pink-soft:#F472B6; --pink-pale:#FDE8F4; --pink-glow:rgba(232,78,160,0.18);
+  --purple:#A855F7; --purple-soft:#C084FC; --purple-pale:#F5E8FF; --lavender:#E9D5FF;
+  --mint:#6EE7B7; --mint-pale:#D1FAF0; --mint-deep:#059669;
+  --yellow:#FCD34D; --yellow-pale:#FFFBEB; --peach:#FB923C; --peach-pale:#FFF0E6;
+  --sky:#38BDF8; --sky-pale:#E0F2FE; --cream:#FFFBF7;
+  --text:#2D1B3D; --text-soft:#7B5EA7; --text-light:#B899CC;
+  --card-bg:rgba(255,255,255,0.78);
+  --shadow:0 8px 32px rgba(168,85,247,0.10),0 2px 8px rgba(232,78,160,0.07);
+  --shadow-hover:0 16px 48px rgba(168,85,247,0.18),0 4px 16px rgba(232,78,160,0.13);
+  --morning-a:#F59E0B; --morning-b:#FCD34D; --morning-pale:#FFFBEB;
+  --work-a:#2563EB; --work-b:#60A5FA; --work-pale:#EFF6FF;
+  --weekend-a:#EC4899; --weekend-b:#F9A8D4;
+  --weekly-a:#059669; --weekly-b:#6EE7B7;
+  --evening-a:#7C3AED; --evening-b:#A78BFA; --evening-pale:#F5F3FF;
+  --kt-a:#E84EA0; --kt-b:#FBBF24;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:
+  radial-gradient(ellipse 70% 55% at 5% 10%,rgba(245,158,11,.09) 0%,transparent 55%),
+  radial-gradient(ellipse 60% 50% at 95% 15%,rgba(59,130,246,.08) 0%,transparent 55%),
+  radial-gradient(ellipse 65% 55% at 50% 92%,rgba(139,92,246,.10) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 45% at 15% 65%,rgba(232,78,160,.08) 0%,transparent 50%),
+  linear-gradient(160deg,#FFFDF5 0%,#F8F0FF 45%,#F0FFFE 75%,#FFFBF7 100%);pointer-events:none}
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0}
+.particles span{position:absolute;font-size:1rem;opacity:.15;animation:drift var(--d,10s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(0);opacity:.12}33%{transform:translateY(-18px) rotate(8deg);opacity:.22}66%{transform:translateY(-8px) rotate(-5deg);opacity:.16}}
+.app{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 20px 72px}
+
+/* Header */
+.header{padding:40px 0 24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;animation:fadeDown .7s ease both}
+.title{font-family:'Dancing Script',cursive;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;background:linear-gradient(135deg,var(--morning-a) 0%,var(--pink) 45%,var(--evening-a) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(232,78,160,.15));line-height:1.1}
+.subtitle{font-size:.88rem;color:var(--text-soft);margin-top:4px}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.date-chip{background:var(--card-bg);border:1.5px solid rgba(168,85,247,.15);border-radius:999px;padding:8px 16px;font-size:.8rem;color:var(--text-soft);font-weight:500;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+.streak-chip{background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:999px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(232,78,160,.25);animation:glow 3s ease infinite}
+@keyframes glow{0%,100%{box-shadow:0 4px 14px rgba(232,78,160,.25)}50%{box-shadow:0 4px 22px rgba(232,78,160,.45)}}
+
+/* Day nav */
+.day-nav{display:flex;gap:8px;margin-bottom:28px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;animation:fadeUp .6s .1s ease both}
+.day-nav::-webkit-scrollbar{display:none}
+.day-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:9px 14px;border-radius:14px;cursor:pointer;border:1.5px solid rgba(168,85,247,.15);background:var(--card-bg);backdrop-filter:blur(10px);transition:all .2s ease;min-width:60px;font-family:'DM Sans',sans-serif}
+.day-btn:hover{border-color:var(--pink-soft);transform:translateY(-2px)}
+.day-btn.active{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(232,78,160,.3);transform:translateY(-2px)}
+.day-btn.active .day-name,.day-btn.active .day-num{color:#fff}
+.day-btn.weekend-day{border-color:rgba(236,72,153,.2);background:linear-gradient(135deg,rgba(253,232,244,.6),rgba(245,232,255,.6))}
+.day-name{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light)}
+.day-num{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:var(--text);margin:2px 0}
+.day-dots{display:flex;gap:3px}
+.day-dot{width:5px;height:5px;border-radius:50%;background:rgba(168,85,247,.2)}
+.day-dot.done{background:var(--mint)}
+.day-dot.partial{background:var(--yellow)}
+
+/* Summary strip */
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;animation:fadeUp .6s .05s ease both}
+.sum-card{background:var(--card-bg);border:1.5px solid rgba(168,85,247,.12);border-radius:16px;padding:15px 14px;text-align:center;backdrop-filter:blur(14px);box-shadow:var(--shadow);transition:transform .2s}
+.sum-card:hover{transform:translateY(-2px)}
+.sum-emoji{font-size:1.4rem;margin-bottom:6px}
+.sum-value{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--text);line-height:1}
+.sum-label{font-size:.68rem;color:var(--text-light);margin-top:4px;font-weight:500}
+
+/* Routine block */
+.routine-block{border-radius:22px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);animation:fadeUp .6s ease both;border:1.5px solid transparent}
+.routine-header{padding:18px 22px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;overflow:hidden}
+.routine-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.06'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E")}
+.rh-left{display:flex;align-items:center;gap:12px}
+.rh-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(255,255,255,.22);box-shadow:0 0 0 3px rgba(255,255,255,.18);flex-shrink:0}
+.rh-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#fff}
+.rh-sub{font-size:.75rem;color:rgba(255,255,255,.75);margin-top:2px}
+.rh-progress{text-align:right}
+.rh-frac{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;line-height:1}
+.rh-plabel{font-size:.68rem;color:rgba(255,255,255,.7);margin-top:2px}
+.rh-bar{width:90px;height:4px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;margin-top:5px}
+.rh-fill{height:100%;border-radius:999px;background:rgba(255,255,255,.85);transition:width .8s cubic-bezier(.22,1,.36,1)}
+
+.morning .routine-header{background:linear-gradient(135deg,#F59E0B 0%,#FBBF24 50%,#FCD34D 100%)}
+.morning{border-color:rgba(245,158,11,.25)}
+.post-work .routine-header{background:linear-gradient(135deg,#2563EB 0%,#3B82F6 50%,#60A5FA 100%)}
+.post-work{border-color:rgba(59,130,246,.25)}
+.weekend-day-block .routine-header{background:linear-gradient(135deg,#DB2777 0%,#EC4899 50%,#F472B6 100%)}
+.weekend-day-block{border-color:rgba(236,72,153,.25)}
+.weekly-block .routine-header{background:linear-gradient(135deg,#059669 0%,#10B981 50%,#6EE7B7 100%)}
+.weekly-block{border-color:rgba(5,150,105,.25)}
+.evening .routine-header{background:linear-gradient(135deg,#7C3AED 0%,#8B5CF6 50%,#A78BFA 100%)}
+.evening{border-color:rgba(139,92,246,.25)}
+
+/* Habit items */
+.habit-list{background:var(--card-bg);backdrop-filter:blur(16px);padding:4px 0}
+.habit-item{display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid rgba(168,85,247,.07);cursor:pointer;transition:background .18s ease;position:relative;overflow:hidden;user-select:none}
+.habit-item:last-child{border-bottom:none}
+.habit-item:hover{background:rgba(255,255,255,.6)}
+.habit-item.done{background:rgba(110,231,183,.06)}
+.habit-item.done:hover{background:rgba(110,231,183,.10)}
+.habit-item::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(110,231,183,.3) 0%,transparent 70%);opacity:0;transform:scale(.5);transition:opacity .4s,transform .4s;pointer-events:none}
+.habit-item.just-done::after{opacity:1;transform:scale(1)}
+
+/* KT shift mode — greyed out with strikethrough, still visible */
+.habit-item.kt-disabled{opacity:.36;pointer-events:none;background:rgba(168,85,247,.04)}
+.habit-item.kt-disabled .check-circle{border-color:rgba(168,85,247,.12)}
+.habit-item.kt-disabled .h-name{text-decoration:line-through;text-decoration-color:rgba(168,85,247,.3);color:var(--text-light)}
+.habit-item.kt-disabled .h-note{opacity:.6}
+.kt-active-badge{display:flex;align-items:center;gap:12px;padding:12px 22px;background:linear-gradient(135deg,rgba(232,78,160,.1),rgba(251,191,36,.1));border-bottom:1px solid rgba(232,78,160,.12)}
+.kt-badge-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--pink),var(--yellow));color:#fff;font-size:.78rem;font-weight:700;padding:5px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(232,78,160,.25);white-space:nowrap}
+.kt-badge-text{font-size:.8rem;color:var(--text-soft);font-style:italic}
+
+.check-circle{width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2px solid rgba(168,85,247,.25);display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);background:rgba(255,255,255,.6)}
+.habit-item.done .check-circle{background:var(--mint);border-color:var(--mint);transform:scale(1.1);box-shadow:0 0 10px rgba(110,231,183,.4)}
+.check-icon{font-size:.7rem;opacity:0;transition:opacity .2s;color:#fff}
+.habit-item.done .check-icon{opacity:1}
+.h-emoji{font-size:1.1rem;width:26px;text-align:center;flex-shrink:0}
+.h-body{flex:1}
+.h-name{font-size:.88rem;font-weight:600;color:var(--text);transition:color .2s}
+.habit-item.done .h-name{color:var(--mint-deep);text-decoration:line-through;text-decoration-color:rgba(5,150,105,.35)}
+.h-note{font-size:.72rem;color:var(--text-light);margin-top:1px}
+.h-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.time-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.morning .time-badge{background:rgba(245,158,11,.12);color:#92400E}
+.post-work .time-badge,.weekend-day-block .time-badge{background:rgba(59,130,246,.12);color:#1D4ED8}
+.weekly-block .time-badge{background:rgba(5,150,105,.12);color:#065F46}
+.evening .time-badge{background:rgba(139,92,246,.12);color:#6D28D9}
+.streak-badge{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(232,78,160,.1);color:var(--pink);white-space:nowrap}
+
+/* OR group (yoga/walk) */
+.or-group-label{display:flex;align-items:center;gap:8px;padding:7px 22px 3px;font-size:.7rem;font-weight:700;color:var(--text-light);letter-spacing:.05em;background:var(--card-bg)}
+.or-divider{flex:1;height:1px;background:rgba(168,85,247,.1)}
+.or-tag{background:rgba(59,130,246,.1);color:#2563EB;padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700}
+
+/* Weekday pass */
+.weekday-pass{display:flex;align-items:center;gap:12px;padding:12px 22px;background:var(--card-bg);border-bottom:1px solid rgba(168,85,247,.07)}
+.pass-icon{font-size:1.1rem;width:26px;text-align:center}
+.pass-text{font-size:.85rem;color:var(--text-light);font-style:italic}
+
+/* KT toggle */
+.kt-toggle-row{display:flex;align-items:center;gap:12px;padding:12px 22px;background:rgba(255,255,255,.5);border-top:1.5px dashed rgba(232,78,160,.2);cursor:pointer;transition:background .18s}
+.kt-toggle-row:hover{background:rgba(255,255,255,.75)}
+.kt-toggle-row.kt-on{background:linear-gradient(135deg,rgba(232,78,160,.08),rgba(251,191,36,.08))}
+.kt-switch{width:38px;height:22px;border-radius:999px;background:rgba(168,85,247,.2);position:relative;transition:background .25s;flex-shrink:0}
+.kt-switch.on{background:linear-gradient(135deg,var(--pink),var(--yellow))}
+.kt-knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.15)}
+.kt-switch.on .kt-knob{transform:translateX(16px)}
+.kt-label{font-size:.82rem;font-weight:600;flex:1}
+.kt-label .kt-on-text{color:var(--pink);font-weight:700}
+.kt-banner{padding:16px 22px;background:linear-gradient(135deg,rgba(232,78,160,.12),rgba(251,191,36,.12));display:flex;align-items:center;gap:14px}
+.kt-banner-icon{font-size:2rem}
+.kt-banner-text{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--pink)}
+.kt-banner-sub{font-size:.78rem;color:var(--text-soft);margin-top:2px}
+
+/* Add row */
+.add-row{display:flex;align-items:center;gap:10px;padding:10px 22px;border-top:1.5px dashed rgba(168,85,247,.15);cursor:pointer;transition:background .18s;background:rgba(255,255,255,.3)}
+.add-row:hover{background:rgba(255,255,255,.6)}
+.add-icon{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;flex-shrink:0;box-shadow:0 2px 8px var(--pink-glow)}
+.add-label{font-size:.78rem;color:var(--text-light);font-weight:500}
+
+/* Morning quote card */
+.morning-quote{background:linear-gradient(135deg,rgba(253,232,244,.85),rgba(255,251,235,.85));border:1.5px solid rgba(245,158,11,.2);border-radius:18px;padding:16px 20px;margin-bottom:0;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px)}
+.mq-icon{font-size:1.8rem;flex-shrink:0;animation:spinbounce 4s ease-in-out infinite}
+@keyframes spinbounce{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.1)}}
+.mq-text{font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;color:var(--text);line-height:1.55}
+.mq-sig{font-family:'Dancing Script',cursive;font-size:.82rem;color:var(--morning-a);margin-top:4px;font-weight:700}
+
+/* Evening note */
+.evening-note{background:linear-gradient(135deg,rgba(245,232,255,.7),rgba(224,242,254,.5));border:1.5px solid rgba(139,92,246,.2);border-radius:16px;padding:12px 18px;margin-bottom:0;display:flex;align-items:center;gap:10px}
+.en-icon{font-size:1.3rem;flex-shrink:0}
+.en-text{font-size:.82rem;color:var(--text-soft);font-weight:500}
+.en-highlight{color:var(--evening-a);font-weight:700}
+
+/* Weekly shared panel */
+.weekly-shared-note{font-size:.75rem;color:var(--text-light);padding:8px 22px 4px;background:var(--card-bg);font-style:italic}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+.celebrate{position:fixed;pointer-events:none;z-index:999;font-size:2rem;animation:flyUp 1.2s ease forwards}
+@keyframes flyUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-130px) scale(1.5);opacity:0}}
+
+.footer{text-align:center;padding:28px 0 12px;font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--text-light)}
+@media(max-width:700px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="particles">
+  <span style="left:6%;top:12%;--d:10s;--dl:0s">☀️</span>
+  <span style="left:90%;top:8%;--d:12s;--dl:2s">🌙</span>
+  <span style="left:20%;top:80%;--d:9s;--dl:1s">⭐</span>
+  <span style="left:75%;top:70%;--d:13s;--dl:3s">✨</span>
+  <span style="left:45%;top:5%;--d:11s;--dl:1.5s">🐾</span>
+  <span style="left:3%;top:50%;--d:8s;--dl:4s">💜</span>
+  <span style="left:85%;top:40%;--d:10s;--dl:.5s">🌸</span>
+</div>
+
+<div class="app">
+  <header class="header">
+    <div>
+      <div class="title" id="mainTitle">Your Daily Routines 🐺</div>
+      <div class="subtitle" id="mainSub">Loading your day...</div>
+    </div>
+    <div class="header-right">
+      <div class="date-chip" id="dateChip"></div>
+      <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
+    </div>
+  </header>
+
+  <div class="day-nav" id="dayNav"></div>
+
+  <div class="summary-strip">
+    <div class="sum-card"><div class="sum-emoji">☀️</div><div class="sum-value" id="sMorn">0/0</div><div class="sum-label">Morning</div></div>
+    <div class="sum-card"><div class="sum-emoji" id="sMidEmoji">💼</div><div class="sum-value" id="sMid">0/0</div><div class="sum-label" id="sMidLabel">Midday</div></div>
+    <div class="sum-card"><div class="sum-emoji">🌙</div><div class="sum-value" id="sEve">0/0</div><div class="sum-label">Evening</div></div>
+    <div class="sum-card"><div class="sum-emoji">🏆</div><div class="sum-value" id="sTotal">0%</div><div class="sum-label" id="sTotalLabel">Today</div></div>
+  </div>
+
+  <div id="routineContainer"></div>
+
+  <div class="footer">built with 💜 by your roomie · every routine is a love letter to your future self 🐺✨</div>
+</div>
+
+<script>
+// ── Supabase config ──────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+
+async function sb(method, table, body=null, params='') {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, {
+    method,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': `Bearer ${SUPA_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : null
+  });
+  if (method==='GET') return res.json();
+  return res.ok;
+}
+
+// ── User identity — persisted locally, used as DB key ───────────────────────
+// Not auth — just a stable anonymous ID so data is yours across devices
+// Share this ID on other devices by copying it from Settings
+function getUserId() {
+  let uid = localStorage.getItem('enid_uid');
+  if (!uid) { uid = 'user_' + Math.random().toString(36).slice(2,10); localStorage.setItem('enid_uid', uid); }
+  return uid;
+}
+const USER_ID = getUserId();
+
+// ── Habit data definitions ───────────────────────────────────────────────────
+const MORNING_QUOTES = [
+  { text:"Rise and grind, sparklepup!! The version of you who has her life together does these things every morning. Be her today.", sig:"— your roomie, fully caffeinated 🌅🐺" },
+  { text:"Every morning you complete this list is a vote for the life you're building. Cast that vote today. Even if it's hard. Especially then.", sig:"— Enid, sunrise hype squad 🌸✨" },
+  { text:"Good morning!! You don't have to be a morning person to OWN the morning. Just start. One thing. Then another. That's the whole secret.", sig:"— your roomie who believes in you 🐾💜" },
+  { text:"Rise & shine glowbug!! Today has literally never happened before. You get to decide what kind of day it becomes. Start here.", sig:"— Enid, aggressively optimistic 🌈🐺" },
+  { text:"The morning routine isn't punishment — it's you choosing yourself before the world gets a chance to choose for you.", sig:"— your roomie with the real talk 💜🔥" },
+];
+
+const MORNING_HABITS_WEEKDAY = [
+  {id:'m_wakeup',  emoji:'⏰', name:'Wake up at 8AM',                    note:'Start the day with intention — weekdays only',   time:'8:00 AM',      weekdayOnly:true},
+  {id:'m_nophone', emoji:'📵', name:'No phone before leaving bed',        note:'Your brain deserves a gentle start',             time:'Immediately',   weekdayOnly:true},
+  {id:'m_makebed', emoji:'🛏️',  name:'Make bed as soon as you wake up',   note:'First win of the day — takes 2 minutes',         time:'Right away',    weekdayOnly:false},
+  {id:'m_stretch', emoji:'🧘', name:'Quick morning stretch',              note:'Loosen up before the day gets going',            time:'Morning',       weekdayOnly:false},
+  {id:'m_washface',emoji:'💧', name:'Wash face',                          note:'Wake your skin up too',                          time:'Morning',       weekdayOnly:false},
+  {id:'m_teeth',   emoji:'🦷', name:'Brush teeth',                        note:'Non-negotiable, sparklepup',                     time:'Morning',       weekdayOnly:false},
+  {id:'m_hamper',  emoji:'👕', name:'Old clothes in hamper',              note:'Future you will be grateful',                    time:'Morning',       weekdayOnly:false},
+  {id:'m_deodor',  emoji:'✨', name:'Deodorant',                          note:'Always 😄',                                       time:'Morning',       weekdayOnly:false},
+  {id:'m_outfit',  emoji:'👗', name:'Fresh outfit',                       note:'Dress for the day you want',                     time:'Morning',       weekdayOnly:false},
+  {id:'m_planner', emoji:'📅', name:'Planner / Calendar check',           note:'Know what\'s coming before it hits you',         time:'Before leaving',weekdayOnly:false},
+  {id:'m_granola', emoji:'🥣', name:'Granola bar / Quick breakfast',      note:'Feed the machine, even something small counts',  time:'Before leaving',weekdayOnly:false},
+];
+const POSTWORK_HABITS = [
+  {id:'w_clothes', emoji:'👟', name:'Change out of work clothes immediately',  note:'Signal to your brain: work mode OFF',                 time:'Right home'},
+  {id:'w_yoga',    emoji:'🧘', name:'Yoga',                                    note:'Check this OR Walk — just one counts for today ✅',    time:'Evening',  orGroup:'w_move'},
+  {id:'w_walk',    emoji:'🚶', name:'Walk',                                    note:'Check this OR Yoga — just one counts for today ✅',    time:'Evening',  orGroup:'w_move'},
+  {id:'w_scc',     emoji:'📱', name:'Check & respond to SCC / AoT messages',  note:'Then put the phone down',                             time:'Evening'},
+  {id:'w_work',    emoji:'💼', name:'1 Hour Work Block',                       note:'SCC, AoT, Personal Cleanup — just 1 productive hour', time:'Evening'},
+  {id:'w_read',    emoji:'📖', name:'15 Minutes of Reading',                   note:'Wind your brain down the good way',                   time:'Before bed'},
+];
+const WEEKEND_HABITS = [
+  {id:'wd_bfast', emoji:'🍳', name:'Breakfast with the family',              note:'Start the day connected',           time:'Morning'},
+  {id:'wd_work',  emoji:'💼', name:'1 Hour Work Block',                      note:'SCC / AoT / Personal Work',         time:'Daytime'},
+  {id:'wd_clean', emoji:'🧹', name:'1 Hour Cleanup / Organization Block',    note:'Future you needs a tidy space',     time:'Daytime'},
+  {id:'wd_yoga',  emoji:'🧘', name:'30 Minute Yoga',                         note:'Give your body some love',          time:'Daytime'},
+  {id:'wd_read',  emoji:'📖', name:'20 Minutes Reading',                     note:'Your brain will thank you',         time:'Daytime'},
+];
+const WEEKLY_SHARED = [
+  {id:'wk_finance', emoji:'💰', name:'Full financial review & reset', note:'Make sure all bills are paid for the week',         time:'This weekend'},
+  {id:'wk_cal',     emoji:'📅', name:'Full calendar review & reset',  note:'Make sure you\'re planned for everything this week', time:'This weekend'},
+  {id:'wk_laundry', emoji:'🧺', name:'Laundry',                       note:'Full cycle — wash, dry, put away',                   time:'This weekend'},
+  {id:'wk_semper',  emoji:'🐕', name:'Walk Semper',                   note:'Good boy deserves his walk 🐶',                      time:'This weekend'},
+];
+const EVENING_HABITS = [
+  {id:'e_head',   emoji:'🚗', name:'Begin to head home at 10:45PM',        note:'Leave wherever you are — the night routine starts NOW', time:'10:45 PM'},
+  {id:'e_home',   emoji:'🏠', name:'Home by 11PM',                          note:'Get yourself home, sparklepup',                         time:'11:00 PM'},
+  {id:'e_wash',   emoji:'💧', name:'Wash face',                             note:'Rinse the day away',                                    time:'11:00 PM'},
+  {id:'e_teeth',  emoji:'🦷', name:'Brush teeth',                           note:'Every single night, no exceptions',                     time:'11:00 PM'},
+  {id:'e_tvoff',  emoji:'📺', name:'TV off by 11:20PM',                     note:'Your brain needs the buffer',                           time:'11:20 PM'},
+  {id:'e_relax',  emoji:'📚', name:'Read or relax in bed until 11:45PM',    note:'Earned rest — enjoy it',                                time:'11:20–11:45 PM'},
+  {id:'e_lights', emoji:'🌙', name:'Lights out at 11:45PM',                 note:'You did the day. Now rest.',                            time:'11:45 PM'},
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+const NOW = new Date();
+let viewDate     = new Date(NOW);
+let dayCompletions  = new Set();   // habit_ids completed on viewDate
+let weekendCompletions = new Set(); // habit_ids completed this weekend
+let ktPostwork   = false;
+let ktWeekend    = false;
+let customHabits = {morning:[],postwork:[],weekend:[],evening:[]};
+let streakCache  = {};             // habit_id → streak count (computed from DB)
+let isLoading    = false;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function dayKey(d) {
+  return d.toFullYear ? d.toFullYear() : d.toISOString().split('T')[0];
+}
+function fmtDate(d) {
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function weekStart(d) {
+  const c=new Date(d); const dow=c.getDay(); const diff=c.getDate()-dow+(dow===0?-6:1);
+  c.setDate(diff); return fmtDate(c);
+}
+function isWeekend(d) { const dw=d.getDay(); return dw===0||dw===6; }
+function isWeekday(d) { return !isWeekend(d); }
+function isViewToday() { return fmtDate(viewDate)===fmtDate(NOW); }
+function showLoading(on) {
+  isLoading=on;
+  document.getElementById('routineContainer').style.opacity = on?'0.5':'1';
+}
+
+// ── Supabase data layer ──────────────────────────────────────────────────────
+async function loadDayData() {
+  const dateStr = fmtDate(viewDate);
+  // Load habit completions for this day
+  const rows = await sb('GET','habit_completions',null,
+    `?user_id=eq.${USER_ID}&completed_date=eq.${dateStr}&select=habit_id`);
+  dayCompletions = new Set((rows||[]).map(r=>r.habit_id));
+
+  // Load weekend tasks for this week
+  const ws = weekStart(viewDate);
+  const wRows = await sb('GET','weekend_tasks',null,
+    `?user_id=eq.${USER_ID}&week_start=eq.${ws}&select=habit_id`);
+  weekendCompletions = new Set((wRows||[]).map(r=>r.habit_id));
+
+  // Load KT shifts
+  const ktRows = await sb('GET','kt_shifts',null,
+    `?user_id=eq.${USER_ID}&shift_date=eq.${dateStr}&select=section`);
+  ktPostwork = (ktRows||[]).some(r=>r.section==='postwork');
+  ktWeekend  = (ktRows||[]).some(r=>r.section==='weekend');
+
+  // Load custom habits
+  const cRows = await sb('GET','custom_habits',null,
+    `?user_id=eq.${USER_ID}&select=section,habit_id,name,emoji,note,time_label`);
+  customHabits = {morning:[],postwork:[],weekend:[],evening:[]};
+  (cRows||[]).forEach(r=>{
+    if (customHabits[r.section]) customHabits[r.section].push({
+      id:r.habit_id, emoji:r.emoji, name:r.name,
+      note:r.note||'Your custom habit 💜', time:r.time_label||'Anytime'
+    });
+  });
+}
+
+async function loadStreaks() {
+  // Count consecutive days each habit was completed ending today
+  const rows = await sb('GET','habit_completions',null,
+    `?user_id=eq.${USER_ID}&select=habit_id,completed_date&order=completed_date.desc`);
+  if (!rows) return;
+  const byHabit = {};
+  rows.forEach(r=>{
+    if (!byHabit[r.habit_id]) byHabit[r.habit_id]=[];
+    byHabit[r.habit_id].push(r.completed_date);
+  });
+  const todayStr = fmtDate(NOW);
+  Object.keys(byHabit).forEach(hid=>{
+    const dates = byHabit[hid].sort().reverse();
+    let streak=0, check=new Date(todayStr);
+    for (const d of dates) {
+      if (d===fmtDate(check)) { streak++; check.setDate(check.getDate()-1); }
+      else break;
+    }
+    streakCache[hid]=streak;
+  });
+}
+
+async function loadDayNavData() {
+  // Get all completions for last 7 days for the nav dots
+  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(NOW); d.setDate(d.getDate()-i); days.push(fmtDate(d)); }
+  const rows = await sb('GET','habit_completions',null,
+    `?user_id=eq.${USER_ID}&completed_date=gte.${days[0]}&select=habit_id,completed_date`);
+  const byDay={};
+  (rows||[]).forEach(r=>{ if(!byDay[r.completed_date]) byDay[r.completed_date]=[]; byDay[r.completed_date].push(r.habit_id); });
+  return byDay;
+}
+
+async function toggleHabitDB(habitId, section) {
+  const isWeekly = section==='weekly';
+  const isDone   = isWeekly ? weekendCompletions.has(habitId) : dayCompletions.has(habitId);
+
+  if (isWeekly) {
+    if (isDone) {
+      await sb('DELETE','weekend_tasks',null,
+        `?user_id=eq.${USER_ID}&habit_id=eq.${habitId}&week_start=eq.${weekStart(viewDate)}`);
+      weekendCompletions.delete(habitId);
+    } else {
+      await sb('POST','weekend_tasks',{user_id:USER_ID,habit_id:habitId,week_start:weekStart(viewDate)});
+      weekendCompletions.add(habitId);
+    }
+  } else {
+    const dateStr=fmtDate(viewDate);
+    if (isDone) {
+      await sb('DELETE','habit_completions',null,
+        `?user_id=eq.${USER_ID}&habit_id=eq.${habitId}&completed_date=eq.${dateStr}`);
+      dayCompletions.delete(habitId);
+      if(streakCache[habitId]>0) streakCache[habitId]--;
+    } else {
+      await sb('POST','habit_completions',{user_id:USER_ID,habit_id:habitId,completed_date:dateStr});
+      dayCompletions.add(habitId);
+      streakCache[habitId]=(streakCache[habitId]||0)+1;
+    }
+  }
+}
+
+async function toggleKTDB(type) {
+  const dateStr=fmtDate(viewDate);
+  const isOn = type==='postwork' ? ktPostwork : ktWeekend;
+  if (isOn) {
+    await sb('DELETE','kt_shifts',null,`?user_id=eq.${USER_ID}&shift_date=eq.${dateStr}&section=eq.${type}`);
+    type==='postwork' ? ktPostwork=false : ktWeekend=false;
+  } else {
+    await sb('POST','kt_shifts',{user_id:USER_ID,shift_date:dateStr,section:type});
+    type==='postwork' ? ktPostwork=true : ktWeekend=true;
+  }
+}
+
+async function addCustomDB(section) {
+  const name = prompt(`Add a ${section} habit! 🐺`);
+  if (!name||!name.trim()) return;
+  const emoji = prompt('Pick an emoji!') || '⭐';
+  const hid = section+'_c_'+Date.now();
+  await sb('POST','custom_habits',{
+    user_id:USER_ID, section, habit_id:hid,
+    name:name.trim(), emoji:emoji.trim().slice(0,2),
+    note:'Your custom habit 💜', time_label:'Anytime'
+  });
+  customHabits[section].push({id:hid,emoji:emoji.trim().slice(0,2),name:name.trim(),note:'Your custom habit 💜',time:'Anytime'});
+  render();
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('routineContainer');
+  container.innerHTML = '';
+  const weekend = isWeekend(viewDate);
+
+  // ── MORNING ────────────────────────────────────────────────────────────
+  const morningHabits = MORNING_HABITS_WEEKDAY.filter(h=>!h.weekdayOnly||!weekend);
+  const weekendPassHabits = MORNING_HABITS_WEEKDAY.filter(h=>h.weekdayOnly&&weekend);
+  const morningDone = morningHabits.filter(h=>dayCompletions.has(h.id)).length;
+  const quoteIdx = NOW.getDate() % MORNING_QUOTES.length;
+  const q = MORNING_QUOTES[quoteIdx];
+
+  const morningBlock = document.createElement('div');
+  morningBlock.className='routine-block morning';
+  morningBlock.innerHTML=`
+    <div class="routine-header">
+      <div class="rh-left"><div class="rh-icon">☀️</div>
+        <div><div class="rh-title">Morning Routine</div>
+          <div class="rh-sub">${weekend?'Weekend morning — no alarm required 🌸':'Weekday rise & grind · Target: by 9AM 💪'}</div>
+        </div>
+      </div>
+      <div class="rh-progress">
+        <div class="rh-frac">${morningDone}/${morningHabits.length}</div>
+        <div class="rh-plabel">completed</div>
+        <div class="rh-bar"><div class="rh-fill" style="width:${morningHabits.length?morningDone/morningHabits.length*100:0}%"></div></div>
+      </div>
+    </div>
+    <div class="morning-quote">
+      <div class="mq-icon">🌟</div>
+      <div><div class="mq-text">${q.text}</div><div class="mq-sig">${q.sig}</div></div>
+    </div>
+    <div class="habit-list" id="morningList"></div>
+    <div class="add-row" onclick="addCustomDB('morning')"><div class="add-icon">+</div><div class="add-label">Add a morning habit...</div></div>`;
+  container.appendChild(morningBlock);
+
+  const mList=document.getElementById('morningList');
+  weekendPassHabits.forEach(h=>{
+    const p=document.createElement('div'); p.className='weekday-pass';
+    p.innerHTML=`<div class="pass-icon">😴</div><div class="pass-text">${h.name} — <em>Weekend pass! Sleep in & doomscroll all you want ✨</em></div>`;
+    mList.appendChild(p);
+  });
+  morningHabits.forEach(h=>appendHabitItem(mList,h,'morning','morning'));
+  (customHabits.morning||[]).forEach(h=>appendHabitItem(mList,h,'morning','morning'));
+
+  // ── MIDDAY ─────────────────────────────────────────────────────────────
+  if (!weekend) {
+    const nonOrHabits=POSTWORK_HABITS.filter(h=>!h.orGroup);
+    const orHabits=POSTWORK_HABITS.filter(h=>h.orGroup);
+    const orDone=orHabits.some(h=>dayCompletions.has(h.id));
+    const pwDone=nonOrHabits.filter(h=>dayCompletions.has(h.id)).length+(orDone?1:0);
+    const pwTotal=nonOrHabits.length+(orHabits.length>0?1:0);
+
+    const pwBlock=document.createElement('div');
+    pwBlock.className='routine-block post-work';
+    pwBlock.innerHTML=`
+      <div class="routine-header">
+        <div class="rh-left"><div class="rh-icon">💼</div>
+          <div><div class="rh-title">After Work Routine</div>
+            <div class="rh-sub">Decompress & reset 💙 · Weekdays only</div>
+          </div>
+        </div>
+        <div class="rh-progress">
+          <div class="rh-frac">${pwDone}/${pwTotal}</div>
+          <div class="rh-plabel">completed</div>
+          <div class="rh-bar"><div class="rh-fill" style="width:${pwTotal?pwDone/pwTotal*100:0}%"></div></div>
+        </div>
+      </div>
+      <div class="habit-list" id="workList"></div>
+      <div class="kt-toggle-row ${ktPostwork?'kt-on':''}" onclick="handleKTToggle('postwork')">
+        <div class="kt-switch ${ktPostwork?'on':''}"><div class="kt-knob"></div></div>
+        <div class="kt-label">${ktPostwork?'<span class="kt-on-text">🛒 KT Shift On — habits greyed out</span>':'Kwik Trip Shift today?'}</div>
+      </div>`;
+    container.appendChild(pwBlock);
+
+    const wList=document.getElementById('workList');
+    if (ktPostwork) {
+      const badge=document.createElement('div'); badge.className='kt-active-badge';
+      badge.innerHTML=`<div class="kt-badge-pill">🛒 KT Shift Active</div><div class="kt-badge-text">You're on the clock — habits greyed out. Go get it! 🐺</div>`;
+      wList.appendChild(badge);
+    }
+    let orShown=false;
+    POSTWORK_HABITS.forEach(h=>{
+      if (h.orGroup&&!orShown) {
+        const ol=document.createElement('div'); ol.className='or-group-label';
+        ol.innerHTML=`<div class="or-divider"></div><span class="or-tag">DO ONE</span><div class="or-divider"></div>`;
+        wList.appendChild(ol); orShown=true;
+      }
+      appendHabitItem(wList,h,'post-work','postwork');
+      if (h.orGroup&&h.id===orHabits.slice(-1)[0].id) {
+        const oe=document.createElement('div'); oe.className='or-group-label';
+        oe.innerHTML=`<div class="or-divider"></div>`; wList.appendChild(oe);
+      }
+    });
+    (customHabits.postwork||[]).forEach(h=>appendHabitItem(wList,h,'post-work','postwork'));
+    const paRow=document.createElement('div'); paRow.className='add-row';
+    paRow.innerHTML=`<div class="add-icon">+</div><div class="add-label">Add an after-work habit...</div>`;
+    paRow.onclick=()=>addCustomDB('postwork'); pwBlock.appendChild(paRow);
+
+  } else {
+    const wdDone=WEEKEND_HABITS.filter(h=>dayCompletions.has(h.id)).length;
+    const wdBlock=document.createElement('div'); wdBlock.className='routine-block weekend-day-block';
+    wdBlock.innerHTML=`
+      <div class="routine-header">
+        <div class="rh-left"><div class="rh-icon">🌸</div>
+          <div><div class="rh-title">Weekend Daytime Habits</div>
+            <div class="rh-sub">Saturday & Sunday — breathe, build, be present 🌈</div>
+          </div>
+        </div>
+        <div class="rh-progress">
+          <div class="rh-frac">${wdDone}/${WEEKEND_HABITS.length}</div>
+          <div class="rh-plabel">completed</div>
+          <div class="rh-bar"><div class="rh-fill" style="width:${WEEKEND_HABITS.length?wdDone/WEEKEND_HABITS.length*100:0}%"></div></div>
+        </div>
+      </div>
+      <div class="habit-list" id="workList"></div>
+      <div class="kt-toggle-row ${ktWeekend?'kt-on':''}" onclick="handleKTToggle('weekend')">
+        <div class="kt-switch ${ktWeekend?'on':''}"><div class="kt-knob"></div></div>
+        <div class="kt-label">${ktWeekend?'<span class="kt-on-text">🛒 KT Shift On — habits greyed out</span>':'Kwik Trip Shift today?'}</div>
+      </div>`;
+    container.appendChild(wdBlock);
+
+    const wdList=document.getElementById('workList');
+    if (ktWeekend) {
+      const badge=document.createElement('div'); badge.className='kt-active-badge';
+      badge.innerHTML=`<div class="kt-badge-pill">🛒 KT Shift Active</div><div class="kt-badge-text">Weekend hustle mode — go make that money! 🐺💪</div>`;
+      wdList.appendChild(badge);
+    }
+    WEEKEND_HABITS.forEach(h=>appendHabitItem(wdList,h,'weekend-day-block','weekend'));
+    (customHabits.weekend||[]).forEach(h=>appendHabitItem(wdList,h,'weekend-day-block','weekend'));
+    const wdAdd=document.createElement('div'); wdAdd.className='add-row';
+    wdAdd.innerHTML=`<div class="add-icon">+</div><div class="add-label">Add a weekend habit...</div>`;
+    wdAdd.onclick=()=>addCustomDB('weekend'); wdBlock.appendChild(wdAdd);
+  }
+
+  // ── WEEKLY SHARED — always visible ─────────────────────────────────────
+  const wkDone=WEEKLY_SHARED.filter(h=>weekendCompletions.has(h.id)).length;
+  const wkBlock=document.createElement('div'); wkBlock.className='routine-block weekly-block';
+  wkBlock.innerHTML=`
+    <div class="routine-header">
+      <div class="rh-left"><div class="rh-icon">📋</div>
+        <div><div class="rh-title">This Weekend's Essentials</div>
+          <div class="rh-sub">One shared checklist for the whole weekend — check off either day ✅</div>
+        </div>
+      </div>
+      <div class="rh-progress">
+        <div class="rh-frac">${wkDone}/${WEEKLY_SHARED.length}</div>
+        <div class="rh-plabel">this weekend</div>
+        <div class="rh-bar"><div class="rh-fill" style="width:${WEEKLY_SHARED.length?wkDone/WEEKLY_SHARED.length*100:0}%"></div></div>
+      </div>
+    </div>
+    <div class="weekly-shared-note">Shared across Saturday & Sunday — checks persist all week 🐾</div>
+    <div class="habit-list" id="weeklyList"></div>`;
+  container.appendChild(wkBlock);
+  const wkList=document.getElementById('weeklyList');
+  WEEKLY_SHARED.forEach(h=>appendHabitItem(wkList,h,'weekly-block','weekly'));
+
+  // ── EVENING ────────────────────────────────────────────────────────────
+  const eveDone=EVENING_HABITS.filter(h=>dayCompletions.has(h.id)).length;
+  const eveBlock=document.createElement('div'); eveBlock.className='routine-block evening';
+  eveBlock.innerHTML=`
+    <div class="routine-header">
+      <div class="rh-left"><div class="rh-icon">🌙</div>
+        <div><div class="rh-title">Evening Routine</div>
+          <div class="rh-sub">${isWeekday(viewDate)?'Begins at 10:45PM on weekdays — don\'t wait 💜':'Evening wind-down 💜'}</div>
+        </div>
+      </div>
+      <div class="rh-progress">
+        <div class="rh-frac">${eveDone}/${EVENING_HABITS.length}</div>
+        <div class="rh-plabel">completed</div>
+        <div class="rh-bar"><div class="rh-fill" style="width:${EVENING_HABITS.length?eveDone/EVENING_HABITS.length*100:0}%"></div></div>
+      </div>
+    </div>
+    <div class="evening-note">
+      <div class="en-icon">⏰</div>
+      <div class="en-text">${isWeekday(viewDate)?'<span class="en-highlight">Weekday reminder:</span> This routine starts at 10:45PM. Wrap up and head home. Your sleep matters.':'Whenever you\'re ready to wind down — the evening routine is here 🌙'}</div>
+    </div>
+    <div class="habit-list" id="eveningList"></div>
+    <div class="add-row" onclick="addCustomDB('evening')"><div class="add-icon">+</div><div class="add-label">Add an evening habit...</div></div>`;
+  container.appendChild(eveBlock);
+  const eList=document.getElementById('eveningList');
+  EVENING_HABITS.forEach(h=>appendHabitItem(eList,h,'evening','evening'));
+  (customHabits.evening||[]).forEach(h=>appendHabitItem(eList,h,'evening','evening'));
+
+  updateSummary();
+}
+
+function appendHabitItem(listEl,h,blockClass,section) {
+  const isWeekly = section==='weekly';
+  const done     = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
+  const isKTOff  = (section==='postwork'&&ktPostwork)||(section==='weekend'&&ktWeekend);
+  const streak   = streakCache[h.id]||0;
+
+  const div=document.createElement('div');
+  div.className=`habit-item${done?' done':''}${isKTOff?' kt-disabled':''}`;
+  div.innerHTML=`
+    <div class="check-circle"><span class="check-icon">✓</span></div>
+    <div class="h-emoji">${h.emoji}</div>
+    <div class="h-body">
+      <div class="h-name">${h.name}${h.orGroup?` <span style="font-size:.62rem;color:var(--work-a);font-weight:700;margin-left:4px">OR</span>`:''}</div>
+      <div class="h-note">${h.note}</div>
+    </div>
+    <div class="h-right">
+      <span class="time-badge ${blockClass}">${h.time}</span>
+      ${streak>0?`<span class="streak-badge">${streak}d 🔥</span>`:''}
+    </div>`;
+  div.onclick=async ()=>{
+    if (isKTOff) return;
+    div.style.pointerEvents='none';
+    await toggleHabitDB(h.id, section);
+    const nowDone = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
+    if (nowDone) { div.classList.add('done','just-done'); spawnCelebration(div); setTimeout(()=>div.classList.remove('just-done'),500); }
+    else div.classList.remove('done');
+    div.style.pointerEvents='';
+    render();
+    buildDayNav();
+  };
+  listEl.appendChild(div);
+}
+
+async function handleKTToggle(type) {
+  await toggleKTDB(type);
+  render();
+}
+
+function spawnCelebration(el) {
+  const emojis=['✨','💜','🌸','🐾','⭐','🎉','🌈'];
+  const e=emojis[Math.floor(Math.random()*emojis.length)];
+  const rect=el.getBoundingClientRect();
+  const span=document.createElement('span');
+  span.className='celebrate'; span.textContent=e;
+  span.style.left=(rect.left+rect.width/2-16)+'px';
+  span.style.top=(rect.top+window.scrollY-10)+'px';
+  document.body.appendChild(span);
+  setTimeout(()=>span.remove(),1300);
+}
+
+function updateSummary() {
+  const weekend=isWeekend(viewDate);
+  const mHabits=MORNING_HABITS_WEEKDAY.filter(h=>!h.weekdayOnly||!weekend);
+  const mDone=mHabits.filter(h=>dayCompletions.has(h.id)).length;
+
+  let midDone=0,midTotal=0;
+  if (!weekend) {
+    const nonOr=POSTWORK_HABITS.filter(h=>!h.orGroup);
+    const orAny=POSTWORK_HABITS.filter(h=>h.orGroup).some(h=>dayCompletions.has(h.id));
+    midDone=nonOr.filter(h=>dayCompletions.has(h.id)).length+(orAny?1:0);
+    midTotal=nonOr.length+(POSTWORK_HABITS.some(h=>h.orGroup)?1:0);
+    document.getElementById('sMidEmoji').textContent='💼';
+    document.getElementById('sMidLabel').textContent='After Work';
+  } else {
+    midDone=WEEKEND_HABITS.filter(h=>dayCompletions.has(h.id)).length;
+    midTotal=WEEKEND_HABITS.length;
+    document.getElementById('sMidEmoji').textContent='🌸';
+    document.getElementById('sMidLabel').textContent='Weekend Day';
+  }
+  const eDone=EVENING_HABITS.filter(h=>dayCompletions.has(h.id)).length;
+  const total=mHabits.length+midTotal+EVENING_HABITS.length;
+  const done=mDone+midDone+eDone;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('sMorn').textContent=`${mDone}/${mHabits.length}`;
+  document.getElementById('sMid').textContent=`${midDone}/${midTotal}`;
+  document.getElementById('sEve').textContent=`${eDone}/${EVENING_HABITS.length}`;
+  document.getElementById('sTotal').textContent=pct+'%';
+  document.getElementById('sTotalLabel').textContent=pct===100?'🎉 PERFECT!':pct>=66?'Crushing it 🔥':pct>=33?'Keep going 💜':'You got this 🐺';
+}
+
+async function buildDayNav() {
+  const byDay = await loadDayNavData();
+  const nav=document.getElementById('dayNav'); nav.innerHTML='';
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const allIds=[...MORNING_HABITS_WEEKDAY,...POSTWORK_HABITS,...WEEKEND_HABITS,...EVENING_HABITS].map(h=>h.id);
+
+  for(let i=6;i>=0;i--) {
+    const d=new Date(NOW); d.setDate(d.getDate()-i);
+    const dk=fmtDate(d); const wknd=isWeekend(d);
+    const donIds=byDay[dk]||[];
+    const pct=donIds.length/allIds.length;
+    const isView=dk===fmtDate(viewDate);
+    const btn=document.createElement('div');
+    btn.className=`day-btn${isView?' active':''}${wknd&&!isView?' weekend-day':''}`;
+    btn.innerHTML=`<div class="day-name">${dayNames[d.getDay()]}</div><div class="day-num">${d.getDate()}</div><div class="day-dots"><div class="day-dot ${pct>=.4?'done':pct>=.2?'partial':''}"></div><div class="day-dot ${pct>=.6?'done':pct>=.4?'partial':''}"></div><div class="day-dot ${pct>=.9?'done':''}"></div></div>`;
+    btn.onclick=async()=>{ viewDate=new Date(d); showLoading(true); await loadDayData(); showLoading(false); buildDayNav(); render(); updateHeader(); };
+    nav.appendChild(btn);
+  }
+}
+
+function updateHeader() {
+  const weekend=isWeekend(viewDate); const isToday=isViewToday();
+  const dow=viewDate.toLocaleDateString('en-US',{weekday:'long'});
+  document.getElementById('mainTitle').textContent=weekend?'Weekend Mode 🌸🐺':'Your Daily Routines 🐺';
+  document.getElementById('mainSub').textContent=isToday
+    ?(weekend?'It\'s the weekend — breathe, build, and be present 🌈':'Show up for yourself today, one habit at a time 💜')
+    :`Viewing ${dow} ${viewDate.getDate()} — ${weekend?'weekend':'weekday'}`;
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('dateChip').textContent=`${DAYS[NOW.getDay()]}, ${MONTHS[NOW.getMonth()]} ${NOW.getDate()}`;
+
+  // Best streak from cache
+  const best=Math.max(0,...Object.values(streakCache),0);
+  document.getElementById('streakChip').textContent=`🔥 Best streak: ${best} days`;
+}
+
+// ── Settings chip: copy/share User ID ───────────────────────────────────────
+function showUID() {
+  prompt('🐺 Your User ID (copy this to use the app on another device!):', USER_ID);
+}
+function loadUID() {
+  const uid=prompt('🐺 Paste your User ID from another device:');
+  if (uid&&uid.trim().startsWith('user_')) {
+    localStorage.setItem('enid_uid', uid.trim());
+    location.reload();
+  } else { alert('Hmm that doesn\'t look right! Make sure you copied the full ID 💜'); }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  updateHeader();
+  showLoading(true);
+  document.getElementById('routineContainer').innerHTML=
+    `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;
+  await Promise.all([loadDayData(), loadStreaks()]);
+  showLoading(false);
+  render();
+  buildDayNav();
+}
+init();
+</script>
+  { text:"Rise and grind, sparklepup!! The version of you who has her life together does these things every morning. Be her today.", sig:"— your roomie, fully caffeinated 🌅🐺" },
+  { text:"Every morning you complete this list is a vote for the life you're building. Cast that vote today. Even if it's hard. Especially then.", sig:"— Enid, sunrise hype squad 🌸✨" },
+  { text:"Good morning!! You don't have to be a morning person to OWN the morning. Just start. One thing. Then another. That's the whole secret.", sig:"— your roomie who believes in you 🐾💜" },
+  { text:"Rise & shine glowbug!! Today has literally never happened before. You get to decide what kind of day it becomes. Start here.", sig:"— Enid, aggressively optimistic 🌈🐺" },
+  { text:"The morning routine isn't punishment — it's you choosing yourself before the world gets a chance to choose for you.", sig:"— your roomie with the real talk 💜🔥" },
+];
+
+const MORNING_HABITS_WEEKDAY = [
+  {id:'m_wakeup',  emoji:'⏰', name:'Wake up at 8AM',              note:'Start the day with intention — weekdays only', time:'8:00 AM', weekdayOnly:true},
+  {id:'m_nophone', emoji:'📵', name:'No phone before leaving bed',  note:'Your brain deserves a gentle start', time:'Immediately', weekdayOnly:true},
+  {id:'m_makebed', emoji:'🛏️',  name:'Make bed as soon as you wake up', note:'First win of the day — takes 2 minutes', time:'Right away', weekdayOnly:false},
+  {id:'m_stretch', emoji:'🧘', name:'Quick morning stretch',         note:'Loosen up before the day gets going', time:'Morning', weekdayOnly:false},
+  {id:'m_washface',emoji:'💧', name:'Wash face',                    note:'Wake your skin up too', time:'Morning', weekdayOnly:false},
+  {id:'m_teeth',   emoji:'🦷', name:'Brush teeth',                  note:'Non-negotiable, sparklepup', time:'Morning', weekdayOnly:false},
+  {id:'m_hamper',  emoji:'👕', name:'Old clothes in hamper',        note:'Future you will be grateful', time:'Morning', weekdayOnly:false},
+  {id:'m_deodor',  emoji:'✨', name:'Deodorant',                    note:'Always 😄', time:'Morning', weekdayOnly:false},
+  {id:'m_outfit',  emoji:'👗', name:'Fresh outfit',                 note:'Dress for the day you want', time:'Morning', weekdayOnly:false},
+  {id:'m_planner', emoji:'📅', name:'Planner / Calendar check',     note:'Know what\'s coming before it hits you', time:'Before leaving', weekdayOnly:false},
+  {id:'m_granola', emoji:'🥣', name:'Granola bar / Quick breakfast', note:'Feed the machine, even something small counts', time:'Before leaving', weekdayOnly:false},
+];
+
+const POSTWORK_HABITS = [
+  {id:'w_clothes', emoji:'👟', name:'Change out of work clothes immediately', note:'Signal to your brain: work mode OFF', time:'Right home'},
+  {id:'w_yoga',    emoji:'🧘', name:'Yoga',    note:'Check this OR Walk — just one counts for today ✅', time:'Evening', orGroup:'w_move'},
+  {id:'w_walk',    emoji:'🚶', name:'Walk',    note:'Check this OR Yoga — just one counts for today ✅', time:'Evening', orGroup:'w_move'},
+  {id:'w_scc',     emoji:'📱', name:'Check & respond to SCC / AoT messages', note:'Then put the phone down', time:'Evening'},
+  {id:'w_work',    emoji:'💼', name:'1 Hour Work Block',  note:'SCC, AoT, Personal Cleanup — just 1 productive hour', time:'Evening'},
+  {id:'w_read',    emoji:'📖', name:'15 Minutes of Reading', note:'Wind your brain down the good way', time:'Before bed'},
+];
+
+const WEEKEND_HABITS = [
+  {id:'wd_bfast',  emoji:'🍳', name:'Breakfast with the family',   note:'Start the day connected', time:'Morning'},
+  {id:'wd_work',   emoji:'💼', name:'1 Hour Work Block',           note:'SCC / AoT / Personal Work', time:'Daytime'},
+  {id:'wd_clean',  emoji:'🧹', name:'1 Hour Cleanup / Organization Block', note:'Future you needs a tidy space', time:'Daytime'},
+  {id:'wd_yoga',   emoji:'🧘', name:'30 Minute Yoga',              note:'Give your body some love', time:'Daytime'},
+  {id:'wd_read',   emoji:'📖', name:'20 Minutes Reading',          note:'Your brain will thank you', time:'Daytime'},
+];
+
+const WEEKLY_SHARED = [
+  {id:'wk_finance', emoji:'💰', name:'Full financial review & reset', note:'Make sure all bills are paid for the week', time:'This weekend'},
+  {id:'wk_cal',     emoji:'📅', name:'Full calendar review & reset',  note:'Make sure you\'re planned for everything this week', time:'This weekend'},
+  {id:'wk_laundry', emoji:'🧺', name:'Laundry',                       note:'Full cycle — wash, dry, put away', time:'This weekend'},
+  {id:'wk_semper',  emoji:'🐕', name:'Walk Semper',                   note:'Good boy deserves his walk 🐶', time:'This weekend'},
+];
+
+const EVENING_HABITS = [
+  {id:'e_head',   emoji:'🚗', name:'Begin to head home at 10:45PM',  note:'Leave wherever you are — the night routine starts NOW', time:'10:45 PM'},
+  {id:'e_home',   emoji:'🏠', name:'Home by 11PM',                   note:'Get yourself home, sparklepup', time:'11:00 PM'},
+  {id:'e_wash',   emoji:'💧', name:'Wash face',                      note:'Rinse the day away', time:'11:00 PM'},
+  {id:'e_teeth',  emoji:'🦷', name:'Brush teeth',                    note:'Every single night, no exceptions', time:'11:00 PM'},
+  {id:'e_tvoff',  emoji:'📺', name:'TV off by 11:20PM',              note:'Your brain needs the buffer', time:'11:20 PM'},
+  {id:'e_relax',  emoji:'📚', name:'Read or relax in bed until 11:45PM', note:'Earned rest — enjoy it', time:'11:20–11:45 PM'},
+  {id:'e_lights', emoji:'🌙', name:'Lights out at 11:45PM',          note:'You did the day. Now rest.', time:'11:45 PM'},
+];
+
+</script>
+</body>
+</html>

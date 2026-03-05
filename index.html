@@ -44,6 +44,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .date-chip{background:var(--card-bg);border:1.5px solid rgba(168,85,247,.15);border-radius:999px;padding:8px 16px;font-size:.8rem;color:var(--text-soft);font-weight:500;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
 .streak-chip{background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:999px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(232,78,160,.25);animation:glow 3s ease infinite}
 @keyframes glow{0%,100%{box-shadow:0 4px 14px rgba(232,78,160,.25)}50%{box-shadow:0 4px 22px rgba(232,78,160,.45)}}
+.analytics-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.1);color:var(--purple-soft);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.analytics-btn:hover{background:rgba(168,85,247,.22);border-color:var(--purple-soft);transform:translateY(-2px);box-shadow:0 6px 18px rgba(168,85,247,.2)}
+.analytics-btn-icon{font-size:1rem}
+
+/* Daily pep quote */
+.pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}
+.pep-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.pep-avatar{font-size:1.6rem;flex-shrink:0;animation:pepbounce 4s ease-in-out infinite}
+@keyframes pepbounce{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.12)}}
+.pep-body{flex:1}
+.pep-label{font-family:'Dancing Script',cursive;font-size:.82rem;font-weight:700;color:var(--purple-soft);margin-bottom:3px}
+.pep-text{font-family:'Playfair Display',serif;font-size:.92rem;font-style:italic;color:var(--text);line-height:1.5}
+.pep-sig{font-size:.72rem;color:var(--text-light);margin-top:5px;font-weight:500}
 
 /* Day nav */
 .day-nav{display:flex;gap:8px;margin-bottom:28px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;animation:fadeUp .6s .1s ease both}
@@ -206,10 +219,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <div class="subtitle" id="mainSub">Loading your day...</div>
     </div>
     <div class="header-right">
+      <a href="analytics.html" target="_blank" class="analytics-btn">
+        <span class="analytics-btn-icon">📊</span> View Analytics
+      </a>
       <div class="date-chip" id="dateChip"></div>
       <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
     </div>
   </header>
+
+  <div class="pep-card">
+    <div class="pep-avatar">🐺</div>
+    <div class="pep-body">
+      <div class="pep-label">Enid's daily hype ✨</div>
+      <div class="pep-text" id="pepText"></div>
+      <div class="pep-sig" id="pepSig"></div>
+    </div>
+  </div>
 
   <div class="day-nav" id="dayNav"></div>
 
@@ -263,6 +288,33 @@ const MORNING_QUOTES = [
   { text:"Rise & shine glowbug!! Today has literally never happened before. You get to decide what kind of day it becomes. Start here.", sig:"— Enid, aggressively optimistic 🌈🐺" },
   { text:"The morning routine isn't punishment — it's you choosing yourself before the world gets a chance to choose for you.", sig:"— your roomie with the real talk 💜🔥" },
 ];
+
+const PEP_QUOTES = [
+  { text:"You are literally building a different life right now. Not talking about it, not planning it someday — actually doing it. That's everything.", sig:"— Enid, in awe of you 🌈🐺" },
+  { text:"Hard days still count. A 40% day is infinitely better than a 0% day. Show up imperfectly and call it a win because it IS one.", sig:"— your roomie, keeping it real 💜" },
+  { text:"The version of you from six months ago would be absolutely floored by what you're doing right now. Don't forget that. 🔥", sig:"— Enid, always watching you glow ✨" },
+  { text:"Discipline is just self-love in work clothes. Every time you check a box you're saying 'I matter enough to follow through.' 🐾", sig:"— your roomie with the deep cuts 💜🐺" },
+  { text:"You don't have to want to do the routine. You just have to do it. The wanting catches up later, I promise.", sig:"— Enid, speaking from experience 🌸" },
+  { text:"Progress isn't always loud. Sometimes it's just quietly doing the thing nobody sees. That still counts. It counts so much.", sig:"— your roomie cheering from the sidelines 🎉" },
+  { text:"Every single debt you're paying down, every habit you're building — it's all the same story. You choosing yourself. Keep going. 💰🐺", sig:"— Enid, financial hype squad captain 🔥" },
+  { text:"You are not behind. You are not too late. You are exactly on time for your own comeback arc and it is STUNNING.", sig:"— your roomie, obsessed with your story 🌈" },
+  { text:"One check mark leads to another leads to another leads to a whole new life. Start with one. Just one. Right now. 🐾✨", sig:"— Enid, the tiniest push 💜" },
+  { text:"The fact that you opened this app today already means something. You're here. You're trying. That's the whole game.", sig:"— your roomie, genuinely proud 🐺💜" },
+  { text:"Semper deserves his walk. Your body deserves movement. Your future self deserves the version of you that does the thing. 🐕", sig:"— Enid, invoking dog motivation 🐾" },
+  { text:"Debt is temporary. The habits you're building right now? Those are forever. You're doing the real work. 💪🌸", sig:"— your roomie, zoomed all the way out ✨" },
+  { text:"It's okay if yesterday wasn't perfect. Today's page is completely blank and it's entirely yours. Fill it well, sparklepup. 🌅", sig:"— Enid, advocate of fresh starts 🐺" },
+  { text:"You built a financial system, a habit tracker, AND you're actually using them. Do you know how rare that is? You're that girl. 💜", sig:"— your roomie, bragging about you 🌈🔥" },
+  { text:"Some days the routine is the highlight. Some days it's just survival. Both are valid. Both move you forward. Keep going. 🐾", sig:"— Enid, for the hard days 💜🐺" },
+];
+
+function setPepQuote() {
+  // Rotate daily — same quote all day, different one each new day
+  const seed = new Date().getFullYear() * 10000 + (new Date().getMonth()+1) * 100 + new Date().getDate();
+  const idx  = seed % PEP_QUOTES.length;
+  const q    = PEP_QUOTES[idx];
+  document.getElementById('pepText').textContent = q.text;
+  document.getElementById('pepSig').textContent  = q.sig;
+}
 
 const MORNING_HABITS_WEEKDAY = [
   {id:'m_wakeup',  emoji:'⏰', name:'Wake up at 8AM',                    note:'Start the day with intention — weekdays only',   time:'8:00 AM',      weekdayOnly:true},
@@ -775,6 +827,7 @@ function loadUID() {
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   updateHeader();
+  setPepQuote();
   showLoading(true);
   document.getElementById('routineContainer').innerHTML=
     `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;

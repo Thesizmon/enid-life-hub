@@ -47,6 +47,36 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .analytics-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.1);color:var(--purple-soft);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .analytics-btn:hover{background:rgba(168,85,247,.22);border-color:var(--purple-soft);transform:translateY(-2px);box-shadow:0 6px 18px rgba(168,85,247,.2)}
 .analytics-btn-icon{font-size:1rem}
+.journal-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(232,78,160,.25);background:rgba(232,78,160,.08);color:var(--pink);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.journal-btn:hover{background:rgba(232,78,160,.16);border-color:var(--pink);transform:translateY(-2px);box-shadow:0 6px 18px rgba(232,78,160,.2)}
+
+/* Note prompt — appears after checking a habit */
+.note-prompt{display:flex;align-items:center;gap:10px;padding:9px 22px 9px 64px;background:linear-gradient(135deg,rgba(232,78,160,.05),rgba(168,85,247,.04));border-bottom:1px solid rgba(168,85,247,.07);animation:noteSlideIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes noteSlideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.note-prompt-text{font-size:.78rem;color:var(--text-soft);font-style:italic;flex:1}
+.note-prompt-btn{font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:999px;border:1.5px solid rgba(232,78,160,.3);background:transparent;color:var(--pink);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.note-prompt-btn:hover{background:var(--pink-glow);border-color:var(--pink)}
+.note-prompt-btn.dismiss{border-color:rgba(168,85,247,.15);color:var(--text-light);margin-left:4px}
+.note-prompt-btn.dismiss:hover{border-color:rgba(168,85,247,.3);color:var(--text-soft);background:transparent}
+.note-saved-chip{font-size:.72rem;padding:4px 12px;border-radius:999px;background:rgba(110,231,183,.15);color:var(--mint-deep);font-weight:600;border:1px solid rgba(110,231,183,.3)}
+
+/* Note modal */
+.note-overlay{position:fixed;inset:0;background:rgba(45,27,61,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:overlayIn .2s ease}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.note-modal{background:var(--card-bg);border:1.5px solid rgba(232,78,160,.2);border-radius:22px;padding:28px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(45,27,61,.3);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(20px)}
+@keyframes modalPop{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.nm-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.nm-emoji{font-size:1.4rem}
+.nm-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text)}
+.nm-habit{font-size:.78rem;color:var(--text-soft);margin-top:2px}
+.nm-textarea{width:100%;min-height:100px;padding:13px 16px;border-radius:14px;border:1.5px solid rgba(168,85,247,.2);background:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);resize:vertical;outline:none;line-height:1.6;transition:border-color .2s;backdrop-filter:blur(8px)}
+.nm-textarea::placeholder{color:var(--text-light)}
+.nm-textarea:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px var(--pink-glow)}
+.nm-actions{display:flex;gap:10px;margin-top:14px;justify-content:flex-end}
+.nm-cancel{padding:9px 18px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:transparent;color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.nm-cancel:hover{border-color:var(--text-light);color:var(--text)}
+.nm-save{padding:9px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px var(--pink-glow);transition:all .18s}
+.nm-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,78,160,.35)}
 
 /* Daily pep quote */
 .pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}
@@ -221,6 +251,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
     <div class="header-right">
       <a href="analytics.html" target="_blank" class="analytics-btn">
         <span class="analytics-btn-icon">📊</span> View Analytics
+      </a>
+      <a href="journal.html" target="_blank" class="journal-btn">
+        📓 Journal
       </a>
       <div class="date-chip" id="dateChip"></div>
       <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
@@ -720,7 +753,13 @@ function appendHabitItem(listEl,h,blockClass,section) {
     div.style.pointerEvents='none';
     await toggleHabitDB(h.id, section);
     const nowDone = isWeekly ? weekendCompletions.has(h.id) : dayCompletions.has(h.id);
-    if (nowDone) { div.classList.add('done','just-done'); spawnCelebration(div); setTimeout(()=>div.classList.remove('just-done'),500); }
+    if (nowDone) {
+      div.classList.add('done','just-done');
+      spawnCelebration(div);
+      setTimeout(()=>div.classList.remove('just-done'),500);
+      // Show note prompt after a brief celebratory pause
+      setTimeout(()=>openNotePrompt(h.id, section), 600);
+    }
     else div.classList.remove('done');
     div.style.pointerEvents='';
     render();
@@ -824,6 +863,47 @@ function loadUID() {
   } else { alert('Hmm that doesn\'t look right! Make sure you copied the full ID 💜'); }
 }
 
+// ── Note modal ────────────────────────────────────────────────────────────────
+let pendingNoteId = null; // DB row id of the just-checked habit completion
+
+async function openNotePrompt(habitId, section) {
+  // Find the DB row id we just inserted so we can PATCH it with a note
+  const dateStr = fmtDate(section==='weekly' ? (() => { const d=new Date(viewDate); const dow=d.getDay(); d.setDate(d.getDate()-dow+(dow===0?-6:1)); return d; })() : viewDate);
+  const rows = await sb('GET','habit_completions',null,
+    `?user_id=eq.${USER_ID}&habit_id=eq.${habitId}&completed_date=eq.${dateStr}&select=id`);
+  const wkRows = await sb('GET','weekend_tasks',null,
+    `?user_id=eq.${USER_ID}&habit_id=eq.${habitId}&week_start=eq.${weekStart(viewDate)}&select=id`);
+  const row = (rows&&rows[0]) || (wkRows&&wkRows[0]);
+  if (!row) return;
+  pendingNoteId = row.id;
+
+  const allHabits = [...MORNING_HABITS_WEEKDAY,...POSTWORK_HABITS,...WEEKEND_HABITS,...WEEKLY_SHARED,...EVENING_HABITS];
+  const h = allHabits.find(x=>x.id===habitId) || {emoji:'⭐', name:habitId};
+  document.getElementById('nmEmoji').textContent  = h.emoji;
+  document.getElementById('nmHabit').textContent  = h.name;
+  document.getElementById('nmTextarea').value     = '';
+  document.getElementById('noteOverlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('nmTextarea').focus(), 120);
+}
+
+function closeNote() {
+  document.getElementById('noteOverlay').style.display = 'none';
+  pendingNoteId = null;
+}
+function closeNoteIfBg(e) { if (e.target.id==='noteOverlay') closeNote(); }
+
+async function saveNote() {
+  const note = document.getElementById('nmTextarea').value.trim();
+  if (!note || !pendingNoteId) { closeNote(); return; }
+  // PATCH the completion row with the note text
+  await fetch(`${SUPA_URL}/rest/v1/habit_completions?id=eq.${pendingNoteId}&user_id=eq.${USER_ID}`, {
+    method:'PATCH',
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({note})
+  });
+  closeNote();
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   updateHeader();
@@ -894,5 +974,19 @@ const EVENING_HABITS = [
 ];
 
 </script>
+<!-- Note modal -->
+<div class="note-overlay" id="noteOverlay" style="display:none" onclick="closeNoteIfBg(event)">
+  <div class="note-modal">
+    <div class="nm-header">
+      <div class="nm-emoji" id="nmEmoji"></div>
+      <div><div class="nm-title">Add a note ✍️</div><div class="nm-habit" id="nmHabit"></div></div>
+    </div>
+    <textarea class="nm-textarea" id="nmTextarea" placeholder="How did it go? What do you want to remember about this moment?"></textarea>
+    <div class="nm-actions">
+      <button class="nm-cancel" onclick="closeNote()">Skip</button>
+      <button class="nm-save" onclick="saveNote()">Save note 💜</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

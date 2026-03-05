@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐺 Enid's Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FAF6EF;
+  --parchment:#F5EDD8;
+  --parchment2:#EDE0C4;
+  --ink:#2C1810;
+  --ink2:#4A3728;
+  --ink3:#7A6558;
+  --ink4:#B09080;
+  --pink:#D4547A;
+  --pink-soft:#E8829C;
+  --pink-pale:rgba(212,84,122,.1);
+  --purple:#8B5CF6;
+  --purple-pale:rgba(139,92,246,.1);
+  --mint:#2D9E7A;
+  --mint-pale:rgba(45,158,122,.1);
+  --gold:#C9943A;
+  --gold-pale:rgba(201,148,58,.12);
+  --card:rgba(255,255,255,0.72);
+  --shadow:0 4px 24px rgba(44,24,16,.08),0 1px 4px rgba(44,24,16,.05);
+  --shadow-hover:0 8px 40px rgba(44,24,16,.14),0 2px 8px rgba(44,24,16,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Warm paper texture background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,148,58,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 20%, rgba(212,84,122,.05) 0%,transparent 50%),
+    radial-gradient(ellipse 70% 60% at 50% 90%, rgba(139,92,246,.04) 0%,transparent 55%),
+    repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(44,24,16,.025) 27px,rgba(44,24,16,.025) 28px),
+    linear-gradient(160deg,#FAF6EF 0%,#F7F0E3 40%,#FAF5ED 100%);
+  pointer-events:none;
+}
+
+.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 80px}
+
+/* ── Header ── */
+.header{padding:48px 0 8px;text-align:center;animation:fadeDown .7s ease both}
+.header-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(44,24,16,.15);background:rgba(255,255,255,.6);color:var(--ink2);font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s ease;font-family:'DM Sans',sans-serif;backdrop-filter:blur(8px)}
+.back-btn:hover{background:rgba(255,255,255,.9);border-color:var(--pink);color:var(--pink);transform:translateY(-1px)}
+.header-actions{display:flex;gap:8px}
+.nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(44,24,16,.12);background:rgba(255,255,255,.5);color:var(--ink3);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.nav-btn:hover{background:rgba(255,255,255,.85);border-color:var(--pink-soft);color:var(--pink)}
+
+.journal-icon{font-size:2.8rem;margin-bottom:12px;display:block;animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.title{font-family:'Lora',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:var(--ink);line-height:1.1}
+.title em{font-style:italic;color:var(--pink)}
+.subtitle{font-size:.9rem;color:var(--ink3);margin-top:10px;font-family:'Lora',serif;font-style:italic}
+.entry-count-chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);border:1px solid rgba(201,148,58,.25);border-radius:999px;padding:6px 14px;font-size:.78rem;font-weight:600;color:var(--gold);margin-top:14px}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.5);border:1.5px solid rgba(44,24,16,.1);border-radius:16px;padding:5px;margin:28px 0 24px;backdrop-filter:blur(10px);animation:fadeUp .5s .1s ease both}
+.tab{flex:1;padding:10px 16px;border-radius:11px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;color:var(--ink3);cursor:pointer;transition:all .22s ease;text-align:center}
+.tab:hover{color:var(--ink);background:rgba(255,255,255,.5)}
+.tab.active{background:var(--card);color:var(--pink);box-shadow:var(--shadow);border:1px solid rgba(212,84,122,.15)}
+
+/* ── Search bar ── */
+.search-wrap{position:relative;margin-bottom:20px;animation:fadeUp .5s .15s ease both}
+.search-input{width:100%;padding:12px 44px 12px 18px;border-radius:14px;border:1.5px solid rgba(44,24,16,.12);background:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);backdrop-filter:blur(8px);outline:none;transition:border-color .2s,box-shadow .2s}
+.search-input::placeholder{color:var(--ink4)}
+.search-input:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px rgba(212,84,122,.1)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--ink4);pointer-events:none}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:60px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:3.5rem;margin-bottom:16px;display:block;opacity:.5}
+.empty-title{font-family:'Lora',serif;font-size:1.3rem;font-weight:600;color:var(--ink2);margin-bottom:8px}
+.empty-sub{font-size:.88rem;color:var(--ink3);font-style:italic;font-family:'Lora',serif;line-height:1.6}
+
+/* ── CHRONOLOGICAL VIEW ── */
+.chrono-feed{display:flex;flex-direction:column;gap:0}
+
+.day-group{margin-bottom:8px;animation:fadeUp .5s ease both}
+.day-header{display:flex;align-items:center;gap:14px;padding:14px 0 10px;position:sticky;top:0;background:linear-gradient(var(--cream),var(--cream) 85%,transparent);z-index:10}
+.day-date{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--ink2)}
+.day-weekday{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ink4);background:var(--parchment);border:1px solid var(--parchment2);padding:3px 10px;border-radius:999px}
+.day-line{flex:1;height:1px;background:linear-gradient(90deg,var(--parchment2),transparent)}
+.day-count{font-size:.72rem;color:var(--ink4);font-weight:500;white-space:nowrap}
+
+.entry-card{background:var(--card);border:1.5px solid rgba(44,24,16,.08);border-radius:16px;padding:18px 20px;margin-bottom:10px;backdrop-filter:blur(10px);box-shadow:var(--shadow);transition:all .2s ease;position:relative;overflow:hidden}
+.entry-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px);border-color:rgba(212,84,122,.2)}
+.entry-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.entry-morning::before{background:linear-gradient(180deg,#F59E0B,#FCD34D)}
+.entry-afterwork::before{background:linear-gradient(180deg,#3B82F6,#60A5FA)}
+.entry-weekend::before{background:linear-gradient(180deg,#EC4899,#F472B6)}
+.entry-weekly::before{background:linear-gradient(180deg,#059669,#6EE7B7)}
+.entry-evening::before{background:linear-gradient(180deg,#7C3AED,#A78BFA)}
+.entry-custom::before{background:linear-gradient(180deg,var(--pink),var(--purple))}
+
+.entry-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.entry-emoji{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.entry-meta{flex:1}
+.entry-habit{font-family:'Lora',serif;font-size:.95rem;font-weight:600;color:var(--ink)}
+.entry-section-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:999px;margin-top:4px}
+.tag-morning{background:rgba(245,158,11,.12);color:#92400E}
+.tag-afterwork{background:rgba(59,130,246,.12);color:#1D4ED8}
+.tag-weekend{background:rgba(236,72,153,.12);color:#BE185D}
+.tag-weekly{background:rgba(5,150,105,.12);color:#065F46}
+.tag-evening{background:rgba(124,58,237,.12);color:#5B21B6}
+.tag-custom{background:rgba(212,84,122,.12);color:var(--pink)}
+.entry-time{font-size:.72rem;color:var(--ink4);margin-left:auto;flex-shrink:0;font-style:italic}
+
+.entry-note{font-family:'Lora',serif;font-size:.92rem;font-style:italic;color:var(--ink2);line-height:1.65;border-top:1px dashed rgba(44,24,16,.1);padding-top:10px;position:relative;padding-left:16px}
+.entry-note::before{content:'\201C';font-size:2rem;color:var(--pink);opacity:.4;position:absolute;left:-2px;top:-8px;font-family:'Lora',serif;line-height:1}
+
+.entry-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.entry-action-btn{font-size:.7rem;padding:4px 10px;border-radius:999px;border:1px solid rgba(44,24,16,.1);background:transparent;color:var(--ink4);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.entry-action-btn:hover{border-color:var(--pink-soft);color:var(--pink);background:var(--pink-pale)}
+.entry-action-btn.delete:hover{border-color:#EF4444;color:#EF4444;background:rgba(239,68,68,.08)}
+
+/* ── CALENDAR VIEW ── */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .5s ease both}
+.cal-month-label{font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:var(--ink)}
+.cal-arrow{width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(44,24,16,.12);background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;color:var(--ink2)}
+.cal-arrow:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-pale)}
+.cal-grid-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.cal-day-label{text-align:center;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);padding:4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;animation:fadeUp .4s ease both}
+.cal-cell{aspect-ratio:1;border-radius:10px;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s ease;position:relative;background:transparent}
+.cal-cell:hover{background:rgba(255,255,255,.7);border-color:rgba(212,84,122,.2)}
+.cal-cell.other-month{opacity:.28;pointer-events:none}
+.cal-cell.today{border-color:var(--pink);background:var(--pink-pale)}
+.cal-cell.selected{background:var(--pink);border-color:var(--pink);box-shadow:0 4px 14px rgba(212,84,122,.3)}
+.cal-cell.selected .cal-num{color:#fff}
+.cal-cell.has-notes{background:rgba(255,255,255,.65);border-color:rgba(201,148,58,.3)}
+.cal-num{font-family:'Lora',serif;font-size:.92rem;font-weight:600;color:var(--ink2);line-height:1}
+.cal-dots{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center;max-width:28px}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.cal-cell.selected .cal-dot{background:rgba(255,255,255,.8)}
+
+.cal-day-panel{background:var(--card);border:1.5px solid rgba(44,24,16,.1);border-radius:20px;padding:24px;margin-top:20px;min-height:120px;backdrop-filter:blur(10px);animation:fadeUp .4s ease both}
+.cal-day-panel-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.cal-day-panel-title span{font-size:.78rem;font-weight:400;color:var(--ink4);font-style:italic}
+.cal-entries{display:flex;flex-direction:column;gap:8px}
+
+/* ── BY HABIT VIEW ── */
+.habit-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;animation:fadeUp .5s .1s ease both}
+.habit-filter-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:999px;border:1.5px solid rgba(44,24,16,.1);background:rgba(255,255,255,.5);color:var(--ink3);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.habit-filter-btn:hover{border-color:var(--pink-soft);color:var(--ink)}
+.habit-filter-btn.active{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 3px 12px rgba(212,84,122,.25)}
+
+.habit-journal-group{margin-bottom:24px;animation:fadeUp .5s ease both}
+.hjg-header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--card);border:1.5px solid rgba(44,24,16,.08);border-radius:14px 14px 0 0;backdrop-filter:blur(8px)}
+.hjg-emoji{font-size:1.2rem}
+.hjg-name{font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--ink)}
+.hjg-count{font-size:.72rem;color:var(--ink4);margin-left:auto;background:var(--parchment);border:1px solid var(--parchment2);padding:3px 10px;border-radius:999px;font-weight:600}
+.hjg-entries{border:1.5px solid rgba(44,24,16,.08);border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
+.hjg-entry{padding:14px 18px;border-bottom:1px dashed rgba(44,24,16,.08);background:rgba(255,255,255,.5);display:flex;gap:14px;align-items:flex-start;transition:background .15s}
+.hjg-entry:last-child{border-bottom:none}
+.hjg-entry:hover{background:rgba(255,255,255,.8)}
+.hjg-date{font-size:.72rem;font-weight:700;color:var(--ink4);white-space:nowrap;padding-top:2px;min-width:70px}
+.hjg-note{font-family:'Lora',serif;font-size:.88rem;font-style:italic;color:var(--ink2);line-height:1.6;flex:1}
+.hjg-no-note{font-size:.8rem;color:var(--ink4);font-style:italic}
+
+/* ── Inline note edit ── */
+.edit-overlay{position:fixed;inset:0;background:rgba(44,24,16,.35);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.edit-modal{background:var(--cream);border:1.5px solid rgba(44,24,16,.15);border-radius:22px;padding:28px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(44,24,16,.2);animation:modalUp .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalUp{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.edit-modal-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+.edit-modal-habit{font-size:.82rem;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.edit-textarea{width:100%;min-height:110px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(44,24,16,.15);background:rgba(255,255,255,.8);font-family:'Lora',serif;font-size:.92rem;font-style:italic;color:var(--ink);resize:vertical;outline:none;line-height:1.65;transition:border-color .2s}
+.edit-textarea::placeholder{color:var(--ink4);font-style:italic}
+.edit-textarea:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px rgba(212,84,122,.1)}
+.edit-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+.btn-cancel{padding:10px 20px;border-radius:999px;border:1.5px solid rgba(44,24,16,.15);background:transparent;color:var(--ink3);font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.btn-cancel:hover{border-color:var(--ink3);color:var(--ink)}
+.btn-save{padding:10px 24px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--pink),#C2415F);color:#fff;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(212,84,122,.3);transition:all .18s}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,84,122,.4)}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+.footer{text-align:center;padding:32px 0 12px;font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--ink4)}
+
+@media(max-width:600px){.tabs{flex-direction:column}.cal-num{font-size:.78rem}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header-nav">
+    <a href="index.html" class="back-btn">← Back to Tracker</a>
+    <div class="header-actions">
+      <a href="analytics.html" target="_blank" class="nav-btn">📊 Analytics</a>
+    </div>
+  </div>
+
+  <header class="header" style="padding-top:0">
+    <span class="journal-icon">📓</span>
+    <div class="title">Your <em>Journal</em></div>
+    <div class="subtitle">Every note you've written — your discipline in your own words</div>
+    <div class="entry-count-chip" id="entryCountChip">✍️ Loading entries...</div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('chrono',this)">📅 Chronological</button>
+    <button class="tab" onclick="switchTab('calendar',this)">🗓️ Calendar</button>
+    <button class="tab" onclick="switchTab('byhabit',this)">🏷️ By Habit</button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search your notes..." oninput="onSearch()">
+    <span class="search-icon">🔍</span>
+  </div>
+
+  <!-- Main content -->
+  <div id="journalContent">
+    <div class="loading">Loading your journal... 📓✨</div>
+  </div>
+
+  <div class="footer">your words, your growth, your story 🐺💜</div>
+</div>
+
+<!-- Edit modal -->
+<div class="edit-overlay" id="editOverlay" style="display:none" onclick="closeEditIfBg(event)">
+  <div class="edit-modal">
+    <div class="edit-modal-title" id="editModalTitle">Edit note</div>
+    <div class="edit-modal-habit" id="editModalHabit"></div>
+    <textarea class="edit-textarea" id="editTextarea" placeholder="What do you want to remember about this moment?"></textarea>
+    <div class="edit-actions">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save note 💜</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Supabase ─────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+
+async function sbGet(table, params='') {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, {
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}
+  });
+  return res.json();
+}
+async function sbPatch(table, params, body) {
+  await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, {
+    method:'PATCH',
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(body)
+  });
+}
+async function sbDelete(table, params) {
+  await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, {
+    method:'DELETE',
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'}
+  });
+}
+
+function getUserId() {
+  let uid=localStorage.getItem('enid_uid');
+  if(!uid){uid='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('enid_uid',uid);}
+  return uid;
+}
+const USER_ID = getUserId();
+
+// ── Habit map ────────────────────────────────────────────────────────────────
+const HABIT_MAP = {
+  m_wakeup:{emoji:'⏰',name:'Wake up at 8AM',section:'morning'},
+  m_nophone:{emoji:'📵',name:'No phone before bed',section:'morning'},
+  m_makebed:{emoji:'🛏️',name:'Make bed',section:'morning'},
+  m_stretch:{emoji:'🧘',name:'Morning stretch',section:'morning'},
+  m_washface:{emoji:'💧',name:'Wash face (AM)',section:'morning'},
+  m_teeth:{emoji:'🦷',name:'Brush teeth (AM)',section:'morning'},
+  m_hamper:{emoji:'👕',name:'Clothes in hamper',section:'morning'},
+  m_deodor:{emoji:'✨',name:'Deodorant',section:'morning'},
+  m_outfit:{emoji:'👗',name:'Fresh outfit',section:'morning'},
+  m_planner:{emoji:'📅',name:'Planner check',section:'morning'},
+  m_granola:{emoji:'🥣',name:'Breakfast',section:'morning'},
+  w_clothes:{emoji:'👟',name:'Change out of work clothes',section:'afterwork'},
+  w_yoga:{emoji:'🧘',name:'Yoga',section:'afterwork'},
+  w_walk:{emoji:'🚶',name:'Walk',section:'afterwork'},
+  w_scc:{emoji:'📱',name:'SCC / AoT messages',section:'afterwork'},
+  w_work:{emoji:'💼',name:'1hr Work Block (weekday)',section:'afterwork'},
+  w_read:{emoji:'📖',name:'15min Reading (weekday)',section:'afterwork'},
+  wd_bfast:{emoji:'🍳',name:'Family breakfast',section:'weekend'},
+  wd_work:{emoji:'💼',name:'1hr Work Block (weekend)',section:'weekend'},
+  wd_clean:{emoji:'🧹',name:'Cleanup block',section:'weekend'},
+  wd_yoga:{emoji:'🧘',name:'30min Yoga (weekend)',section:'weekend'},
+  wd_read:{emoji:'📖',name:'20min Reading (weekend)',section:'weekend'},
+  wk_finance:{emoji:'💰',name:'Financial review',section:'weekly'},
+  wk_cal:{emoji:'📅',name:'Calendar review',section:'weekly'},
+  wk_laundry:{emoji:'🧺',name:'Laundry',section:'weekly'},
+  wk_semper:{emoji:'🐕',name:'Walk Semper',section:'weekly'},
+  e_head:{emoji:'🚗',name:'Head home 10:45PM',section:'evening'},
+  e_home:{emoji:'🏠',name:'Home by 11PM',section:'evening'},
+  e_wash:{emoji:'💧',name:'Wash face (PM)',section:'evening'},
+  e_teeth:{emoji:'🦷',name:'Brush teeth (PM)',section:'evening'},
+  e_tvoff:{emoji:'📺',name:'TV off 11:20PM',section:'evening'},
+  e_relax:{emoji:'📚',name:'Read/relax in bed',section:'evening'},
+  e_lights:{emoji:'🌙',name:'Lights out 11:45PM',section:'evening'},
+};
+
+// ── State ────────────────────────────────────────────────────────────────────
+let allEntries   = []; // [{id, habit_id, completed_date, note, created_at}]
+let activeTab    = 'chrono';
+let searchQuery  = '';
+let calMonth     = new Date();
+let calSelected  = null;
+let habitFilter  = 'all';
+let editingId    = null;
+
+// ── Load data ────────────────────────────────────────────────────────────────
+async function loadEntries() {
+  const rows = await sbGet('habit_completions',
+    `?user_id=eq.${USER_ID}&select=id,habit_id,completed_date,note,completed_at&order=completed_date.desc,completed_at.desc`);
+  allEntries = (rows||[]).filter(r => r.note && r.note.trim().length > 0);
+  document.getElementById('entryCountChip').textContent =
+    `✍️ ${allEntries.length} journal entr${allEntries.length===1?'y':'ies'}`;
+}
+
+function getFiltered() {
+  let entries = [...allEntries];
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    entries = entries.filter(e =>
+      (e.note||'').toLowerCase().includes(q) ||
+      (HABIT_MAP[e.habit_id]?.name||'').toLowerCase().includes(q)
+    );
+  }
+  if (habitFilter !== 'all') {
+    entries = entries.filter(e => e.habit_id === habitFilter);
+  }
+  return entries;
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  activeTab = tab;
+  habitFilter = 'all';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderContent();
+}
+
+function onSearch() {
+  searchQuery = document.getElementById('searchInput').value;
+  renderContent();
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function renderContent() {
+  const el = document.getElementById('journalContent');
+  const filtered = getFiltered();
+
+  if (filtered.length === 0 && allEntries.length === 0) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <span class="empty-icon">📓</span>
+        <div class="empty-title">Your journal is empty for now</div>
+        <div class="empty-sub">Head to the tracker, check off a habit, and tap<br>"Add a note?" to write your first entry. 🐺💜</div>
+      </div>`;
+    return;
+  }
+
+  if (filtered.length === 0 && searchQuery) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <span class="empty-icon">🔍</span>
+        <div class="empty-title">No entries match that search</div>
+        <div class="empty-sub">Try a different word or clear the search to see all entries.</div>
+      </div>`;
+    return;
+  }
+
+  if (activeTab === 'chrono')   renderChrono(el, filtered);
+  if (activeTab === 'calendar') renderCalendar(el);
+  if (activeTab === 'byhabit')  renderByHabit(el, filtered);
+}
+
+// ── CHRONOLOGICAL ─────────────────────────────────────────────────────────────
+function renderChrono(el, entries) {
+  // Group by date
+  const byDate = {};
+  entries.forEach(e => {
+    if (!byDate[e.completed_date]) byDate[e.completed_date] = [];
+    byDate[e.completed_date].push(e);
+  });
+  const dates = Object.keys(byDate).sort().reverse();
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  let html = '<div class="chrono-feed">';
+  dates.forEach((d,i) => {
+    const dt = new Date(d+'T12:00:00');
+    const isToday = d === fmtDate(new Date());
+    const label = isToday ? 'Today' : `${DAYS[dt.getDay()]}, ${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}`;
+    html += `
+      <div class="day-group" style="animation-delay:${i*.04}s">
+        <div class="day-header">
+          <div class="day-date">${label}</div>
+          <div class="day-line"></div>
+          <div class="day-count">${byDate[d].length} note${byDate[d].length>1?'s':''}</div>
+        </div>
+        ${byDate[d].map(e => entryCardHTML(e)).join('')}
+      </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function entryCardHTML(e) {
+  const h = HABIT_MAP[e.habit_id] || {emoji:'⭐',name:e.habit_id,section:'custom'};
+  const time = e.completed_at ? new Date(e.completed_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}) : '';
+  return `
+    <div class="entry-card entry-${h.section}" id="entry-${e.id}">
+      <div class="entry-top">
+        <div class="entry-emoji">${h.emoji}</div>
+        <div class="entry-meta">
+          <div class="entry-habit">${h.name}</div>
+          <span class="entry-section-tag tag-${h.section}">${h.section}</span>
+        </div>
+        ${time?`<div class="entry-time">${time}</div>`:''}
+      </div>
+      ${e.note?`
+        <div class="entry-note">${escHtml(e.note)}</div>
+        <div class="entry-actions">
+          <button class="entry-action-btn" onclick="openEdit('${e.id}','${escAttr(h.name)}','${h.emoji}',\`${escAttr(e.note)}\`)">✏️ Edit</button>
+          <button class="entry-action-btn delete" onclick="deleteNote('${e.id}')">🗑️ Delete</button>
+        </div>`:''}
+    </div>`;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+function renderCalendar(el) {
+  const allFiltered = getFiltered();
+  const notesByDate = {};
+  allFiltered.forEach(e => {
+    if (!notesByDate[e.completed_date]) notesByDate[e.completed_date] = [];
+    notesByDate[e.completed_date].push(e);
+  });
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const today  = fmtDate(new Date());
+  const y = calMonth.getFullYear(), m = calMonth.getMonth();
+  const firstDay = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const daysInPrev  = new Date(y,m,0).getDate();
+
+  let html = `
+    <div class="cal-nav">
+      <button class="cal-arrow" onclick="calNav(-1)">←</button>
+      <div class="cal-month-label">${MONTHS[m]} ${y}</div>
+      <button class="cal-arrow" onclick="calNav(1)">→</button>
+    </div>
+    <div class="cal-grid-header">
+      ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-day-label">${d}</div>`).join('')}
+    </div>
+    <div class="cal-grid">`;
+
+  // Prev month days
+  for (let i=firstDay-1;i>=0;i--) {
+    html+=`<div class="cal-cell other-month"><span class="cal-num">${daysInPrev-i}</span></div>`;
+  }
+  // This month
+  for (let d=1;d<=daysInMonth;d++) {
+    const dk = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const notes = notesByDate[dk]||[];
+    const isToday = dk===today;
+    const isSel   = dk===calSelected;
+    const dots    = notes.slice(0,5).map(()=>'<div class="cal-dot"></div>').join('');
+    html+=`<div class="cal-cell ${isToday?'today':''} ${isSel?'selected':''} ${notes.length?'has-notes':''}" onclick="selectCalDay('${dk}')">
+      <span class="cal-num">${d}</span>
+      ${notes.length?`<div class="cal-dots">${dots}</div>`:''}
+    </div>`;
+  }
+  // Next month days
+  const remaining = 42 - firstDay - daysInMonth;
+  for (let d=1;d<=remaining;d++) {
+    html+=`<div class="cal-cell other-month"><span class="cal-num">${d}</span></div>`;
+  }
+  html += '</div>';
+
+  // Day panel
+  if (calSelected) {
+    const dayEntries = notesByDate[calSelected]||[];
+    const selDt = new Date(calSelected+'T12:00:00');
+    const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    html += `<div class="cal-day-panel">
+      <div class="cal-day-panel-title">
+        ${DAYS[selDt.getDay()]}, ${MONTHS[selDt.getMonth()]} ${selDt.getDate()}
+        <span>${dayEntries.length} note${dayEntries.length!==1?'s':''}</span>
+      </div>
+      <div class="cal-entries">
+        ${dayEntries.length ? dayEntries.map(e=>entryCardHTML(e)).join('') : '<div style="font-family:Lora,serif;font-style:italic;color:var(--ink4);font-size:.88rem">No notes for this day — but that\'s okay! 🌸</div>'}
+      </div>
+    </div>`;
+  } else {
+    html += `<div class="cal-day-panel"><div style="font-family:Lora,serif;font-style:italic;color:var(--ink4);font-size:.88rem;text-align:center;padding:20px">Tap a day to see its notes 🐺</div></div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function calNav(dir) {
+  calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()+dir, 1);
+  renderContent();
+}
+function selectCalDay(dk) {
+  calSelected = calSelected===dk ? null : dk;
+  renderContent();
+}
+
+// ── BY HABIT ──────────────────────────────────────────────────────────────────
+function renderByHabit(el, entries) {
+  // Get unique habits that have notes
+  const habitIds = [...new Set(allEntries.map(e=>e.habit_id))];
+
+  // Filter bar
+  let html = `<div class="habit-filter">
+    <button class="habit-filter-btn ${habitFilter==='all'?'active':''}" onclick="setHabitFilter('all',this)">All habits</button>
+    ${habitIds.map(hid => {
+      const h = HABIT_MAP[hid]||{emoji:'⭐',name:hid};
+      return `<button class="habit-filter-btn ${habitFilter===hid?'active':''}" onclick="setHabitFilter('${hid}',this)">${h.emoji} ${h.name}</button>`;
+    }).join('')}
+  </div>`;
+
+  // Group entries by habit
+  const byHabit = {};
+  entries.forEach(e => {
+    if (!byHabit[e.habit_id]) byHabit[e.habit_id] = [];
+    byHabit[e.habit_id].push(e);
+  });
+
+  const sortedHabits = Object.keys(byHabit).sort((a,b)=>byHabit[b].length-byHabit[a].length);
+
+  if (sortedHabits.length === 0) {
+    html += `<div class="empty-state"><span class="empty-icon">🏷️</span><div class="empty-title">No entries for this habit yet</div></div>`;
+    el.innerHTML = html; return;
+  }
+
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAYS_SHORT   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  sortedHabits.forEach((hid,i) => {
+    const h = HABIT_MAP[hid]||{emoji:'⭐',name:hid,section:'custom'};
+    const habitEntries = byHabit[hid].sort((a,b)=>b.completed_date.localeCompare(a.completed_date));
+    html += `
+      <div class="habit-journal-group" style="animation-delay:${i*.05}s">
+        <div class="hjg-header">
+          <div class="hjg-emoji">${h.emoji}</div>
+          <div class="hjg-name">${h.name}</div>
+          <div class="hjg-count">${habitEntries.length} note${habitEntries.length!==1?'s':''}</div>
+        </div>
+        <div class="hjg-entries">
+          ${habitEntries.map(e => {
+            const dt = new Date(e.completed_date+'T12:00:00');
+            const dateLabel = `${DAYS_SHORT[dt.getDay()]} ${MONTHS_SHORT[dt.getMonth()]} ${dt.getDate()}`;
+            return `<div class="hjg-entry">
+              <div class="hjg-date">${dateLabel}</div>
+              ${e.note
+                ? `<div class="hjg-note">${escHtml(e.note)}</div>`
+                : `<div class="hjg-no-note">No note</div>`}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+function setHabitFilter(hid, btn) {
+  habitFilter = hid;
+  document.querySelectorAll('.habit-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderContent();
+}
+
+// ── Edit / Delete ─────────────────────────────────────────────────────────────
+function openEdit(id, habitName, emoji, currentNote) {
+  editingId = id;
+  document.getElementById('editModalTitle').textContent = 'Edit your note';
+  document.getElementById('editModalHabit').innerHTML = `${emoji} <strong>${habitName}</strong>`;
+  document.getElementById('editTextarea').value = currentNote || '';
+  document.getElementById('editOverlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('editTextarea').focus(), 100);
+}
+function closeEdit() {
+  document.getElementById('editOverlay').style.display = 'none';
+  editingId = null;
+}
+function closeEditIfBg(e) {
+  if (e.target.id==='editOverlay') closeEdit();
+}
+async function saveEdit() {
+  const note = document.getElementById('editTextarea').value.trim();
+  if (!note) return;
+  await sbPatch('habit_completions', `?id=eq.${editingId}&user_id=eq.${USER_ID}`, {note});
+  const entry = allEntries.find(e=>e.id===editingId);
+  if (entry) entry.note = note;
+  closeEdit();
+  renderContent();
+}
+async function deleteNote(id) {
+  if (!confirm('Delete this note? The habit check stays — just the note is removed. 💜')) return;
+  await sbPatch('habit_completions', `?id=eq.${id}&user_id=eq.${USER_ID}`, {note: null});
+  allEntries = allEntries.filter(e=>e.id!==id);
+  document.getElementById('entryCountChip').textContent = `✍️ ${allEntries.length} journal entr${allEntries.length===1?'y':'ies'}`;
+  renderContent();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmtDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return (s||'').replace(/'/g,"\\'").replace(/`/g,'\\`').replace(/\n/g,'\\n');
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  await loadEntries();
+  renderContent();
+}
+init();
+</script>
+</body>
+</html>

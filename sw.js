@@ -1,12 +1,16 @@
 // ── Enid's Service Worker 🐺 ─────────────────────────────────────────────────
 // Handles push notifications and offline caching
 
-const CACHE_NAME = 'enid-life-hub-v1';
+const CACHE_NAME = 'enid-life-hub-v3'; // bumped — forces cache wipe on all devices
 const URLS_TO_CACHE = [
   '/enid-life-hub/',
   '/enid-life-hub/index.html',
   '/enid-life-hub/analytics.html',
   '/enid-life-hub/journal.html',
+  '/enid-life-hub/finance.html',
+  '/enid-life-hub/movies.html',
+  '/enid-life-hub/books.html',
+  '/enid-life-hub/badges.html',
 ];
 
 // ── Enid-coded notification messages ────────────────────────────────────────
@@ -76,11 +80,32 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// ── Fetch event — serve from cache when offline ──────────────────────────────
+// ── Fetch event — NETWORK FIRST, cache fallback ─────────────────────────────
+// Always tries the network first so updates reach devices instantly.
+// Falls back to cache only if offline. HTML files are never served stale.
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
-  );
+  // Only handle GET requests for our own pages
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  const isOurPage = url.origin === self.location.origin && url.pathname.startsWith('/enid-life-hub');
+
+  if (isOurPage) {
+    // Network-first: try fresh from server, cache as fallback
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          // Got a fresh response — clone and update the cache
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return networkResponse;
+        })
+        .catch(() => {
+          // Offline — serve from cache
+          return caches.match(event.request);
+        })
+    );
+  }
+  // For all other requests (CDN fonts, Supabase API etc) — just fetch normally
 });
 
 // ── Push notification handler ────────────────────────────────────────────────

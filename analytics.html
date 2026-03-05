@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐺 Enid's Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0E0818;
+  --bg2:      #160D24;
+  --bg3:      #1E1230;
+  --card:     rgba(255,255,255,0.05);
+  --card2:    rgba(255,255,255,0.08);
+  --border:   rgba(255,255,255,0.08);
+  --border2:  rgba(232,78,160,0.25);
+  --pink:     #E84EA0;
+  --pink2:    #F472B6;
+  --pink-dim: rgba(232,78,160,0.15);
+  --purple:   #A855F7;
+  --purple2:  #C084FC;
+  --mint:     #6EE7B7;
+  --mint2:    #34D399;
+  --mint-dim: rgba(110,231,183,0.12);
+  --yellow:   #FCD34D;
+  --sky:      #38BDF8;
+  --text:     #F0E6FF;
+  --text2:    #B899CC;
+  --text3:    #7B5EA7;
+  --shadow:   0 8px 32px rgba(0,0,0,0.4);
+  --glow-pink:0 0 40px rgba(232,78,160,0.2);
+  --glow-mint:0 0 40px rgba(110,231,183,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Mesh background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 5%, rgba(168,85,247,.18) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 45% at 90% 10%, rgba(232,78,160,.14) 0%,transparent 50%),
+    radial-gradient(ellipse 55% 50% at 50% 95%, rgba(110,231,183,.10) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 35% at 80% 60%, rgba(56,189,248,.08) 0%,transparent 45%),
+    linear-gradient(160deg,#0E0818 0%,#130A20 50%,#0A1218 100%);
+  pointer-events:none;
+}
+
+/* Noise grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px}
+
+/* ── Header ── */
+.header{padding:44px 0 36px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;animation:fadeDown .7s ease both}
+.title-block{}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+.title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,3.8rem);font-weight:900;line-height:1;color:var(--text)}
+.title em{font-style:italic;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:.9rem;color:var(--text2);margin-top:10px}
+.header-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.back-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;border:1.5px solid var(--border2);background:var(--pink-dim);color:var(--pink);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s ease;font-family:'DM Sans',sans-serif}
+.back-btn:hover{background:rgba(232,78,160,.25);transform:translateY(-1px)}
+.range-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--border);background:var(--card);color:var(--text2);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.range-btn.active,.range-btn:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-dim)}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:80px 20px;font-family:'Dancing Script',cursive;font-size:1.6rem;color:var(--pink);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Stat cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;animation:fadeUp .6s .1s ease both}
+.stat-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:22px 20px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(232,78,160,.3)}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%)}
+.stat-accent{position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.stat-accent-pink{background:linear-gradient(90deg,var(--pink),var(--purple))}
+.stat-accent-mint{background:linear-gradient(90deg,var(--mint),var(--sky))}
+.stat-accent-yellow{background:linear-gradient(90deg,var(--yellow),var(--peach,#FB923C))}
+.stat-accent-purple{background:linear-gradient(90deg,var(--purple),var(--pink))}
+.stat-icon{font-size:1.5rem;margin-bottom:12px}
+.stat-value{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;line-height:1;color:var(--text)}
+.stat-label{font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+.stat-sub{font-size:.78rem;color:var(--text2);margin-top:4px}
+
+/* ── Section titles ── */
+.section-title{font-family:'Dancing Script',cursive;font-size:1.4rem;font-weight:700;color:var(--pink);margin:40px 0 16px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,78,160,.3),transparent)}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px;backdrop-filter:blur(10px);animation:fadeUp .6s ease both}
+.card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:18px}
+
+/* ── Heatmap ── */
+.heatmap-wrap{overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:rgba(232,78,160,.3) transparent}
+.heatmap-wrap::-webkit-scrollbar{height:4px}
+.heatmap-wrap::-webkit-scrollbar-thumb{background:rgba(232,78,160,.3);border-radius:999px}
+.heatmap-grid{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:4px;min-width:max-content}
+.hm-cell{width:14px;height:14px;border-radius:3px;background:rgba(255,255,255,.05);transition:all .15s ease;cursor:default;position:relative}
+.hm-cell:hover{transform:scale(1.4);z-index:10}
+.hm-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:.68rem;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;z-index:20;font-family:'DM Sans',sans-serif}
+.hm-0{background:rgba(255,255,255,.05)}
+.hm-1{background:rgba(232,78,160,.25)}
+.hm-2{background:rgba(232,78,160,.45)}
+.hm-3{background:rgba(232,78,160,.65)}
+.hm-4{background:rgba(232,78,160,.85)}
+.hm-5{background:var(--pink);box-shadow:0 0 6px rgba(232,78,160,.5)}
+.heatmap-months{display:flex;gap:0;margin-bottom:6px;min-width:max-content}
+.hm-month-label{font-size:.62rem;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.heatmap-days{display:grid;grid-template-rows:repeat(7,14px);gap:4px;margin-right:8px;flex-shrink:0}
+.hm-day-label{font-size:.6rem;color:var(--text3);line-height:14px;font-weight:600}
+.heatmap-outer{display:flex;align-items:flex-start;gap:0}
+.hm-legend{display:flex;align-items:center;gap:6px;margin-top:12px;font-size:.68rem;color:var(--text3)}
+.hm-legend-cell{width:11px;height:11px;border-radius:2px}
+
+/* ── Bar chart ── */
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:12px}
+.bar-habit-name{font-size:.8rem;font-weight:500;color:var(--text2);width:200px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:visible;position:relative}
+.bar-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);position:relative}
+.bar-fill::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:inherit;box-shadow:0 0 8px currentColor;filter:brightness(1.3)}
+.bar-pct{font-size:.78rem;font-weight:700;width:42px;text-align:right;flex-shrink:0}
+.bar-streak{font-size:.68rem;color:var(--text3);width:52px;text-align:right;flex-shrink:0}
+
+/* Bar color tiers */
+.bar-excellent .bar-fill{background:linear-gradient(90deg,var(--mint2),var(--mint));box-shadow:0 0 8px rgba(110,231,183,.3)}
+.bar-excellent .bar-pct{color:var(--mint)}
+.bar-good     .bar-fill{background:linear-gradient(90deg,var(--sky),#67E8F9)}
+.bar-good     .bar-pct{color:var(--sky)}
+.bar-okay     .bar-fill{background:linear-gradient(90deg,var(--yellow),#FDE68A)}
+.bar-okay     .bar-pct{color:var(--yellow)}
+.bar-struggle .bar-fill{background:linear-gradient(90deg,var(--pink),var(--purple))}
+.bar-struggle .bar-pct{color:var(--pink2)}
+
+/* ── Streak leaderboard ── */
+.streak-list{display:flex;flex-direction:column;gap:8px}
+.streak-item{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);transition:all .2s ease;animation:fadeUp .5s ease both}
+.streak-item:hover{background:rgba(255,255,255,.07);border-color:rgba(232,78,160,.2);transform:translateX(4px)}
+.streak-rank{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;width:28px;flex-shrink:0;text-align:center}
+.streak-rank-1{color:var(--yellow)}
+.streak-rank-2{color:#CBD5E1}
+.streak-rank-3{color:#CD7F32}
+.streak-rank-n{color:var(--text3)}
+.streak-emoji{font-size:1.2rem;flex-shrink:0}
+.streak-body{flex:1}
+.streak-name{font-size:.88rem;font-weight:600;color:var(--text)}
+.streak-section{font-size:.7rem;color:var(--text3);margin-top:2px;text-transform:capitalize}
+.streak-count{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--pink);flex-shrink:0}
+.streak-fire{font-size:.9rem;margin-left:2px}
+.streak-bar-wrap{width:80px;flex-shrink:0}
+.streak-bar-track{height:4px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.streak-bar-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:999px;transition:width 1s ease}
+
+/* ── Month trend ── */
+.trend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.trend-month{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:16px 14px;text-align:center;transition:all .2s ease;cursor:default}
+.trend-month:hover{background:rgba(255,255,255,.07);border-color:rgba(232,78,160,.25);transform:translateY(-2px)}
+.trend-month-name{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px}
+.trend-ring{margin:0 auto 10px;position:relative;width:64px;height:64px}
+.trend-ring svg{transform:rotate(-90deg)}
+.trend-ring-track{fill:none;stroke:rgba(255,255,255,.07)}
+.trend-ring-fill{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)}
+.trend-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.trend-pct{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:var(--text);line-height:1}
+.trend-days{font-size:.58rem;color:var(--text3);margin-top:1px}
+.trend-bar-row{display:flex;gap:2px;justify-content:center;flex-wrap:wrap}
+.trend-day-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.1)}
+.trend-day-dot.done{background:var(--mint)}
+.trend-day-dot.partial{background:var(--yellow)}
+.trend-delta{font-size:.7rem;margin-top:8px;font-weight:700}
+.trend-up{color:var(--mint)}
+.trend-down{color:var(--pink2)}
+.trend-same{color:var(--text3)}
+
+/* ── Enid insight card ── */
+.insight-card{background:linear-gradient(135deg,rgba(232,78,160,.12),rgba(168,85,247,.10));border:1.5px solid rgba(232,78,160,.25);border-radius:20px;padding:24px 28px;display:flex;gap:18px;align-items:flex-start;margin-bottom:32px;animation:fadeUp .6s .15s ease both}
+.insight-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;box-shadow:0 0 20px rgba(232,78,160,.3);animation:glow 3s ease infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(232,78,160,.3)}50%{box-shadow:0 0 35px rgba(232,78,160,.5)}}
+.insight-body{}
+.insight-from{font-family:'Dancing Script',cursive;font-size:.88rem;color:rgba(232,78,160,.7);margin-bottom:5px}
+.insight-text{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--text);line-height:1.6}
+
+/* ── Two col grid ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:32px 0 12px;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:40px;color:var(--text3);font-style:italic;font-size:.88rem}
+
+@media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr}}
+@media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}.bar-habit-name{width:130px}}
+@media(max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Your Growth Story 🐺</div>
+      <div class="title">Habit <em>Analytics</em></div>
+      <div class="subtitle">Every check mark you've ever made — visualized 💜</div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="back-btn">← Back to Tracker</a>
+      <button class="range-btn active" onclick="setRange('all',this)">All Time</button>
+      <button class="range-btn" onclick="setRange(90,this)">90 Days</button>
+      <button class="range-btn" onclick="setRange(30,this)">30 Days</button>
+      <button class="range-btn" onclick="setRange(7,this)">7 Days</button>
+    </div>
+  </header>
+
+  <div id="mainContent">
+    <div class="loading">Loading your data... ✨🐺</div>
+  </div>
+
+  <div class="footer">every check mark is proof you showed up · keep going sparklepup 🐾💜</div>
+</div>
+
+<script>
+// ── Supabase ─────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+
+async function sbGet(table, params='') {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, {
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}
+  });
+  return res.json();
+}
+
+function getUserId() {
+  let uid = localStorage.getItem('enid_uid');
+  if (!uid) { uid='user_'+Math.random().toString(36).slice(2,10); localStorage.setItem('enid_uid',uid); }
+  return uid;
+}
+const USER_ID = getUserId();
+
+// ── Habit definitions (mirrored from tracker) ────────────────────────────────
+const ALL_HABITS = [
+  {id:'m_wakeup',  emoji:'⏰', name:'Wake up at 8AM',              section:'morning'},
+  {id:'m_nophone', emoji:'📵', name:'No phone before bed',          section:'morning'},
+  {id:'m_makebed', emoji:'🛏️',  name:'Make bed',                    section:'morning'},
+  {id:'m_stretch', emoji:'🧘', name:'Morning stretch',              section:'morning'},
+  {id:'m_washface',emoji:'💧', name:'Wash face (AM)',               section:'morning'},
+  {id:'m_teeth',   emoji:'🦷', name:'Brush teeth (AM)',             section:'morning'},
+  {id:'m_hamper',  emoji:'👕', name:'Clothes in hamper',            section:'morning'},
+  {id:'m_deodor',  emoji:'✨', name:'Deodorant',                    section:'morning'},
+  {id:'m_outfit',  emoji:'👗', name:'Fresh outfit',                 section:'morning'},
+  {id:'m_planner', emoji:'📅', name:'Planner check',                section:'morning'},
+  {id:'m_granola', emoji:'🥣', name:'Breakfast',                    section:'morning'},
+  {id:'w_clothes', emoji:'👟', name:'Change out of work clothes',   section:'afterwork'},
+  {id:'w_yoga',    emoji:'🧘', name:'Yoga',                         section:'afterwork'},
+  {id:'w_walk',    emoji:'🚶', name:'Walk',                         section:'afterwork'},
+  {id:'w_scc',     emoji:'📱', name:'SCC / AoT messages',           section:'afterwork'},
+  {id:'w_work',    emoji:'💼', name:'1hr Work Block (weekday)',      section:'afterwork'},
+  {id:'w_read',    emoji:'📖', name:'15min Reading (weekday)',       section:'afterwork'},
+  {id:'wd_bfast',  emoji:'🍳', name:'Family breakfast',             section:'weekend'},
+  {id:'wd_work',   emoji:'💼', name:'1hr Work Block (weekend)',      section:'weekend'},
+  {id:'wd_clean',  emoji:'🧹', name:'Cleanup block',                section:'weekend'},
+  {id:'wd_yoga',   emoji:'🧘', name:'30min Yoga (weekend)',          section:'weekend'},
+  {id:'wd_read',   emoji:'📖', name:'20min Reading (weekend)',       section:'weekend'},
+  {id:'e_head',    emoji:'🚗', name:'Head home 10:45PM',            section:'evening'},
+  {id:'e_home',    emoji:'🏠', name:'Home by 11PM',                 section:'evening'},
+  {id:'e_wash',    emoji:'💧', name:'Wash face (PM)',               section:'evening'},
+  {id:'e_teeth',   emoji:'🦷', name:'Brush teeth (PM)',             section:'evening'},
+  {id:'e_tvoff',   emoji:'📺', name:'TV off 11:20PM',               section:'evening'},
+  {id:'e_relax',   emoji:'📚', name:'Read/relax in bed',            section:'evening'},
+  {id:'e_lights',  emoji:'🌙', name:'Lights out 11:45PM',           section:'evening'},
+];
+const HABIT_MAP = Object.fromEntries(ALL_HABITS.map(h=>[h.id,h]));
+
+// ── State ────────────────────────────────────────────────────────────────────
+let allCompletions = []; // [{habit_id, completed_date}]
+let rangeDays = null;    // null = all time, number = last N days
+let rangeLabel = 'All Time';
+
+// ── Data loading ─────────────────────────────────────────────────────────────
+async function loadAll() {
+  const rows = await sbGet('habit_completions',
+    `?user_id=eq.${USER_ID}&select=habit_id,completed_date&order=completed_date.asc`);
+  allCompletions = rows || [];
+}
+
+function filteredCompletions() {
+  if (!rangeDays) return allCompletions;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - rangeDays);
+  const cutoffStr = fmtDate(cutoff);
+  return allCompletions.filter(r => r.completed_date >= cutoffStr);
+}
+
+function fmtDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── Analytics computations ───────────────────────────────────────────────────
+function computeStats(rows) {
+  const byDate = {};
+  rows.forEach(r => {
+    if (!byDate[r.completed_date]) byDate[r.completed_date] = new Set();
+    byDate[r.completed_date].add(r.habit_id);
+  });
+
+  const dates = Object.keys(byDate).sort();
+  const totalDays = dates.length;
+  if (totalDays === 0) return null;
+
+  // Total completions
+  const totalChecks = rows.length;
+
+  // Average daily completion
+  const dailyCounts = dates.map(d => byDate[d].size);
+  const avgDaily = dailyCounts.reduce((a,b)=>a+b,0) / totalDays;
+
+  // Best day
+  const bestDate = dates.reduce((a,b) => byDate[a].size >= byDate[b].size ? a : b);
+  const bestCount = byDate[bestDate].size;
+
+  // Current streak (consecutive days ending today or yesterday)
+  const today = fmtDate(new Date());
+  const yesterday = fmtDate(new Date(Date.now()-86400000));
+  let streak = 0;
+  let check = new Date();
+  const datesSet = new Set(dates);
+  // Start from today or yesterday
+  if (!datesSet.has(today) && !datesSet.has(yesterday)) {
+    streak = 0;
+  } else {
+    if (!datesSet.has(today)) check.setDate(check.getDate()-1);
+    while (datesSet.has(fmtDate(check))) {
+      streak++;
+      check.setDate(check.getDate()-1);
+    }
+  }
+
+  return { byDate, dates, totalDays, totalChecks, avgDaily, bestDate, bestCount, streak };
+}
+
+function computeHabitStats(rows) {
+  const byHabit = {};
+  const dateSet = new Set(rows.map(r=>r.completed_date));
+  const totalDays = dateSet.size;
+
+  rows.forEach(r => {
+    if (!byHabit[r.habit_id]) byHabit[r.habit_id] = new Set();
+    byHabit[r.habit_id].add(r.completed_date);
+  });
+
+  // For each habit compute streak
+  const allDates = [...dateSet].sort().reverse();
+  const today = fmtDate(new Date());
+
+  return Object.keys(byHabit).map(hid => {
+    const dates = [...byHabit[hid]].sort().reverse();
+    const pct = totalDays > 0 ? Math.round(dates.length / totalDays * 100) : 0;
+
+    // Streak
+    let streak = 0;
+    let check = new Date();
+    const ds = new Set(dates);
+    if (ds.has(today) || ds.has(fmtDate(new Date(Date.now()-86400000)))) {
+      if (!ds.has(today)) check.setDate(check.getDate()-1);
+      while (ds.has(fmtDate(check))) { streak++; check.setDate(check.getDate()-1); }
+    }
+
+    return { id: hid, count: dates.length, pct, streak,
+             habit: HABIT_MAP[hid] || {emoji:'⭐',name:hid,section:'custom'} };
+  }).sort((a,b) => b.pct - a.pct);
+}
+
+function computeMonthlyTrend(rows) {
+  const byMonth = {};
+  const daysByMonth = {};
+
+  rows.forEach(r => {
+    const month = r.completed_date.slice(0,7);
+    if (!byMonth[month]) byMonth[month] = new Set();
+    if (!daysByMonth[month]) daysByMonth[month] = new Set();
+    byMonth[month].add(r.habit_id+'|'+r.completed_date);
+    daysByMonth[month].add(r.completed_date);
+  });
+
+  const months = Object.keys(byMonth).sort();
+  return months.map((m,i) => {
+    const [y,mo] = m.split('-').map(Number);
+    const daysInMonth = new Date(y,mo,0).getDate();
+    const activeDays = daysByMonth[m].size;
+    const pct = Math.round(activeDays / daysInMonth * 100);
+    const prevPct = i>0 ? Math.round(daysByMonth[months[i-1]].size / new Date(Number(months[i-1].split('-')[0]), Number(months[i-1].split('-')[1]), 0).getDate() * 100) : null;
+    const delta = prevPct !== null ? pct - prevPct : null;
+    return { month: m, label: new Date(y,mo-1,1).toLocaleDateString('en-US',{month:'short',year:'2-digit'}),
+             pct, activeDays, daysInMonth, delta };
+  });
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function renderAll() {
+  const rows = filteredCompletions();
+  const stats = computeStats(rows);
+  const content = document.getElementById('mainContent');
+
+  if (!stats) {
+    content.innerHTML = `
+      <div class="insight-card">
+        <div class="insight-av">🐺</div>
+        <div class="insight-body">
+          <div class="insight-from">Your roomie says ✨</div>
+          <div class="insight-text">No data yet for this time range! Head back to the tracker and start checking off those habits. Your story starts with the first check mark. 💜</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const habitStats = computeHabitStats(rows);
+  const monthTrend = computeMonthlyTrend(rows);
+
+  // ── Enid insight ──────────────────────────────────────────────────────────
+  const topHabit = habitStats[0];
+  const struggleHabit = [...habitStats].sort((a,b)=>a.pct-b.pct)[0];
+  const insights = [
+    `You've logged <strong>${stats.totalChecks.toLocaleString()} total check marks</strong> across ${stats.totalDays} days. That's not a habit — that's a lifestyle. 🐺`,
+    `Your best habit is ${topHabit?.habit.emoji} <strong>${topHabit?.habit.name}</strong> at ${topHabit?.pct}% completion. You're literally built different for that one. 🔥`,
+    `${stats.streak > 0 ? `You're on a <strong>${stats.streak}-day active streak</strong> right now. Don't you dare break it. 🌈` : `Start a streak today — every journey starts with one day. You've got this. 💜`}`,
+    `Your average is <strong>${stats.avgDaily.toFixed(1)} habits per day</strong>. Imagine where you'll be in 6 months at this rate. ✨`,
+  ];
+  const insight = insights[new Date().getDate() % insights.length];
+
+  let html = `
+    <div class="insight-card">
+      <div class="insight-av">🐺</div>
+      <div class="insight-body">
+        <div class="insight-from">Enid's read of your data ✨</div>
+        <div class="insight-text">${insight}</div>
+      </div>
+    </div>`;
+
+  // ── Stat cards ────────────────────────────────────────────────────────────
+  const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const bestD = new Date(stats.bestDate+'T12:00:00');
+  html += `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-accent stat-accent-pink"></div>
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">${stats.totalChecks.toLocaleString()}</div>
+        <div class="stat-label">Total Check-ins</div>
+        <div class="stat-sub">across ${stats.totalDays} active days</div>
+      </div>
+      <div class="stat-card"><div class="stat-accent stat-accent-mint"></div>
+        <div class="stat-icon">📈</div>
+        <div class="stat-value">${stats.avgDaily.toFixed(1)}</div>
+        <div class="stat-label">Avg Habits / Day</div>
+        <div class="stat-sub">out of ${ALL_HABITS.length} possible</div>
+      </div>
+      <div class="stat-card"><div class="stat-accent stat-accent-yellow"></div>
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">${stats.streak}</div>
+        <div class="stat-label">Current Streak</div>
+        <div class="stat-sub">${stats.streak>0?'consecutive days':'start one today!'}</div>
+      </div>
+      <div class="stat-card"><div class="stat-accent stat-accent-purple"></div>
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">${stats.bestCount}</div>
+        <div class="stat-label">Best Single Day</div>
+        <div class="stat-sub">${MONTHS_SHORT[bestD.getMonth()]} ${bestD.getDate()}, ${bestD.getFullYear()}</div>
+      </div>
+    </div>`;
+
+  // ── Heatmap ───────────────────────────────────────────────────────────────
+  html += `<div class="section-title">🌸 Completion Heatmap</div>
+    <div class="card" style="animation-delay:.05s">
+      <div class="card-title">Every day you showed up — ${rangeLabel}</div>
+      <div id="heatmapContainer"></div>
+      <div class="hm-legend">
+        <span>Less</span>
+        <div class="hm-legend-cell hm-0"></div>
+        <div class="hm-legend-cell hm-1"></div>
+        <div class="hm-legend-cell hm-2"></div>
+        <div class="hm-legend-cell hm-3"></div>
+        <div class="hm-legend-cell hm-5"></div>
+        <span>More</span>
+      </div>
+    </div>`;
+
+  // ── Two col: bar chart + streak board ────────────────────────────────────
+  html += `<div class="section-title">📊 Habit Breakdown</div>
+    <div class="two-col">
+      <div class="card" style="animation-delay:.08s">
+        <div class="card-title">Completion rate per habit</div>
+        <div id="barChart"></div>
+      </div>
+      <div class="card" style="animation-delay:.12s">
+        <div class="card-title">🏆 Streak Leaderboard</div>
+        <div id="streakBoard"></div>
+      </div>
+    </div>`;
+
+  // ── Month trend ───────────────────────────────────────────────────────────
+  html += `<div class="section-title">📅 Month-Over-Month Trend</div>
+    <div class="card" style="animation-delay:.15s">
+      <div class="card-title">Active days per month (are you improving?)</div>
+      <div class="trend-grid" id="trendGrid"></div>
+    </div>`;
+
+  content.innerHTML = html;
+
+  // Now populate dynamic sections
+  renderHeatmap(stats.byDate);
+  renderBarChart(habitStats);
+  renderStreakBoard(habitStats);
+  renderTrend(monthTrend);
+}
+
+// ── Heatmap render ────────────────────────────────────────────────────────────
+function renderHeatmap(byDate) {
+  const container = document.getElementById('heatmapContainer');
+  if (!container) return;
+
+  const today = new Date();
+  // Show up to 52 weeks back
+  const weeks = rangeDays ? Math.ceil(rangeDays/7)+1 : 52;
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - (weeks*7) + 1);
+  // Align to Sunday
+  startDate.setDate(startDate.getDate() - startDate.getDay());
+
+  // Build month labels
+  const monthLabels = [];
+  let curMonth = -1, colIdx = 0;
+  const cells = [];
+  const d = new Date(startDate);
+
+  while (d <= today) {
+    const wk = Math.floor((d-startDate)/(7*86400000));
+    if (d.getMonth() !== curMonth) {
+      monthLabels.push({col: wk, label: d.toLocaleDateString('en-US',{month:'short'})});
+      curMonth = d.getMonth();
+    }
+    const dk = fmtDate(d);
+    const count = byDate[dk] ? byDate[dk].size : 0;
+    const isFuture = d > today;
+    cells.push({date:dk, count, dow:d.getDay(), isFuture, display:d.toLocaleDateString('en-US',{month:'short',day:'numeric'})});
+    d.setDate(d.getDate()+1);
+  }
+
+  const totalCols = Math.ceil(cells.length/7);
+  const DAY_LABELS = ['S','M','T','W','T','F','S'];
+
+  // Month label row
+  let monthHtml = `<div style="display:flex;margin-left:28px;margin-bottom:4px;overflow:hidden">`;
+  monthLabels.forEach((ml,i) => {
+    const nextCol = monthLabels[i+1]?.col ?? totalCols;
+    const width = (nextCol - ml.col) * 18;
+    monthHtml += `<div style="min-width:${width}px;font-size:.62rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">${ml.label}</div>`;
+  });
+  monthHtml += `</div>`;
+
+  // Grid
+  let gridHtml = `<div style="display:flex;gap:0">
+    <div style="display:grid;grid-template-rows:repeat(7,14px);gap:4px;margin-right:8px;padding-top:0">
+      ${DAY_LABELS.map(l=>`<div style="font-size:.6rem;color:var(--text3);line-height:14px;font-weight:600;width:16px">${l}</div>`).join('')}
+    </div>
+    <div class="heatmap-wrap"><div class="heatmap-grid" style="grid-template-rows:repeat(7,14px)">`;
+
+  cells.forEach(c => {
+    if (c.isFuture) { gridHtml += `<div class="hm-cell hm-0"></div>`; return; }
+    const level = c.count === 0 ? 0 : c.count <= 3 ? 1 : c.count <= 6 ? 2 : c.count <= 10 ? 3 : c.count <= 15 ? 4 : 5;
+    gridHtml += `<div class="hm-cell hm-${level}" data-tip="${c.display}: ${c.count} habits"></div>`;
+  });
+
+  gridHtml += `</div></div></div>`;
+  container.innerHTML = monthHtml + gridHtml;
+}
+
+// ── Bar chart render ──────────────────────────────────────────────────────────
+function renderBarChart(habitStats) {
+  const el = document.getElementById('barChart');
+  if (!el) return;
+  if (habitStats.length === 0) { el.innerHTML='<div class="empty">No habit data yet 🌸</div>'; return; }
+
+  const maxStreak = Math.max(...habitStats.map(h=>h.streak),1);
+  let html = '<div class="bar-chart">';
+  habitStats.forEach(h => {
+    const tier = h.pct>=80?'excellent':h.pct>=60?'good':h.pct>=40?'okay':'struggle';
+    const label = h.pct>=80?'🌟':h.pct>=60?'💙':h.pct>=40?'💛':'💪';
+    html += `
+      <div class="bar-row ${`bar-${tier}`}">
+        <div class="bar-habit-name" title="${h.habit.name}">${h.habit.emoji} ${h.habit.name}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${h.pct}%"></div>
+        </div>
+        <div class="bar-pct">${h.pct}%</div>
+        <div class="bar-streak">${h.streak>0?`${h.streak}d 🔥`:''}</div>
+      </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── Streak leaderboard render ─────────────────────────────────────────────────
+function renderStreakBoard(habitStats) {
+  const el = document.getElementById('streakBoard');
+  if (!el) return;
+  const withStreaks = habitStats.filter(h=>h.streak>0).sort((a,b)=>b.streak-a.streak).slice(0,10);
+  if (withStreaks.length === 0) {
+    el.innerHTML='<div class="empty">Start checking habits to build streaks! 🐺</div>'; return;
+  }
+  const maxStreak = withStreaks[0].streak;
+  let html = '<div class="streak-list">';
+  withStreaks.forEach((h,i) => {
+    const rankClass = i===0?'streak-rank-1':i===1?'streak-rank-2':i===2?'streak-rank-3':'streak-rank-n';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    html += `
+      <div class="streak-item" style="animation-delay:${i*.05}s">
+        <div class="streak-rank ${rankClass}">${medal}</div>
+        <div class="streak-emoji">${h.habit.emoji}</div>
+        <div class="streak-body">
+          <div class="streak-name">${h.habit.name}</div>
+          <div class="streak-section">${h.habit.section}</div>
+        </div>
+        <div class="streak-bar-wrap">
+          <div class="streak-bar-track">
+            <div class="streak-bar-fill" style="width:${Math.round(h.streak/maxStreak*100)}%"></div>
+          </div>
+        </div>
+        <div class="streak-count">${h.streak}<span class="streak-fire">🔥</span></div>
+      </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── Monthly trend render ──────────────────────────────────────────────────────
+function renderTrend(months) {
+  const el = document.getElementById('trendGrid');
+  if (!el) return;
+  if (months.length === 0) { el.innerHTML='<div class="empty">Not enough data yet — keep going! 🌸</div>'; return; }
+
+  let html = '';
+  months.forEach(m => {
+    const circ = 2 * Math.PI * 26; // r=26
+    const offset = circ - (m.pct/100)*circ;
+    const color = m.pct>=80?'var(--mint)':m.pct>=60?'var(--sky)':m.pct>=40?'var(--yellow)':'var(--pink)';
+    const deltaHtml = m.delta===null?'':m.delta>0?`<div class="trend-delta trend-up">↑ ${m.delta}%</div>`:m.delta<0?`<div class="trend-delta trend-down">↓ ${Math.abs(m.delta)}%</div>`:`<div class="trend-delta trend-same">→ same</div>`;
+    html += `
+      <div class="trend-month">
+        <div class="trend-month-name">${m.label}</div>
+        <div class="trend-ring">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle class="trend-ring-track" cx="32" cy="32" r="26" stroke-width="5"/>
+            <circle class="trend-ring-fill" cx="32" cy="32" r="26" stroke-width="5"
+              stroke="${color}"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${offset}"
+              style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/>
+          </svg>
+          <div class="trend-ring-text">
+            <div class="trend-pct">${m.pct}%</div>
+            <div class="trend-days">${m.activeDays}d</div>
+          </div>
+        </div>
+        ${deltaHtml}
+      </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ── Range switching ───────────────────────────────────────────────────────────
+function setRange(range, btn) {
+  document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  rangeDays = range === 'all' ? null : range;
+  rangeLabel = range === 'all' ? 'All Time' : `Last ${range} Days`;
+  renderAll();
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  await loadAll();
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>

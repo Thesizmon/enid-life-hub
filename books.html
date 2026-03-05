@@ -369,12 +369,7 @@ async function sbDelete(table, params) {
   return r.ok;
 }
 
-function getUserId(){
-  let uid=localStorage.getItem('enid_uid');
-  if(!uid){uid='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('enid_uid',uid);}
-  return uid;
-}
-const USER_ID = getUserId();
+const USER_ID = 'Enid'; // 🐺 hardcoded — single user forever
 
 // ── Open Library ──────────────────────────────────────────────────────────────
 const OL = 'https://openlibrary.org';

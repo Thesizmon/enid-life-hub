@@ -259,6 +259,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
   .rh-bar{width:64px}
   .rh-plabel{font-size:.6rem}
 }
+
 </style>
 </head>
 <body>
@@ -347,12 +348,7 @@ async function sb(method, table, body=null, params='') {
 // ── User identity — persisted locally, used as DB key ───────────────────────
 // Not auth — just a stable anonymous ID so data is yours across devices
 // Share this ID on other devices by copying it from Settings
-function getUserId() {
-  let uid = localStorage.getItem('enid_uid');
-  if (!uid) { uid = 'user_' + Math.random().toString(36).slice(2,10); localStorage.setItem('enid_uid', uid); }
-  return uid;
-}
-const USER_ID = getUserId();
+const USER_ID = 'Enid'; // 🐺 hardcoded — single user forever
 
 // ── Habit data definitions ───────────────────────────────────────────────────
 const MORNING_QUOTES = [
@@ -1005,14 +1001,8 @@ function updateHeader() {
 
 // ── Settings chip: copy/share User ID ───────────────────────────────────────
 function showUID() {
-  prompt('🐺 Your User ID (copy this to use the app on another device!):', USER_ID);
+  
 }
-function loadUID() {
-  const uid=prompt('🐺 Paste your User ID from another device:');
-  if (uid&&uid.trim().startsWith('user_')) {
-    localStorage.setItem('enid_uid', uid.trim());
-    location.reload();
-  } else { alert('Hmm that doesn\'t look right! Make sure you copied the full ID 💜'); }
 }
 
 // ── Note modal ────────────────────────────────────────────────────────────────
@@ -1372,7 +1362,7 @@ async function saveReadingLog() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user_id: getUserId(),
+        user_id: USER_ID,
         book_id: bookId,
         session_date: fmtDate(viewDate),
         pages_read: pages,

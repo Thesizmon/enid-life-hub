@@ -331,12 +331,7 @@ async function sbGet(table, params='') {
   return res.json();
 }
 
-function getUserId() {
-  let uid = localStorage.getItem('enid_uid');
-  if (!uid) { uid='user_'+Math.random().toString(36).slice(2,10); localStorage.setItem('enid_uid',uid); }
-  return uid;
-}
-const USER_ID = getUserId();
+const USER_ID = 'Enid'; // 🐺 hardcoded — single user forever
 
 // ── Habit definitions (mirrored from tracker) ────────────────────────────────
 const ALL_HABITS = [

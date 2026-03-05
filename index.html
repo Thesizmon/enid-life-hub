@@ -999,12 +999,6 @@ function updateHeader() {
   document.getElementById('streakChip').textContent=`🔥 Best streak: ${best} days`;
 }
 
-// ── Settings chip: copy/share User ID ───────────────────────────────────────
-function showUID() {
-  
-}
-}
-
 // ── Note modal ────────────────────────────────────────────────────────────────
 let pendingNoteId = null; // DB row id of the just-checked habit completion
 
@@ -1456,8 +1450,6 @@ async function init() {
     updateHeader();
   });
 }
-init();
-</script>
   { text:"Rise and grind, sparklepup!! The version of you who has her life together does these things every morning. Be her today.", sig:"— your roomie, fully caffeinated 🌅🐺" },
   { text:"Every morning you complete this list is a vote for the life you're building. Cast that vote today. Even if it's hard. Especially then.", sig:"— Enid, sunrise hype squad 🌸✨" },
   { text:"Good morning!! You don't have to be a morning person to OWN the morning. Just start. One thing. Then another. That's the whole secret.", sig:"— your roomie who believes in you 🐾💜" },
@@ -1513,6 +1505,7 @@ const EVENING_HABITS = [
   {id:'e_lights', emoji:'🌙', name:'Lights out at 11:45PM',          note:'You did the day. Now rest.', time:'11:45 PM'},
 ];
 
+init();
 </script>
 <!-- Notification permission banner -->
 <div id="notifBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;width:calc(100% - 40px);max-width:500px">

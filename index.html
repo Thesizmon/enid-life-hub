@@ -51,7 +51,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .date-chip{background:var(--card-bg);border:1.5px solid rgba(168,85,247,.15);border-radius:999px;padding:8px 16px;font-size:.8rem;color:var(--text-soft);font-weight:500;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
 .streak-chip{background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:999px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(232,78,160,.25);animation:glow 3s ease infinite;white-space:nowrap}
+.chip-row{display:flex;gap:10px;flex-wrap:wrap;margin:-8px 0 18px}
 @media(max-width:600px){
+  .chip-row{flex-direction:column;gap:8px}
   .date-chip,.streak-chip{width:100%;justify-content:center;text-align:center;display:flex;box-sizing:border-box}
 }
 @keyframes glow{0%,100%{box-shadow:0 4px 14px rgba(232,78,160,.25)}50%{box-shadow:0 4px 22px rgba(232,78,160,.45)}}
@@ -332,10 +334,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(200,133,58,.25);background:rgba(200,133,58,.08);color:#E8A855;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(200,133,58,.18)';this.style.borderColor='rgba(200,133,58,.5)'" onmouseout="this.style.background='rgba(200,133,58,.08)';this.style.borderColor='rgba(200,133,58,.25)'">📚 Books</a>
       <a href="calendar.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(56,189,248,.25);background:rgba(56,189,248,.08);color:#38BDF8;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(56,189,248,.18)';this.style.borderColor='rgba(56,189,248,.5)'" onmouseout="this.style.background='rgba(56,189,248,.08)';this.style.borderColor='rgba(56,189,248,.25)'">📅 Calendar</a>
       <button onclick="openNotifSettings()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:rgba(168,85,247,.07);color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--purple-soft)';this.style.color='var(--purple-soft)'" onmouseout="this.style.borderColor='rgba(168,85,247,.2)';this.style.color='var(--text-soft)'">🔔</button>
-      <div class="date-chip" id="dateChip"></div>
-      <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
     </div>
   </header>
+  <div class="chip-row">
+    <div class="date-chip" id="dateChip"></div>
+    <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
+  </div>
 
   <div class="pep-card">
     <div class="pep-avatar">🐺</div>

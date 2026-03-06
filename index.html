@@ -294,6 +294,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <a href="finance.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(29,185,84,.25);background:rgba(29,185,84,.08);color:#4ADE80;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(29,185,84,.18)';this.style.borderColor='rgba(29,185,84,.5)'" onmouseout="this.style.background='rgba(29,185,84,.08)';this.style.borderColor='rgba(29,185,84,.25)'">💰 Finance</a>
       <a href="movies.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(232,35,42,.25);background:rgba(232,35,42,.08);color:#FF5555;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(232,35,42,.18)';this.style.borderColor='rgba(232,35,42,.5)'" onmouseout="this.style.background='rgba(232,35,42,.08)';this.style.borderColor='rgba(232,35,42,.25)'">🎬 Movies</a>
       <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(200,133,58,.25);background:rgba(200,133,58,.08);color:#E8A855;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(200,133,58,.18)';this.style.borderColor='rgba(200,133,58,.5)'" onmouseout="this.style.background='rgba(200,133,58,.08)';this.style.borderColor='rgba(200,133,58,.25)'">📚 Books</a>
+      <a href="calendar.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(56,189,248,.25);background:rgba(56,189,248,.08);color:#38BDF8;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(56,189,248,.18)';this.style.borderColor='rgba(56,189,248,.5)'" onmouseout="this.style.background='rgba(56,189,248,.08)';this.style.borderColor='rgba(56,189,248,.25)'">📅 Calendar</a>
       <button onclick="openNotifSettings()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:rgba(168,85,247,.07);color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--purple-soft)';this.style.color='var(--purple-soft)'" onmouseout="this.style.borderColor='rgba(168,85,247,.2)';this.style.color='var(--text-soft)'">🔔</button>
       <div class="date-chip" id="dateChip"></div>
       <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
@@ -314,6 +315,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 
   <!-- Book widget — shows currently reading books -->
   <div id="bookWidget"></div>
+
+  <!-- Calendar widget — shows upcoming events -->
+  <div id="calendarWidget"></div>
 
   <div class="day-nav" id="dayNav"></div>
 
@@ -985,6 +989,12 @@ async function buildDayNav() {
     btn.onclick=async()=>{ viewDate=new Date(d); showLoading(true); await loadDayData(); showLoading(false); buildDayNav(); render(); updateHeader(); };
     nav.appendChild(btn);
   }
+
+  // Auto-scroll so today (the active button) is always visible on load
+  const activeBtn = nav.querySelector('.day-btn.active');
+  if (activeBtn) {
+    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
 }
 
 function updateHeader() {
@@ -1422,12 +1432,63 @@ function renderBookWidget() {
     </div>`;
 }
 
+// ── Calendar Widget ───────────────────────────────────────────────────────────
+function renderCalendarWidget() {
+  const el = document.getElementById('calendarWidget');
+  if (!el) return;
+  const events = JSON.parse(localStorage.getItem('enid_calendar_widget')||'[]');
+  if (!events.length) { el.innerHTML = ''; return; }
+
+  const TYPE_COLOR = {
+    event:'rgba(232,78,160,.85)', deadline:'rgba(245,200,66,.85)',
+    appointment:'rgba(52,211,153,.85)', birthday:'rgba(168,85,247,.85)',
+    reminder:'rgba(56,189,248,.85)'
+  };
+  const TYPE_EMOJI = { event:'🎳', deadline:'⚡', appointment:'🏥', birthday:'🎂', reminder:'📌' };
+  const todayDateStr = (()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+
+  el.innerHTML = `
+    <div class="movie-widget" style="border-color:rgba(56,189,248,.25);background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(168,85,247,.04))">
+      <div class="mw-header">
+        <span style="font-size:1.2rem">📅</span>
+        <span class="mw-title" style="font-family:'Dancing Script',cursive;font-size:1rem">Coming Up</span>
+        <a href="calendar.html" target="_blank" class="mw-sub" style="text-decoration:none;color:var(--text-soft)">open calendar →</a>
+      </div>
+      <div class="mw-list">
+        ${events.slice(0,4).map(ev => {
+          const isToday = ev._onDate === todayDateStr;
+          const d = new Date(ev._onDate + 'T12:00:00');
+          const dateLabel = isToday ? '🗓 TODAY' : d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+          const color = TYPE_COLOR[ev.type] || TYPE_COLOR.event;
+          const emoji = TYPE_EMOJI[ev.type] || '📅';
+          const timeStr = ev.time ? fmtWidgetTime(ev.time) : '';
+          return `
+            <a class="mw-item" href="calendar.html" target="_blank" style="border-color:rgba(56,189,248,.15)">
+              <div style="width:36px;height:36px;border-radius:8px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${emoji}</div>
+              <div class="mw-info">
+                <div class="mw-movie-title">${ev.title}</div>
+                <div class="mw-when" style="color:${color}">${dateLabel}</div>
+                ${timeStr ? `<div class="mw-where">${timeStr}</div>` : ''}
+              </div>
+            </a>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function fmtWidgetTime(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':'); const hr = parseInt(h);
+  return `${hr>12?hr-12:hr||12}:${m}${hr>=12?'PM':'AM'}`;
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   updateHeader();
   setPepQuote();
   renderMovieWidget();
   renderBookWidget();
+  renderCalendarWidget();
   registerSW();
   checkNotifBanner();
   showLoading(true);

@@ -58,11 +58,11 @@ body::after{
 /* ── Search bar ── */
 .search-zone{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:20px;margin-bottom:32px;animation:fadeUp .5s .1s ease both}
 .search-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--red);font-family:var(--mono);margin-bottom:10px}
-.search-row{display:flex;gap:10px}
+.search-row{display:flex;gap:10px;align-items:stretch}
 .search-input{flex:1;background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:10px;padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none;transition:all .2s}
 .search-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px var(--red-dim)}
 .search-input::placeholder{color:var(--text3)}
-.search-btn{background:linear-gradient(135deg,var(--red),#C01820);border:none;border-radius:10px;padding:11px 22px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.search-btn{background:linear-gradient(135deg,var(--red),#C01820);border:none;border-radius:10px;padding:12px 26px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap;flex-shrink:0}
 .search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--red-glow)}
 .search-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
@@ -201,6 +201,11 @@ body::after{
 .enid-loader-text{font-family:'Dancing Script',cursive;font-size:1.15rem;color:rgba(255,255,255,.9);text-align:center;animation:loaderFade 1.9s ease-in-out infinite}
 @keyframes loaderFade{0%,100%{opacity:.5}50%{opacity:1}}
 
+
+/* ── Nav scrollable strip ── */
+.nav-scroll-row{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.nav-scroll-row::-webkit-scrollbar{display:none}
+@media(min-width:768px){.nav-scroll-row{flex-wrap:wrap;overflow-x:visible}}
 </style>
 </head>
 <body>
@@ -258,7 +263,7 @@ body::after{
 
     <div class="header-nav" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 0;animation:fadeDown .5s ease both">
     <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1.5px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);color:#EF4444;font-size:.78rem;font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">← Tracker</a>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <div class="nav-scroll-row">
       <a href="analytics.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:#9CA3AF;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📊 Analytics</a>
       <a href="badges.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:#9CA3AF;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">🏆 Badges</a>
       <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:#9CA3AF;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📚 Books</a>

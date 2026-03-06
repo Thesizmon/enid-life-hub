@@ -367,6 +367,11 @@ body::after{
 .enid-loader-text{font-family:'Dancing Script',cursive;font-size:1.15rem;color:rgba(255,255,255,.9);text-align:center;animation:loaderFade 1.9s ease-in-out infinite}
 @keyframes loaderFade{0%,100%{opacity:.5}50%{opacity:1}}
 
+
+/* ── Nav scrollable strip ── */
+.nav-scroll-row{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.nav-scroll-row::-webkit-scrollbar{display:none}
+@media(min-width:768px){.nav-scroll-row{flex-wrap:wrap;overflow-x:visible}}
 </style>
 </head>
 <body>
@@ -424,7 +429,7 @@ body::after{
 
     <div class="header-nav" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 0;animation:fadeDown .5s ease both">
     <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1.5px solid rgba(29,185,84,.25);background:rgba(29,185,84,.08);color:#4ADE80;font-size:.78rem;font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">← Tracker</a>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <div class="nav-scroll-row">
       <a href="analytics.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📊 Analytics</a>
       <a href="badges.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">🏆 Badges</a>
       <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📚 Books</a>

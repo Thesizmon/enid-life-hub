@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Badge Toast Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(135deg,#1a0e2e 0%,#0e1a2e 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'DM Sans',sans-serif;padding:40px 20px}
+
+h2{color:rgba(255,255,255,.5);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+
+/* ── Badge Toast ── */
+.badge-toast{width:100%;max-width:380px;position:relative}
+.bt-inner{background:linear-gradient(135deg,#FDE8F4 0%,#F0E6FF 50%,#E6F4FF 100%);border:2px solid rgba(232,78,160,.25);border-radius:22px;padding:16px 20px;box-shadow:0 8px 40px rgba(168,85,247,.18),0 2px 12px rgba(232,78,160,.12);display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.bt-glow{position:absolute;inset:0;border-radius:22px;background:linear-gradient(135deg,rgba(249,168,212,.15),rgba(196,181,253,.1),rgba(147,197,253,.08));pointer-events:none}
+.bt-emoji{font-size:2rem;flex-shrink:0;animation:btBounce 1s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes btBounce{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.bt-body{flex:1;min-width:0}
+.bt-eyebrow{font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(168,85,247,.7);margin-bottom:2px}
+.bt-name{font-size:.95rem;font-weight:800;color:#2D1B4E;line-height:1.2;margin-bottom:3px}
+.bt-desc{font-size:.72rem;color:rgba(93,63,140,.7);font-style:italic}
+.bt-tier{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:rgba(255,255,255,.6);border:1.5px solid rgba(168,85,247,.2)}
+.bt-paws{position:absolute;bottom:8px;right:14px;font-size:.7rem;opacity:.35;letter-spacing:2px}
+.bt-paws span{animation:btShimmer 1.5s ease infinite}
+.bt-paws span:nth-child(2){animation-delay:.3s}
+.bt-paws span:nth-child(3){animation-delay:.6s}
+.bt-paws span:nth-child(4){animation-delay:.9s}
+@keyframes btShimmer{0%,100%{opacity:.3}50%{opacity:.9}}
+
+/* Slide-in animation for demo */
+.demo-enter{animation:slideDown .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes slideDown{0%{transform:translateY(-30px);opacity:0}100%{transform:translateY(0);opacity:1}}
+
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.demo-btn{padding:10px 22px;border-radius:999px;border:1.5px solid rgba(232,78,160,.3);background:rgba(232,78,160,.08);color:#F9A8D4;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s}
+.demo-btn:hover{background:rgba(232,78,160,.18);transform:translateY(-1px)}
+
+.label{color:rgba(255,255,255,.35);font-size:.7rem;text-align:center;margin-top:6px;font-style:italic}
+</style>
+</head>
+<body>
+
+<h2>🐺 Badge Unlock Toast — Preview</h2>
+
+<div id="toastContainer"></div>
+
+<div class="btn-row">
+  <button class="demo-btn" onclick="show('streak')">🔥 Streak Badge</button>
+  <button class="demo-btn" onclick="show('checkins')">✅ Check-in Badge</button>
+  <button class="demo-btn" onclick="show('legendary')">👑 Legendary Badge</button>
+  <button class="demo-btn" onclick="show('platinum')">💎 Platinum Badge</button>
+</div>
+<div class="label">Click any button to preview the toast!!</div>
+
+<script>
+const BADGES = {
+  streak: {
+    emoji:'🔥', name:'First Blood 🔥',
+    desc:'7 consecutive days of habit logging',
+    tier:'🥉', label:'streak badge · bronze'
+  },
+  checkins: {
+    emoji:'✅', name:'Getting Serious',
+    desc:'50 check-ins — you mean it now',
+    tier:'🥈', label:'check-in badge · silver'
+  },
+  legendary: {
+    emoji:'👑', name:'Century Legend',
+    desc:'100 days — one hundred days of you',
+    tier:'👑', label:'streak badge · legendary'
+  },
+  platinum: {
+    emoji:'💎', name:'Unstoppable Force',
+    desc:'60 days — two months of pure discipline',
+    tier:'💎', label:'streak badge · platinum'
+  },
+};
+
+let current = null;
+
+function show(key) {
+  const b = BADGES[key];
+  const container = document.getElementById('toastContainer');
+
+  // Remove existing
+  if (current) { current.remove(); current = null; }
+
+  const el = document.createElement('div');
+  el.className = 'badge-toast demo-enter';
+  el.innerHTML = `
+    <div class="bt-inner">
+      <div class="bt-glow"></div>
+      <div class="bt-emoji">${b.emoji}</div>
+      <div class="bt-body">
+        <div class="bt-eyebrow">🐺 new badge unlocked!!</div>
+        <div class="bt-name">${b.name}</div>
+        <div class="bt-desc">${b.desc}</div>
+      </div>
+      <div class="bt-tier">${b.tier}</div>
+      <div class="bt-paws"><span>🐾</span><span>🐾</span><span>🐾</span><span>🐾</span></div>
+    </div>`;
+
+  container.appendChild(el);
+  current = el;
+}
+
+// Show first one automatically on load
+show('streak');
+</script>
+</body>
+</html>

@@ -293,6 +293,53 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .enid-loader-text{font-family:'Dancing Script',cursive;font-size:1.15rem;color:rgba(255,255,255,.9);text-align:center;animation:loaderFade 1.9s ease-in-out infinite}
 @keyframes loaderFade{0%,100%{opacity:.5}50%{opacity:1}}
 
+
+/* ══ Today at a Glance ══ */
+.glance-card{background:linear-gradient(135deg,rgba(168,85,247,.07) 0%,rgba(232,78,160,.05) 50%,rgba(56,189,248,.04) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:20px;padding:18px 20px;margin-bottom:20px;animation:fadeUp .5s .08s ease both;position:relative;overflow:hidden}
+.glance-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.08),transparent 70%);pointer-events:none}
+.glance-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.glance-title{font-family:'Dancing Script',cursive;font-size:1.05rem;font-weight:700;color:var(--purple-soft)}
+.glance-date{font-size:.68rem;color:var(--text-soft);font-family:var(--mono)}
+.glance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:500px){.glance-grid{grid-template-columns:repeat(2,1fr)}}
+.glance-tile{background:rgba(255,255,255,.04);border:1px solid rgba(168,85,247,.1);border-radius:13px;padding:11px 10px;text-align:center;transition:all .2s}
+.glance-tile:hover{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.25)}
+.glance-tile-emoji{font-size:1.25rem;margin-bottom:5px}
+.glance-tile-val{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px}
+.glance-tile-label{font-size:.6rem;color:var(--text-soft);text-transform:uppercase;letter-spacing:.09em;font-weight:600}
+.glance-tile-sub{font-size:.62rem;color:var(--text-light);margin-top:2px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.glance-tile.highlight{border-color:rgba(232,78,160,.25);background:rgba(232,78,160,.06)}
+.glance-tile.highlight .glance-tile-val{color:var(--pink)}
+
+/* ══ Weekly Review Banner ══ */
+.review-banner{background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(232,78,160,.08));border:1.5px solid rgba(168,85,247,.28);border-radius:18px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;animation:fadeUp .5s ease both;position:relative;overflow:hidden}
+.review-banner::after{content:'🌸';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:2.4rem;opacity:.12;pointer-events:none}
+.rb-emoji{font-size:1.8rem;flex-shrink:0}
+.rb-body{flex:1;min-width:0}
+.rb-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.rb-sub{font-size:.76rem;color:var(--text-soft);line-height:1.4}
+.rb-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--purple-soft),var(--pink));color:#fff;font-size:.76rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .2s;text-decoration:none}
+.rb-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(168,85,247,.3)}
+@media(max-width:500px){.review-banner{flex-wrap:wrap}.rb-btn{width:100%;justify-content:center}}
+
+/* ══ Badge Unlock Toast ══ */
+.badge-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:9000;min-width:300px;max-width:92vw;pointer-events:none;transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .45s ease}
+.badge-toast.visible{transform:translateX(-50%) translateY(0);pointer-events:all}
+.bt-inner{background:linear-gradient(135deg,#FDE8F4 0%,#F0E6FF 50%,#E6F4FF 100%);border:2px solid rgba(232,78,160,.25);border-radius:22px;padding:16px 20px;box-shadow:0 8px 40px rgba(168,85,247,.18),0 2px 12px rgba(232,78,160,.12);display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif}
+.bt-glow{position:absolute;inset:0;border-radius:22px;background:linear-gradient(135deg,rgba(249,168,212,.15),rgba(196,181,253,.1),rgba(147,197,253,.08));pointer-events:none}
+.bt-emoji{font-size:2rem;flex-shrink:0;animation:btBounce 1s cubic-bezier(.34,1.56,.64,1) .2s both}
+@keyframes btBounce{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.bt-body{flex:1;min-width:0}
+.bt-eyebrow{font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(168,85,247,.7);margin-bottom:2px}
+.bt-name{font-size:.95rem;font-weight:800;color:#2D1B4E;line-height:1.2;margin-bottom:3px}
+.bt-desc{font-size:.72rem;color:rgba(93,63,140,.7);font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bt-tier{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:rgba(255,255,255,.6);border:1.5px solid rgba(168,85,247,.2)}
+.bt-paws{position:absolute;bottom:8px;right:14px;font-size:.7rem;opacity:.4;letter-spacing:2px}
+@keyframes btShimmer{0%,100%{opacity:.4}50%{opacity:.9}}
+.bt-paws span{animation:btShimmer 1.5s ease infinite}
+.bt-paws span:nth-child(2){animation-delay:.3s}
+.bt-paws span:nth-child(3){animation-delay:.6s}
+.bt-paws span:nth-child(4){animation-delay:.9s}
 </style>
 </head>
 <body>
@@ -339,6 +386,25 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
   <div class="chip-row">
     <div class="date-chip" id="dateChip"></div>
     <div class="streak-chip" id="streakChip">🔥 0 day streak</div>
+  </div>
+
+  <!-- Weekly Review Banner — Sundays only -->
+  <div class="review-banner" id="reviewBanner" style="display:none">
+    <div class="rb-emoji">📓</div>
+    <div class="rb-body">
+      <div class="rb-title">Weekly review time, roomie!! 🌸</div>
+      <div class="rb-sub" id="rbSub">It's Sunday — the perfect moment to look back at your week and write a little reflection. How did you do? What felt good? What do you want to do differently?</div>
+    </div>
+    <a href="journal.html" target="_blank" class="rb-btn">Write reflection →</a>
+  </div>
+
+  <!-- Today at a Glance -->
+  <div class="glance-card" id="glanceCard">
+    <div class="glance-header">
+      <span class="glance-title">✨ Today at a Glance</span>
+      <span class="glance-date" id="glanceDate"></span>
+    </div>
+    <div class="glance-grid" id="glanceGrid"></div>
   </div>
 
   <div class="pep-card">
@@ -895,6 +961,8 @@ function render() {
   (customHabits.evening||[]).forEach(h=>appendHabitItem(eList,h,'evening','evening'));
 
   updateSummary();
+  renderGlance();
+  renderWeeklyReview();
 }
 
 function appendHabitItem(listEl,h,blockClass,section) {
@@ -944,6 +1012,7 @@ function appendHabitItem(listEl,h,blockClass,section) {
     else div.classList.remove('done');
     div.style.pointerEvents='';
     await loadStreaks();
+    checkBadgesAfterToggle();
     render();
     buildDayNav();
   };
@@ -1011,6 +1080,133 @@ function updateSummary() {
   document.getElementById('sEve').textContent=`${eDone}/${EVENING_HABITS.length}`;
   document.getElementById('sTotal').textContent=pct+'%';
   document.getElementById('sTotalLabel').textContent=pct===100?'🎉 PERFECT!':pct>=66?'Crushing it 🔥':pct>=33?'Keep going 💜':'You got this 🐺';
+}
+
+// ── Today at a Glance ────────────────────────────────────────────────────────
+function renderGlance() {
+  const grid = document.getElementById('glanceGrid');
+  const dateEl = document.getElementById('glanceDate');
+  if (!grid) return;
+
+  // Date label
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  dateEl.textContent = `${DAYS[NOW.getDay()]}, ${MONTHS[NOW.getMonth()]} ${NOW.getDate()}`;
+
+  // 1. Habits done today
+  const weekend = isWeekend(NOW);
+  const mHabits = MORNING_HABITS_WEEKDAY.filter(h=>!h.weekdayOnly||!weekend);
+  const midHabits = weekend ? WEEKEND_HABITS : POSTWORK_HABITS.filter(h=>!h.orGroup);
+  const allToday = [...mHabits, ...midHabits, ...EVENING_HABITS];
+  const doneTodayCount = allToday.filter(h=>dayCompletions.has(h.id)).length;
+  const totalToday = allToday.length;
+  const pct = totalToday ? Math.round(doneTodayCount/totalToday*100) : 0;
+
+  // 2. Current streak
+  const bestStreak = Math.max(0, ...Object.values(streakCache), 0);
+
+  // 3. Currently reading book (first one from widget)
+  const books = JSON.parse(localStorage.getItem('enid_books_widget')||'[]');
+  const currentBook = books[0] || null;
+
+  // 4. Next calendar event
+  const events = JSON.parse(localStorage.getItem('enid_calendar_widget')||'[]');
+  const todayStr2 = fmtDate(NOW);
+  const todayEvents = events.filter(e=>e._onDate===todayStr2);
+  const nextEvent = todayEvents[0] || events[0] || null;
+
+  // 5. Bills due this week — skip (finance out of scope)
+
+  const tiles = [];
+
+  // Tile 1: Today's progress
+  tiles.push({
+    emoji: pct===100?'🎉':pct>=66?'🔥':pct>=33?'💜':'🐺',
+    val: `${doneTodayCount}/${totalToday}`,
+    label: 'Habits Today',
+    sub: pct===100?'Perfect day!!':pct+'% done',
+    highlight: pct===100,
+  });
+
+  // Tile 2: Current streak
+  tiles.push({
+    emoji: bestStreak >= 30 ? '👑' : bestStreak >= 7 ? '🔥' : '⭐',
+    val: bestStreak,
+    label: 'Day Streak',
+    sub: bestStreak===0?'Start today!':bestStreak>=7?'Keep it going!!':'Building up 💜',
+    highlight: false,
+  });
+
+  // Tile 3: Current book or invite
+  if (currentBook) {
+    const bookPct = (currentBook.totalPages && currentBook.pagesRead)
+      ? Math.round(currentBook.pagesRead/currentBook.totalPages*100) : null;
+    tiles.push({
+      emoji: '📚',
+      val: bookPct !== null ? bookPct+'%' : '📖',
+      label: 'Reading',
+      sub: currentBook.title.length > 18 ? currentBook.title.slice(0,18)+'…' : currentBook.title,
+      highlight: false,
+    });
+  } else {
+    tiles.push({
+      emoji: '📚',
+      val: '—',
+      label: 'Reading',
+      sub: 'Add a book!',
+      highlight: false,
+    });
+  }
+
+  // Tile 4: Next event or all clear
+  if (nextEvent) {
+    const TYPE_EMOJI = {event:'🎳',deadline:'⚡',appointment:'🏥',birthday:'🎂',reminder:'📌'};
+    const isToday = nextEvent._onDate === todayStr2;
+    tiles.push({
+      emoji: TYPE_EMOJI[nextEvent.type]||'📅',
+      val: isToday ? 'TODAY' : '↑ SOON',
+      label: 'Calendar',
+      sub: nextEvent.title.length > 18 ? nextEvent.title.slice(0,18)+'…' : nextEvent.title,
+      highlight: isToday,
+    });
+  } else {
+    tiles.push({
+      emoji: '📅',
+      val: '✓',
+      label: 'Calendar',
+      sub: 'All clear!',
+      highlight: false,
+    });
+  }
+
+  grid.innerHTML = tiles.map(t=>`
+    <div class="glance-tile${t.highlight?' highlight':''}">
+      <div class="glance-tile-emoji">${t.emoji}</div>
+      <div class="glance-tile-val">${t.val}</div>
+      <div class="glance-tile-label">${t.label}</div>
+      <div class="glance-tile-sub">${t.sub}</div>
+    </div>`).join('');
+}
+
+// ── Weekly Review Banner (Sundays only) ──────────────────────────────────────
+function renderWeeklyReview() {
+  const banner = document.getElementById('reviewBanner');
+  if (!banner) return;
+  const isSunday = NOW.getDay() === 0;
+  if (!isSunday) { banner.style.display='none'; return; }
+
+  // Compute this week's stats for the sub text
+  const weekend = isWeekend(NOW);
+  const allHabits = [...MORNING_HABITS_WEEKDAY, ...POSTWORK_HABITS, ...EVENING_HABITS];
+  const doneTodayCount = allHabits.filter(h=>dayCompletions.has(h.id)).length;
+  const bestStreak = Math.max(0,...Object.values(streakCache),0);
+
+  document.getElementById('rbSub').textContent =
+    `It's Sunday — the perfect moment to look back and write a little reflection. ` +
+    `You're on a ${bestStreak}-day streak. How did this week feel? ` +
+    `What do you want to carry into next week? 💜`;
+
+  banner.style.display = 'flex';
 }
 
 async function buildDayNav() {
@@ -1492,33 +1688,66 @@ function renderCalendarWidget() {
   const TYPE_EMOJI = { event:'🎳', deadline:'⚡', appointment:'🏥', birthday:'🎂', reminder:'📌' };
   const todayDateStr = (()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
 
-  el.innerHTML = `
+  const todayEvents   = events.filter(ev => ev._onDate === todayDateStr);
+  const upcomingEvents = events.filter(ev => ev._onDate !== todayDateStr);
+
+  // If there are today events, render them as a special "TODAY" widget first
+  let todayHtml = '';
+  if (todayEvents.length) {
+    const todayItems = todayEvents.map(ev => {
+      const color = TYPE_COLOR[ev.type] || TYPE_COLOR.event;
+      const emoji = TYPE_EMOJI[ev.type] || '📅';
+      const timeStr = ev.time ? fmtWidgetTime(ev.time) : '';
+      return `
+        <a class="mw-item" href="calendar.html" target="_blank" style="border-color:${color.replace('.85','.3')};background:${color.replace('.85','.06')}">
+          <div style="width:36px;height:36px;border-radius:8px;background:${color.replace('.85','.15')};border:1px solid ${color.replace('.85','.35')};display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${emoji}</div>
+          <div class="mw-info">
+            <div class="mw-movie-title">${ev.title}</div>
+            <div class="mw-when" style="color:${color}">📍 TODAY${timeStr ? ' · '+timeStr : ''}</div>
+          </div>
+        </a>`;
+    }).join('');
+    todayHtml = `
+    <div class="movie-widget" style="border-color:rgba(232,78,160,.3);background:linear-gradient(135deg,rgba(232,78,160,.08),rgba(168,85,247,.05));margin-bottom:10px">
+      <div class="mw-header">
+        <span style="font-size:1.2rem">🗓️</span>
+        <span class="mw-title" style="font-family:'Dancing Script',cursive;font-size:1rem;color:var(--pink)">Today's Events</span>
+        <a href="calendar.html" target="_blank" class="mw-sub" style="text-decoration:none;color:var(--text-soft)">open calendar →</a>
+      </div>
+      <div class="mw-list">${todayItems}</div>
+    </div>`;
+  }
+
+  // Render upcoming (non-today) events as before
+  let upcomingHtml = '';
+  if (upcomingEvents.length) {
+    const upItems = upcomingEvents.slice(0,3).map(ev => {
+      const d = new Date(ev._onDate + 'T12:00:00');
+      const dateLabel = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      const color = TYPE_COLOR[ev.type] || TYPE_COLOR.event;
+      const emoji = TYPE_EMOJI[ev.type] || '📅';
+      const timeStr = ev.time ? fmtWidgetTime(ev.time) : '';
+      return `
+        <a class="mw-item" href="calendar.html" target="_blank" style="border-color:rgba(56,189,248,.15)">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${emoji}</div>
+          <div class="mw-info">
+            <div class="mw-movie-title">${ev.title}</div>
+            <div class="mw-when" style="color:${color}">${dateLabel}${timeStr ? ' · '+timeStr : ''}</div>
+          </div>
+        </a>`;
+    }).join('');
+    upcomingHtml = `
     <div class="movie-widget" style="border-color:rgba(56,189,248,.25);background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(168,85,247,.04))">
       <div class="mw-header">
         <span style="font-size:1.2rem">📅</span>
         <span class="mw-title" style="font-family:'Dancing Script',cursive;font-size:1rem">Coming Up</span>
         <a href="calendar.html" target="_blank" class="mw-sub" style="text-decoration:none;color:var(--text-soft)">open calendar →</a>
       </div>
-      <div class="mw-list">
-        ${events.slice(0,4).map(ev => {
-          const isToday = ev._onDate === todayDateStr;
-          const d = new Date(ev._onDate + 'T12:00:00');
-          const dateLabel = isToday ? '🗓 TODAY' : d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-          const color = TYPE_COLOR[ev.type] || TYPE_COLOR.event;
-          const emoji = TYPE_EMOJI[ev.type] || '📅';
-          const timeStr = ev.time ? fmtWidgetTime(ev.time) : '';
-          return `
-            <a class="mw-item" href="calendar.html" target="_blank" style="border-color:rgba(56,189,248,.15)">
-              <div style="width:36px;height:36px;border-radius:8px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${emoji}</div>
-              <div class="mw-info">
-                <div class="mw-movie-title">${ev.title}</div>
-                <div class="mw-when" style="color:${color}">${dateLabel}</div>
-                ${timeStr ? `<div class="mw-where">${timeStr}</div>` : ''}
-              </div>
-            </a>`;
-        }).join('')}
-      </div>
+      <div class="mw-list">${upItems}</div>
     </div>`;
+  }
+
+  el.innerHTML = todayHtml + upcomingHtml;
 }
 
 function fmtWidgetTime(t) {
@@ -1541,7 +1770,8 @@ async function init() {
     `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;
   await Promise.all([loadDayData(), loadStreaks()]);
   showLoading(false);
-  render();
+  renderWeeklyReview();
+  render(); // render() also calls renderGlance + renderWeeklyReview
   buildDayNav();
 
   // ── Cross-device sync: re-fetch when app regains focus ────────────────────
@@ -1567,6 +1797,59 @@ init();
 const _LOADER_MSGS=['loading your data, sparklepup!!','fetching your stuff 🐾','almost there, glowbug!!','one sec, roomie!! 🐺','pulling it all together 💜','making magic happen ✨','hang tight, bestie!! 🌸'];
 function showEnidLoader(msg){const el=document.getElementById('enidLoader'),tx=document.getElementById('enidLoaderText');if(!el)return;if(tx)tx.textContent=msg||_LOADER_MSGS[Math.floor(Math.random()*_LOADER_MSGS.length)];el.classList.add('visible');}
 function hideEnidLoader(){const el=document.getElementById('enidLoader');if(el)el.classList.remove('visible');}
+
+// ── Badge unlock check (runs after each habit toggle) ─────────────────
+const TRACKER_BADGE_DEFS = [
+  {id:'streak_7',   check:s=>s.best>=7,   emoji:'🔥', name:'First Blood 🔥',       desc:'7 consecutive days of habit logging',           tier:'🥉'},
+  {id:'streak_14',  check:s=>s.best>=14,  emoji:'🔥', name:'Two Week Warrior',      desc:'14 days straight — two full weeks',              tier:'🥈'},
+  {id:'streak_30',  check:s=>s.best>=30,  emoji:'🔥', name:'The Month',             desc:'30 days without breaking',                       tier:'🏆'},
+  {id:'streak_60',  check:s=>s.best>=60,  emoji:'🔥', name:'Unstoppable Force',     desc:'60 days — two months of pure discipline',        tier:'💎'},
+  {id:'streak_100', check:s=>s.best>=100, emoji:'👑', name:'Century Legend',        desc:'100 days — one hundred days of you',             tier:'👑'},
+  {id:'checks_10',  check:s=>s.total>=10,  emoji:'✅', name:'First Steps',           desc:'10 total habit check-ins',                       tier:'🥉'},
+  {id:'checks_50',  check:s=>s.total>=50,  emoji:'✅', name:'Getting Serious',       desc:'50 check-ins — you mean it now',                 tier:'🥈'},
+  {id:'checks_100', check:s=>s.total>=100, emoji:'✅', name:'Triple Digits',         desc:'100 total check-ins',                            tier:'🏆'},
+  {id:'checks_500', check:s=>s.total>=500, emoji:'✅', name:'Habit Machine',         desc:'500 check-ins — fully automatic',                tier:'💎'},
+];
+let _badgeToastQueue = [];
+let _badgeToastShowing = false;
+
+function getSeenBadgesTracker() {
+  try { return new Set(JSON.parse(localStorage.getItem('enid_seen_badges')||'[]')); }
+  catch { return new Set(); }
+}
+function markBadgeSeenTracker(id) {
+  const seen = getSeenBadgesTracker(); seen.add(id);
+  localStorage.setItem('enid_seen_badges', JSON.stringify([...seen]));
+}
+
+function checkBadgesAfterToggle() {
+  const best  = Math.max(0, ...Object.values(streakCache), 0);
+  const total = dayCompletions.size;
+  const seen  = getSeenBadgesTracker();
+  const stats = { best, total };
+  const newlyEarned = TRACKER_BADGE_DEFS.filter(b => !seen.has(b.id) && b.check(stats));
+  newlyEarned.forEach(b => {
+    markBadgeSeenTracker(b.id);
+    _badgeToastQueue.push(b);
+  });
+  if (!_badgeToastShowing && _badgeToastQueue.length) drainBadgeQueue();
+}
+
+function drainBadgeQueue() {
+  if (!_badgeToastQueue.length) { _badgeToastShowing = false; return; }
+  _badgeToastShowing = true;
+  const b = _badgeToastQueue.shift();
+  const toast = document.getElementById('badgeToast');
+  document.getElementById('btEmoji').textContent = b.emoji;
+  document.getElementById('btName').textContent  = b.name;
+  document.getElementById('btDesc').textContent  = b.desc;
+  document.getElementById('btTier').textContent  = b.tier;
+  toast.classList.add('visible');
+  setTimeout(() => {
+    toast.classList.remove('visible');
+    setTimeout(() => drainBadgeQueue(), 500);
+  }, 4500);
+}
 
 </script>
 <!-- Notification permission banner -->
@@ -1624,5 +1907,21 @@ function hideEnidLoader(){const el=document.getElementById('enidLoader');if(el)e
     </div>
   </div>
 </div>
+
+<!-- Badge Unlock Toast -->
+<div class="badge-toast" id="badgeToast">
+  <div class="bt-inner" style="position:relative;overflow:hidden">
+    <div class="bt-glow"></div>
+    <div class="bt-emoji" id="btEmoji">🏆</div>
+    <div class="bt-body">
+      <div class="bt-eyebrow">🐺 new badge unlocked!!</div>
+      <div class="bt-name" id="btName"></div>
+      <div class="bt-desc" id="btDesc"></div>
+    </div>
+    <div class="bt-tier" id="btTier">🥉</div>
+    <div class="bt-paws"><span>🐾</span><span>🐾</span><span>🐾</span><span>🐾</span></div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -228,6 +228,20 @@ body::before{
 .nav-scroll-row{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .nav-scroll-row::-webkit-scrollbar{display:none}
 @media(min-width:768px){.nav-scroll-row{flex-wrap:wrap;overflow-x:visible}}
+/* ── New Entry Button & Modal ── */
+.new-entry-btn{margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:999px;border:1.5px solid rgba(212,84,122,.3);background:linear-gradient(135deg,rgba(212,84,122,.08),rgba(139,94,60,.06));color:var(--pink-soft);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .22s}
+.new-entry-btn:hover{background:linear-gradient(135deg,rgba(212,84,122,.16),rgba(139,94,60,.1));transform:translateY(-1px);box-shadow:0 4px 14px rgba(212,84,122,.18)}
+.ne-overlay{position:fixed;inset:0;background:rgba(44,24,16,.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);animation:fadeIn .2s ease}
+.ne-modal{background:var(--cream);border:1.5px solid rgba(44,24,16,.15);border-radius:22px;padding:28px;width:100%;max-width:500px;box-shadow:0 20px 60px rgba(44,24,16,.22);animation:modalUp .3s cubic-bezier(.34,1.56,.64,1)}
+.ne-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ne-sub{font-size:.78rem;color:var(--ink3);margin-bottom:18px}
+.ne-field{margin-bottom:14px}
+.ne-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:6px;display:block}
+.ne-date-input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(44,24,16,.15);background:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;box-sizing:border-box;transition:border-color .2s}
+.ne-date-input:focus{border-color:var(--pink-soft)}
+.ne-textarea{width:100%;min-height:120px;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(44,24,16,.15);background:rgba(255,255,255,.8);font-family:'Lora',serif;font-size:.92rem;font-style:italic;color:var(--ink);resize:vertical;outline:none;line-height:1.65;transition:border-color .2s;box-sizing:border-box}
+.ne-textarea::placeholder{color:var(--ink4);font-style:italic}
+.ne-textarea:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px rgba(212,84,122,.1)}
 </style>
 </head>
 <body>
@@ -260,6 +274,7 @@ body::before{
     <div class="title">Your <em>Journal</em></div>
     <div class="subtitle">Every note you've written — your discipline in your own words</div>
     <div class="entry-count-chip" id="entryCountChip">✍️ Loading entries...</div>
+    <button class="new-entry-btn" onclick="openNewEntry()">✍️ Write new entry</button>
   </header>
 
   <!-- Tabs -->
@@ -358,6 +373,7 @@ const HABIT_MAP = {
   e_tvoff:{emoji:'📺',name:'TV off 11:20PM',section:'evening'},
   e_relax:{emoji:'📚',name:'Read/relax in bed',section:'evening'},
   e_lights:{emoji:'🌙',name:'Lights out 11:45PM',section:'evening'},
+  journal_free:{emoji:'📓',name:'Free journal entry',section:'journal'},
 };
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -690,11 +706,76 @@ async function init() {
 }
 init();
 
+// ── New Entry Modal ───────────────────────────────────────────────────
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function openNewEntry() {
+  document.getElementById('neDate').value = todayISO();
+  document.getElementById('neText').value = '';
+  document.getElementById('neOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('neText').focus(), 100);
+}
+function closeNewEntry() {
+  document.getElementById('neOverlay').style.display = 'none';
+}
+async function saveNewEntry() {
+  const note = document.getElementById('neText').value.trim();
+  const date = document.getElementById('neDate').value;
+  if (!note) { document.getElementById('neText').focus(); return; }
+  if (!date)  { document.getElementById('neDate').focus(); return; }
+  const btn = document.getElementById('neSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving... 💜';
+  // Insert as a free-written entry — use habit_id 'journal_free' so it shows up
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/habit_completions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({ user_id: USER_ID, habit_id: 'journal_free', completed_date: date, note })
+    });
+    const rows = await res.json();
+    if (rows && rows[0]) {
+      const newEntry = { id: rows[0].id, habit_id: 'journal_free', completed_date: date, note, completed_at: rows[0].completed_at };
+      allEntries.unshift(newEntry);
+      allEntries.sort((a,b) => b.completed_date.localeCompare(a.completed_date));
+      document.getElementById('entryCountChip').textContent = `✍️ ${allEntries.length} journal entr${allEntries.length===1?'y':'ies'}`;
+      renderContent();
+    }
+    closeNewEntry();
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Save entry 💜';
+  }
+}
 // ── Enid Loader ───────────────────────────────────────────────────────
 const _LOADER_MSGS=['loading your data, sparklepup!!','fetching your stuff 🐾','almost there, glowbug!!','one sec, roomie!! 🐺','pulling it all together 💜','making magic happen ✨','hang tight, bestie!! 🌸'];
 function showEnidLoader(msg){const el=document.getElementById('enidLoader'),tx=document.getElementById('enidLoaderText');if(!el)return;if(tx)tx.textContent=msg||_LOADER_MSGS[Math.floor(Math.random()*_LOADER_MSGS.length)];el.classList.add('visible');}
 function hideEnidLoader(){const el=document.getElementById('enidLoader');if(el)el.classList.remove('visible');}
 
 </script>
+
+<!-- New Entry Modal -->
+<div class="ne-overlay" id="neOverlay" style="display:none" onclick="if(event.target.id==='neOverlay')closeNewEntry()">
+  <div class="ne-modal">
+    <div class="ne-title">✍️ New journal entry</div>
+    <div class="ne-sub">Write freely — this isn't attached to a habit, just you 🐺💜</div>
+    <div class="ne-field">
+      <label class="ne-label" for="neDate">Date</label>
+      <input class="ne-date-input" type="date" id="neDate">
+    </div>
+    <div class="ne-field">
+      <label class="ne-label" for="neText">Your entry</label>
+      <textarea class="ne-textarea" id="neText" placeholder="What's on your mind today? What happened? What are you feeling? No rules — just write 💜"></textarea>
+    </div>
+    <div class="edit-actions">
+      <button class="btn-cancel" onclick="closeNewEntry()">Cancel</button>
+      <button class="btn-save" id="neSaveBtn" onclick="saveNewEntry()">Save entry 💜</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

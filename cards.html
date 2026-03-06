@@ -864,6 +864,106 @@ body.panini-mode .back-btn:hover {
   margin: 0 auto 12px;
   font-size: 2.8rem;
 }
+
+/* ══ ENID'S CORNER ════════════════════════════════════════════ */
+.enid-section-banner {
+  background: linear-gradient(135deg, #ff6eb4 0%, #ffb347 30%, #ffe066 55%, #7ee8fa 80%, #b48aff 100%);
+  border-radius: 18px;
+  padding: 18px 22px 14px;
+  margin-bottom: 28px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(255,110,180,.35), 0 0 0 2px rgba(255,255,255,.12);
+  position: relative;
+  overflow: hidden;
+}
+.enid-section-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.07) 0px, rgba(255,255,255,.07) 2px, transparent 2px, transparent 14px);
+  pointer-events: none;
+}
+.enid-banner-title {
+  font-family: var(--serif);
+  font-size: 1.45rem; font-weight: 900;
+  color: #1a0e2e;
+  letter-spacing: .04em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+  position: relative;
+}
+.enid-banner-sub {
+  font-family: var(--body); font-size: .78rem;
+  color: rgba(26,14,46,.7); margin-top: 4px;
+  letter-spacing: .12em; text-transform: uppercase;
+  position: relative;
+}
+.enid-paw { font-size: 1.1rem; margin: 0 3px; }
+.enid-prog-wrap {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px; justify-content: center; position: relative;
+}
+.enid-prog-track {
+  flex: 1; max-width: 220px; height: 7px;
+  background: rgba(26,14,46,.15); border-radius: 99px; overflow: hidden;
+}
+.enid-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6eb4, #ffe066, #7ee8fa);
+  border-radius: 99px;
+  transition: width .6s cubic-bezier(.34,1.56,.64,1);
+}
+.enid-prog-txt {
+  font-family: var(--sans); font-size: .75rem; font-weight: 800; color: #1a0e2e;
+}
+.enid-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+  align-items: start;
+}
+/* Enid tiles — no forced aspect ratio, image drives height */
+.enid-tile {
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--bg3);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all .22s cubic-bezier(.34,1.2,.64,1);
+  display: flex; flex-direction: column;
+  animation: fadeUp .4s ease both;
+}
+.enid-tile:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 36px rgba(255,110,180,.35);
+}
+.enid-tile img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+.enid-tile img.ghost {
+  filter: grayscale(1) brightness(.4);
+}
+.enid-tile-info {
+  padding: 5px 6px 6px;
+}
+.enid-tile-name {
+  font-family: var(--body); font-size: .67rem;
+  color: var(--ink); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.enid-tile-num {
+  font-family: var(--sans); font-size: .6rem;
+  color: var(--ink4); margin-top: 1px;
+}
+.enid-tile.owned {
+  box-shadow: 0 0 0 2px #ff6eb4, 0 4px 18px rgba(255,110,180,.4);
+}
+.enid-tile.hunting {
+  box-shadow: 0 0 0 2px var(--gold), 0 2px 10px rgba(212,168,67,.2);
+}
+
 </style>
 </head>
 <body>
@@ -982,12 +1082,31 @@ body.panini-mode .back-btn:hover {
   </div>
 
   <!-- Card sections -->
+<!-- ══ ENID'S CORNER ══════════════════════════════════════ -->
+  <div id="enid-corner" style="display:none">
+    <div class="enid-section-banner">
+      <div class="enid-banner-title">
+        <span class="enid-paw">🐾</span> Enid's Corner <span class="enid-paw">🌈</span>
+      </div>
+      <div class="enid-banner-sub">Every card featuring our favourite sparklepup</div>
+      <div class="enid-prog-wrap">
+        <div class="enid-prog-track">
+          <div class="enid-prog-fill" id="enidProgFill" style="width:0%"></div>
+        </div>
+        <div class="enid-prog-txt" id="enidProgTxt">0/5 owned</div>
+      </div>
+    </div>
+    <div class="enid-card-grid" id="enid-grid"></div>
+  </div>
+
   <div id="cardSections"></div>
 
 </div>
 
 <!-- Detail Modal -->
-<div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+
+
+  <div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-eyebrow" id="mEyebrow"></div>
@@ -2023,6 +2142,62 @@ function parallelClass(p) {
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
+
+// ══ ENID'S CORNER ══════════════════════════════════════════════
+const ENID_CARD_NUMS = ['2','12','26','27','32','46','53','92','96','104','145','158','168','171','173','175','177'];
+
+// Pre-baked trimmed images for Enid's Corner (better crops than PANINI_CARD_IMAGES)
+const ENID_IMAGES = PANINI_CARD_IMAGES; // uses same source, display handled by enid-tile CSS
+
+function renderEnidCorner() {
+  const corner = document.getElementById('enid-corner');
+  const grid   = document.getElementById('enid-grid');
+  const fill   = document.getElementById('enidProgFill');
+  const txt    = document.getElementById('enidProgTxt');
+
+  if (activeSet !== 'panini') { corner.style.display = 'none'; return; }
+
+  const enidCards = PANINI_CARDS.filter(c => ENID_CARD_NUMS.includes(c.num));
+  const filtered  = enidCards.filter(c => {
+    const state = getCardState(c.id);
+    if (activeFilter==='owned'   && state.status!=='owned')   return false;
+    if (activeFilter==='hunting' && state.status!=='hunting') return false;
+    if (activeFilter==='missing' && state.status!=='missing') return false;
+    if (activeSearch && !c.name.toLowerCase().includes(activeSearch.toLowerCase())) return false;
+    return true;
+  });
+
+  const ownedCount = enidCards.filter(c => getCardState(c.id).status === 'owned').length;
+  const pct = Math.round(ownedCount / ENID_CARD_NUMS.length * 100);
+  fill.style.width = pct + '%';
+  txt.textContent  = ownedCount + '/' + ENID_CARD_NUMS.length + ' owned';
+
+  grid.innerHTML = '';
+  if (!filtered.length) { corner.style.display = 'none'; return; }
+  corner.style.display = 'block';
+
+  filtered.forEach(card => {
+    const state   = getCardState(card.id);
+    const isOwned = state.status === 'owned';
+    const imgSrc  = PANINI_CARD_IMAGES[card.num];
+
+    const tile = document.createElement('div');
+    tile.className = 'enid-tile ' + state.status;
+
+    const ghostCls = !isOwned ? ' ghost' : '';
+    tile.innerHTML = `
+      <img src="${imgSrc}" alt="${card.name}" class="${ghostCls}" loading="lazy">
+      <div class="enid-tile-info">
+        <div class="enid-tile-name">${card.name}</div>
+        <div class="enid-tile-num">#${card.num}</div>
+      </div>`;
+
+    tile.onclick = () => openModal(card.id);
+    grid.appendChild(tile);
+  });
+}
+
+
 function render() {
   const sections = document.getElementById('cardSections');
   sections.innerHTML = '';
@@ -2119,6 +2294,7 @@ function render() {
   }
 
   updateStats();
+  renderEnidCorner();
 }
 
 // ── Filter ────────────────────────────────────────────────────────────────────

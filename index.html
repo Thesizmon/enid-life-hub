@@ -47,9 +47,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .header{padding:40px 0 24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;animation:fadeDown .7s ease both}
 .title{font-family:'Dancing Script',cursive;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;background:linear-gradient(135deg,var(--morning-a) 0%,var(--pink) 45%,var(--evening-a) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(232,78,160,.15));line-height:1.1}
 .subtitle{font-size:.88rem;color:var(--text-soft);margin-top:4px}
+@media(max-width:600px){.subtitle{font-size:.72rem;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .date-chip{background:var(--card-bg);border:1.5px solid rgba(168,85,247,.15);border-radius:999px;padding:8px 16px;font-size:.8rem;color:var(--text-soft);font-weight:500;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
-.streak-chip{background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:999px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(232,78,160,.25);animation:glow 3s ease infinite}
+.streak-chip{background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:999px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(232,78,160,.25);animation:glow 3s ease infinite;white-space:nowrap}
+@media(max-width:600px){
+  .date-chip,.streak-chip{width:100%;justify-content:center;text-align:center;display:flex;box-sizing:border-box}
+}
 @keyframes glow{0%,100%{box-shadow:0 4px 14px rgba(232,78,160,.25)}50%{box-shadow:0 4px 22px rgba(232,78,160,.45)}}
 .analytics-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.1);color:var(--purple-soft);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .analytics-btn:hover{background:rgba(168,85,247,.22);border-color:var(--purple-soft);transform:translateY(-2px);box-shadow:0 6px 18px rgba(168,85,247,.2)}
@@ -835,7 +839,8 @@ function render() {
     wdAdd.onclick=()=>addCustomDB('weekend'); wdBlock.appendChild(wdAdd);
   }
 
-  // ── WEEKLY SHARED — always visible ─────────────────────────────────────
+  // ── WEEKLY SHARED — weekends only ──────────────────────────────────────
+  if (weekend) {
   const wkDone=WEEKLY_SHARED.filter(h=>weekendCompletions.has(h.id)).length;
   const wkBlock=document.createElement('div'); wkBlock.className='routine-block weekly-block';
   wkBlock.innerHTML=`
@@ -856,6 +861,7 @@ function render() {
   container.appendChild(wkBlock);
   const wkList=document.getElementById('weeklyList');
   WEEKLY_SHARED.forEach(h=>appendHabitItem(wkList,h,'weekly-block','weekly'));
+  } // end weekend-only block
 
   // ── EVENING ────────────────────────────────────────────────────────────
   const eveDone=EVENING_HABITS.filter(h=>dayCompletions.has(h.id)).length;

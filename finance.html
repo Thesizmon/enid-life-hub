@@ -72,6 +72,16 @@ body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.025;
 .cat-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
 .cat-total{font-family:var(--mono);font-size:.72rem;color:var(--text3)}
 
+/* Category progress bar */
+.cat-progress{display:flex;align-items:center;gap:10px;margin:-2px 0 10px;padding:0 4px}
+.cp-bar{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.cp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .35s ease}
+.cp-fill.full{background:linear-gradient(90deg,var(--green2),#86efac)}
+.cp-text{font-family:var(--mono);font-size:.62rem;color:var(--text3);white-space:nowrap}
+.cp-count{color:var(--text2);font-weight:700}
+.cp-done{color:var(--green2)}
+.cp-left{color:var(--amber)}
+
 /* Item rows */
 .item-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);margin-bottom:5px;transition:all .18s}
 .item-row:hover{border-color:rgba(29,185,84,.2)}
@@ -763,7 +773,8 @@ function renderPeriod(pid){
         <span class="cat-title">${m.title}</span>
         <div class="cat-line"></div>
         <span class="cat-total">${fmt(catTotal)}</span>
-      </div>`;
+      </div>
+      ${(cat==='cc'||cat==='affirm')?renderCatProgress(pid,p,cat):''}`;
     items.forEach(item=>{
       const idx=p.items.indexOf(item);
       html+=item.paidOff?renderPaidOff(item):item.variable?renderVariable(item,pid,idx):renderFixed(item,pid,idx);
@@ -855,6 +866,39 @@ function refreshBalance(pid){
   if(saveEl){saveEl.textContent=fmtSigned(c.savings);saveEl.className='bt-stat-val '+(c.savings>=0?'green':'red')}
 }
 
+function computeCatProgress(pid,p,cat){
+  const items=p.items.filter(i=>i.cat===cat&&!i.paidOff&&!i.variable);
+  const total=items.length;
+  const totalAmt=items.reduce((s,i)=>s+(i.amount||0),0);
+  let done=0,doneAmt=0;
+  items.forEach(item=>{
+    const idx=p.items.indexOf(item);
+    const cleared=cat==='cc'?getCleared(pid,idx):getCheck(pid,idx);
+    if(cleared){done++;doneAmt+=item.amount||0;}
+  });
+  return{total,totalAmt,done,doneAmt,leftAmt:totalAmt-doneAmt,pct:total>0?(done/total)*100:0};
+}
+
+function renderCatProgress(pid,p,cat){
+  const c=computeCatProgress(pid,p,cat);
+  const lbl=cat==='cc'?'cleared':'paid';
+  return`<div class="cat-progress" id="cp-${pid}-${cat}">
+    <div class="cp-bar"><div class="cp-fill${c.pct===100?' full':''}" id="cpf-${pid}-${cat}" style="width:${c.pct}%"></div></div>
+    <span class="cp-text" id="cpt-${pid}-${cat}"><span class="cp-count">${c.done}/${c.total}</span> ${lbl} · <span class="cp-done">${fmt(c.doneAmt)}</span> paid · <span class="cp-left">${fmt(c.leftAmt)}</span> left</span>
+  </div>`;
+}
+
+function refreshCatProgress(pid,cat){
+  const p=PERIODS.find(x=>x.id===pid);
+  if(!p)return;
+  const c=computeCatProgress(pid,p,cat);
+  const fillEl=document.getElementById(`cpf-${pid}-${cat}`);
+  const textEl=document.getElementById(`cpt-${pid}-${cat}`);
+  const lbl=cat==='cc'?'cleared':'paid';
+  if(fillEl){fillEl.style.width=c.pct+'%';fillEl.className='cp-fill'+(c.pct===100?' full':'');}
+  if(textEl)textEl.innerHTML=`<span class="cp-count">${c.done}/${c.total}</span> ${lbl} · <span class="cp-done">${fmt(c.doneAmt)}</span> paid · <span class="cp-left">${fmt(c.leftAmt)}</span> left`;
+}
+
 function renderPaidOff(item){
   return`<div class="item-row paid-off">
     <div class="item-check done"></div>
@@ -934,6 +978,7 @@ function toggleCheck(pid,idx,el){
   setCheck(pid,idx,newVal);
   el.classList.toggle('done',newVal);
   row.classList.toggle('checked',newVal);
+  refreshCatProgress(pid,'affirm');
   refreshBalance(pid);
 }
 
@@ -955,6 +1000,7 @@ function toggleCleared(pid,idx,el){
     const schedEl=row.querySelector('.cc-check-item:first-child .cc-cb');
     if(schedEl)schedEl.classList.add('sched');
   }
+  refreshCatProgress(pid,'cc');
   refreshBalance(pid);
 }
 

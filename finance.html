@@ -168,6 +168,22 @@ body::after{content:'✦ ✧ ✦ ✧ ✦ ✧';position:fixed;top:8%;left:2%;font
 .cc-check-item:has(.cc-cb.sched) .cc-cb-lbl{color:var(--amber)}
 .cc-check-item:has(.cc-cb.cleared) .cc-cb-lbl{color:var(--mint-deep)}
 
+/* CC balance input on each card */
+.cc-balance-row{display:flex;align-items:center;gap:5px;margin-top:2px}
+.cc-bal-lbl{font-family:var(--mono);font-size:.63rem;color:var(--text3);white-space:nowrap}
+.cc-bal-input{flex:1;min-width:0;background:rgba(255,255,255,.78);border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none;transition:all .2s}
+.cc-bal-input:focus{border-color:var(--pink2);box-shadow:0 0 0 2px var(--pink-glow)}
+.cc-interest{font-family:var(--mono);font-size:.63rem;font-weight:700;color:var(--red);margin-top:1px}
+.cloud-amount-sub{font-size:.58rem;font-weight:700;font-family:var(--mono);color:var(--text3);letter-spacing:.04em;vertical-align:middle;margin-left:3px;text-transform:uppercase}
+
+/* CC section summary bar */
+.cc-summary{display:flex;gap:10px;margin-bottom:12px;padding:12px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(255,232,248,.85),rgba(238,228,255,.75));border:1.5px solid rgba(255,95,174,.2);backdrop-filter:blur(10px);box-shadow:0 3px 14px rgba(255,95,174,.1),inset 0 1px 0 rgba(255,255,255,.7)}
+.cc-sum-divider{width:1.5px;background:linear-gradient(to bottom,rgba(255,95,174,.2),rgba(176,96,240,.15));border-radius:999px;flex-shrink:0}
+.cc-sum-item{flex:1;text-align:center;display:flex;flex-direction:column;gap:4px}
+.cc-sum-lbl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:var(--mono)}
+.cc-sum-val{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:var(--text)}
+.cc-sum-val.interest{color:var(--red)}
+
 /* Variable spending cloud */
 .var-budget-lbl{font-family:var(--mono);font-size:.63rem;color:var(--text3)}
 .var-prefix{font-family:var(--mono);font-size:.72rem;color:var(--text3)}
@@ -782,6 +798,8 @@ function getBBSActual(pid,def){const v=getState()[pid]?.bbs;return v!==undefined
 function setBBSActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].bbs=val;saveState(s)}
 function getKTActual(pid){return(getState()[pid]?.kt)??''}
 function setKTActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].kt=val;saveState(s)}
+function getCCBal(pid,idx){return(getState()[pid]?.bal||{})[idx]||''}
+function setCCBal(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].bal)s[pid].bal={};s[pid].bal[idx]=val;saveState(s)}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -823,6 +841,7 @@ function renderPeriod(pid){
         <span class="cat-total">${fmt(catTotal)}</span>
       </div>
       ${(cat==='cc'||cat==='affirm')?renderCatProgress(pid,p,cat):''}
+      ${cat==='cc'?renderCCSummary(pid,p):''}
       <div class="items-grid">`;
     items.forEach(item=>{
       const idx=p.items.indexOf(item);
@@ -948,6 +967,55 @@ function refreshCatProgress(pid,cat){
   if(textEl)textEl.innerHTML=`<span class="cp-count">${c.done}/${c.total}</span> ${lbl} · <span class="cp-done">${fmt(c.doneAmt)}</span> paid · <span class="cp-left">${fmt(c.leftAmt)}</span> left`;
 }
 
+function computeCCSummary(pid,p){
+  let totalBal=0,totalInterest=0;
+  p.items.filter(i=>i.cat==='cc'&&!i.paidOff).forEach((item,_,__)=>{
+    const idx=p.items.indexOf(item);
+    const balNum=parseFloat(getCCBal(pid,idx))||0;
+    const aprNum=parseFloat(item.apr)||0;
+    totalBal+=balNum;
+    if(aprNum>0)totalInterest+=balNum*(aprNum/100)/12;
+  });
+  return{totalBal,totalInterest};
+}
+
+function renderCCSummary(pid,p){
+  const {totalBal,totalInterest}=computeCCSummary(pid,p);
+  return`<div class="cc-summary" id="cc-sum-${pid}">
+    <div class="cc-sum-item">
+      <div class="cc-sum-lbl">💳 Total CC Balance</div>
+      <div class="cc-sum-val" id="cc-sum-bal-${pid}">${fmt(totalBal)}</div>
+    </div>
+    <div class="cc-sum-divider"></div>
+    <div class="cc-sum-item">
+      <div class="cc-sum-lbl">🔥 Monthly Interest</div>
+      <div class="cc-sum-val interest" id="cc-sum-int-${pid}">${fmt(totalInterest)}</div>
+    </div>
+  </div>`;
+}
+
+function refreshCCSummary(pid){
+  const p=PERIODS.find(x=>x.id===pid);
+  if(!p)return;
+  const {totalBal,totalInterest}=computeCCSummary(pid,p);
+  const balEl=document.getElementById(`cc-sum-bal-${pid}`);
+  const intEl=document.getElementById(`cc-sum-int-${pid}`);
+  if(balEl)balEl.textContent=fmt(totalBal);
+  if(intEl)intEl.textContent=fmt(totalInterest);
+}
+
+function updateCCBalance(pid,idx,input,aprPct){
+  setCCBal(pid,idx,input.value);
+  const balNum=parseFloat(input.value)||0;
+  const monthly=balNum>0&&aprPct>0?balNum*(aprPct/100)/12:0;
+  const intEl=document.getElementById(`cc-int-${pid}-${idx}`);
+  if(intEl){
+    intEl.style.display=monthly>0?'':'none';
+    intEl.textContent=monthly>0?`~${fmt(monthly)}/mo interest`:'';
+  }
+  refreshCCSummary(pid);
+}
+
 function renderPaidOff(item){
   return`<div class="cloud-card paid-off-cloud">
     <div class="cloud-amount cleared-lbl">✅ CLEARED</div>
@@ -976,11 +1044,22 @@ function renderFixed(item,pid,idx){
 function renderCC(item,pid,idx){
   const sched=getSched(pid,idx);
   const cleared=getCleared(pid,idx);
+  const aprNum=parseFloat(item.apr)||0;
   const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
+  const balVal=getCCBal(pid,idx);
+  const balNum=parseFloat(balVal)||0;
+  const monthly=balNum>0&&aprNum>0?balNum*(aprNum/100)/12:0;
+  const interestLine=monthly>0?`<div class="cc-interest" id="cc-int-${pid}-${idx}">~${fmt(monthly)}/mo interest</div>`:`<div class="cc-interest" id="cc-int-${pid}-${idx}" style="display:none"></div>`;
   return`<div class="cloud-card ${cleared?'cc-cleared':''}" id="row-${pid}-${idx}">
-    <div class="cloud-amount">${fmt(item.amount)}</div>
+    <div class="cloud-amount">${fmt(item.amount)}<span class="cloud-amount-sub">min</span></div>
     <div class="cloud-name">${item.name}</div>
     ${item.note?`<div class="cloud-note">${item.note}</div>`:''}
+    <div class="cc-balance-row">
+      <span class="cc-bal-lbl">Balance $</span>
+      <input class="cc-bal-input" type="number" placeholder="0.00" value="${balVal}" step="0.01" min="0"
+        oninput="updateCCBalance('${pid}',${idx},this,${aprNum})">
+    </div>
+    ${interestLine}
     <div class="cloud-footer">
       <span class="item-due">${item.due}</span>
       ${aprBadge}

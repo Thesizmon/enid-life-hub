@@ -110,6 +110,34 @@ body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.025;
 .cc-check-item:has(.cc-cb.cleared) .cc-cb-lbl{color:var(--green2)}
 .item-row.cc-cleared{opacity:.45;background:transparent}
 
+/* Balance Tracker */
+.bt{background:linear-gradient(135deg,rgba(29,185,84,.07),rgba(201,148,58,.05));border:1.5px solid var(--border2);border-radius:16px;padding:20px;margin-bottom:24px;animation:fadeUp .5s ease both}
+.bt-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--brass);font-family:var(--mono);margin-bottom:14px}
+.bt-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.bt-input-group{display:flex;flex-direction:column;gap:5px}
+.bt-input-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono)}
+.bt-field{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--mono);font-size:.92rem;color:var(--text);outline:none;width:100%;transition:border-color .2s}
+.bt-field:focus{border-color:var(--border2)}
+.bt-field.start{border-color:rgba(201,148,58,.4);background:rgba(201,148,58,.07)}
+.bt-available-row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:8px;padding:9px 14px;margin-bottom:14px}
+.bt-available-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);font-family:var(--mono)}
+.bt-available-val{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text)}
+.bt-divider{height:1px;background:var(--border2);margin:14px 0}
+.bt-running-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--text3);font-family:var(--mono);text-align:center;margin-bottom:6px}
+.bt-running{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;text-align:center;line-height:1;transition:color .25s}
+.bt-running.great{color:var(--green2)}
+.bt-running.ok{color:var(--amber)}
+.bt-running.low{color:#F97316}
+.bt-running.danger{color:var(--red)}
+.bt-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.bt-stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center}
+.bt-stat-lbl{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-family:var(--mono);margin-bottom:5px}
+.bt-stat-val{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text)}
+.bt-stat-val.green{color:var(--green2)}
+.bt-stat-val.amber{color:var(--amber)}
+.bt-stat-val.red{color:var(--red)}
+@media(max-width:600px){.bt-inputs{grid-template-columns:1fr 1fr}.bt-stats{grid-template-columns:1fr 1fr}}
+
 /* Variable spending rows */
 .var-row{flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px}
 .var-top{display:flex;align-items:center;gap:10px}
@@ -690,11 +718,18 @@ function getSched(pid,idx){return(getState()[pid]?.sc||{})[idx]||false}
 function setSched(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].sc)s[pid].sc={};s[pid].sc[idx]=val;saveState(s)}
 function getCleared(pid,idx){return(getState()[pid]?.cl||{})[idx]||false}
 function setCleared(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].cl)s[pid].cl={};s[pid].cl[idx]=val;saveState(s)}
+function getStartBal(pid){return(getState()[pid]?.sb)??''}
+function setStartBal(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].sb=val;saveState(s)}
+function getBBSActual(pid,def){const v=getState()[pid]?.bbs;return v!==undefined&&v!==''?v:def}
+function setBBSActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].bbs=val;saveState(s)}
+function getKTActual(pid){return(getState()[pid]?.kt)??''}
+function setKTActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].kt=val;saveState(s)}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function fmtSigned(n){return n>=0?fmt(n):'('+fmt(Math.abs(n))+')'}
 function aprCls(apr){if(!apr)return'';const n=parseFloat(apr);if(n===0)return'apr-zero';if(n>=29)return'apr-crit';if(n>=25)return'apr-high';if(n>=20)return'apr-mid';return'apr-low'}
 const CAT_META={cc:{icon:'💳',title:'Credit Cards'},loan:{icon:'🏦',title:'Loans'},affirm:{icon:'🛒',title:'BNPL / Affirm'},sub:{icon:'📱',title:'Subscriptions'},life:{icon:'🌿',title:'Life'}};
 
@@ -715,21 +750,8 @@ function renderTabs(){
 function renderPeriod(pid){
   const p=PERIODS.find(x=>x.id===pid);
   if(!p)return;
-  const income=p.income.bbs+p.income.kt;
-  const activeItems=p.items.filter(i=>!i.paidOff);
-  const fixedItems=activeItems.filter(i=>!i.variable);
-  const totalFixed=fixedItems.reduce((s,i)=>s+(i.amount||0),0);
-  const surplus=income-totalFixed;
-
-  // Group by category
   const cats=['cc','loan','affirm','sub','life'];
-  let html=`
-    <div class="income-bar">
-      <div class="ib-item"><div class="ib-label">💵 Est. Income</div><div class="ib-val green">${fmt(income)}</div></div>
-      <div class="ib-item"><div class="ib-label">📋 Fixed Due</div><div class="ib-val">${fmt(totalFixed)}</div></div>
-      <div class="ib-item"><div class="ib-label">📅 Pay Period</div><div class="ib-val gold">${p.dates}</div></div>
-    </div>`;
-
+  let html=renderBalanceTracker(pid,p);
   cats.forEach(cat=>{
     const items=p.items.filter(i=>i.cat===cat);
     if(!items.length)return;
@@ -748,25 +770,89 @@ function renderPeriod(pid){
     });
     html+=`</div>`;
   });
-
-  html+=`
-    <div class="period-summary">
-      <div class="ps-title">📊 Period Summary</div>
-      <div class="ps-rows">
-        <div class="ps-row"><span class="ps-row-label">BBS Salary</span><span class="ps-row-val">${fmt(p.income.bbs)}</span></div>
-        <div class="ps-row"><span class="ps-row-label">KT Hourly (estimate)</span><span class="ps-row-val">${fmt(p.income.kt)}</span></div>
-        <div class="ps-divider"></div>
-        <div class="ps-row ps-total"><span class="ps-row-label">Total Est. Income</span><span class="ps-row-val green">${fmt(income)}</span></div>
-        <div class="ps-row"><span class="ps-row-label">Fixed Payments Due</span><span class="ps-row-val">${fmt(totalFixed)}</span></div>
-        <div class="ps-divider"></div>
-        <div class="ps-row ps-total ps-surplus ${surplus>=0?'pos':'neg'}">
-          <span class="ps-row-label">Est. Surplus / (Deficit)</span>
-          <span class="ps-row-val">${surplus>=0?fmt(surplus):'('+fmt(Math.abs(surplus))+')'}</span>
-        </div>
-      </div>
-    </div>`;
-
   document.getElementById('periodContent').innerHTML=html;
+}
+
+function computeBalance(pid,p){
+  const sb=parseFloat(getStartBal(pid))||0;
+  const bbs=Number(getBBSActual(pid,p.income.bbs))||p.income.bbs;
+  const kt=parseFloat(getKTActual(pid))||0;
+  const avail=sb+bbs+kt;
+  let out=0,owed=0;
+  p.items.forEach((item,idx)=>{
+    if(item.paidOff)return;
+    if(item.variable){
+      const spent=parseFloat(getSpent(pid,idx))||0;
+      out+=spent;
+      owed+=Math.max(0,item.amount-spent);
+    } else if(item.cat==='cc'){
+      if(getCleared(pid,idx))out+=item.amount;
+      else owed+=item.amount;
+    } else {
+      if(getCheck(pid,idx))out+=item.amount;
+      else owed+=item.amount;
+    }
+  });
+  const running=avail-out;
+  const savings=running-owed;
+  return{sb,bbs,kt,avail,out,owed,running,savings};
+}
+
+function renderBalanceTracker(pid,p){
+  const c=computeBalance(pid,p);
+  const runCls=c.running>=500?'great':c.running>=200?'ok':c.running>=0?'low':'danger';
+  const saveCls=c.savings>=0?'green':'red';
+  const owedCls=c.owed>500?'red':'amber';
+  const bbsVal=getBBSActual(pid,p.income.bbs);
+  const ktVal=getKTActual(pid);
+  return`<div class="bt" id="bt-${pid}">
+    <div class="bt-title">💰 Balance Tracker — ${p.dates}</div>
+    <div class="bt-inputs">
+      <div class="bt-input-group">
+        <div class="bt-input-lbl">Starting Balance</div>
+        <input class="bt-field start" type="number" placeholder="0.00" value="${getStartBal(pid)}" step="0.01" oninput="setStartBal('${pid}',this.value);refreshBalance('${pid}')">
+      </div>
+      <div class="bt-input-group">
+        <div class="bt-input-lbl">BBS Paycheck</div>
+        <input class="bt-field" type="number" placeholder="${p.income.bbs}" value="${bbsVal}" step="0.01" oninput="setBBSActual('${pid}',this.value);refreshBalance('${pid}')">
+      </div>
+      <div class="bt-input-group">
+        <div class="bt-input-lbl">KT Paycheck</div>
+        <input class="bt-field" type="number" placeholder="0.00" value="${ktVal}" step="0.01" oninput="setKTActual('${pid}',this.value);refreshBalance('${pid}')">
+      </div>
+    </div>
+    <div class="bt-available-row">
+      <span class="bt-available-lbl">Total Available</span>
+      <span class="bt-available-val" id="bt-avail-${pid}">${fmt(c.avail)}</span>
+    </div>
+    <div class="bt-divider"></div>
+    <div class="bt-running-lbl">Running Balance</div>
+    <div class="bt-running ${runCls}" id="bt-run-${pid}">${fmt(c.running)}</div>
+    <div class="bt-stats">
+      <div class="bt-stat"><div class="bt-stat-lbl">Paid Out</div><div class="bt-stat-val" id="bt-out-${pid}">${fmt(c.out)}</div></div>
+      <div class="bt-stat"><div class="bt-stat-lbl">Still Owed</div><div class="bt-stat-val ${owedCls}" id="bt-owed-${pid}">${fmt(c.owed)}</div></div>
+      <div class="bt-stat"><div class="bt-stat-lbl">Period</div><div class="bt-stat-val" style="font-size:.75rem;font-weight:700;color:var(--text2)">${p.label}</div></div>
+      <div class="bt-stat"><div class="bt-stat-lbl">Est. Savings</div><div class="bt-stat-val ${saveCls}" id="bt-save-${pid}">${fmtSigned(c.savings)}</div></div>
+    </div>
+  </div>`;
+}
+
+function refreshBalance(pid){
+  const p=PERIODS.find(x=>x.id===pid);
+  if(!p)return;
+  const c=computeBalance(pid,p);
+  const runEl=document.getElementById(`bt-run-${pid}`);
+  if(!runEl)return;
+  const availEl=document.getElementById(`bt-avail-${pid}`);
+  const outEl=document.getElementById(`bt-out-${pid}`);
+  const owedEl=document.getElementById(`bt-owed-${pid}`);
+  const saveEl=document.getElementById(`bt-save-${pid}`);
+  if(availEl)availEl.textContent=fmt(c.avail);
+  runEl.textContent=fmt(c.running);
+  runEl.className='bt-running '+(c.running>=500?'great':c.running>=200?'ok':c.running>=0?'low':'danger');
+  if(outEl)outEl.textContent=fmt(c.out);
+  if(owedEl){owedEl.textContent=fmt(c.owed);owedEl.className='bt-stat-val '+(c.owed>500?'red':'amber')}
+  if(saveEl){saveEl.textContent=fmtSigned(c.savings);saveEl.className='bt-stat-val '+(c.savings>=0?'green':'red')}
 }
 
 function renderPaidOff(item){
@@ -848,6 +934,7 @@ function toggleCheck(pid,idx,el){
   setCheck(pid,idx,newVal);
   el.classList.toggle('done',newVal);
   row.classList.toggle('checked',newVal);
+  refreshBalance(pid);
 }
 
 function toggleSched(pid,idx,el){
@@ -868,6 +955,7 @@ function toggleCleared(pid,idx,el){
     const schedEl=row.querySelector('.cc-check-item:first-child .cc-cb');
     if(schedEl)schedEl.classList.add('sched');
   }
+  refreshBalance(pid);
 }
 
 function updateSpent(pid,idx,input,budget){
@@ -880,6 +968,7 @@ function updateSpent(pid,idx,input,budget){
   const status=document.getElementById(`vs-${pid}-${idx}`);
   if(fill){fill.style.width=pct+'%';fill.className='var-fill'+(over?' over':'');}
   if(status)status.textContent=spentNum>0?(over?`⚠️ $${(spentNum-budget).toFixed(2)} over`:`$${(budget-spentNum).toFixed(2)} left`):'not started';
+  refreshBalance(pid);
 }
 
 function switchPeriod(pid){

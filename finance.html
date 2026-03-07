@@ -82,28 +82,33 @@ body::after{content:'✦ ✧ ✦ ✧ ✦ ✧';position:fixed;top:8%;left:2%;font
 .period-tab.active{border-color:transparent;background:linear-gradient(135deg,var(--bubblegum),var(--pink2),var(--purple2));color:#fff;box-shadow:0 6px 22px rgba(255,63,160,.38),0 0 0 2px rgba(255,200,235,.35);transform:translateY(-2px)}
 .period-tab.is-current::after{content:'✨NOW';position:absolute;top:-8px;right:-5px;font-size:.45rem;font-weight:900;background:linear-gradient(135deg,var(--yellow),var(--peach));color:#fff;border-radius:999px;padding:2px 6px;letter-spacing:.05em;box-shadow:0 2px 8px rgba(255,168,0,.4)}
 
-/* Category section */
-.cat-section{margin-bottom:28px;animation:fadeUp .4s ease both}
-.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 15px;border-radius:16px;background:var(--card2);border:1.5px solid var(--border);backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(255,95,174,.07)}
+/* Corkboard panel — wraps each category */
+.cat-section{margin-bottom:32px;animation:fadeUp .4s ease both;border-radius:28px;padding:20px 20px 22px;border:1.5px solid rgba(255,95,174,.12);backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(255,95,174,.07),inset 0 1px 0 rgba(255,255,255,.8)}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 15px;border-radius:16px;background:var(--card2);border:1.5px solid var(--border);backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(255,95,174,.07)}
 .cat-icon{font-size:1rem}
 .cat-title{font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--text2)}
 .cat-line{flex:1;height:1.5px;background:linear-gradient(90deg,rgba(255,95,174,.25),rgba(176,96,240,.15),transparent);border-radius:999px}
 .cat-total{font-family:var(--mono);font-size:.72rem;color:var(--text3);background:var(--pink-pale);padding:3px 10px;border-radius:999px;border:1px solid rgba(255,95,174,.2)}
 
-/* Per-category pastel accent colors */
+/* Per-category corkboard tints */
+[data-cat="cc"]{background:rgba(255,232,248,.55);border-color:rgba(255,95,174,.14)}
 [data-cat="cc"] .cat-header{background:rgba(255,238,250,.96);border-color:rgba(255,95,174,.24)}
 [data-cat="cc"] .cat-title{color:var(--bubblegum)}
+[data-cat="loan"]{background:rgba(238,228,255,.55);border-color:rgba(176,96,240,.14)}
 [data-cat="loan"] .cat-header{background:rgba(240,230,255,.96);border-color:rgba(176,96,240,.24)}
 [data-cat="loan"] .cat-title{color:var(--purple)}
+[data-cat="affirm"]{background:rgba(255,245,230,.55);border-color:rgba(255,165,92,.14)}
 [data-cat="affirm"] .cat-header{background:rgba(255,245,232,.96);border-color:rgba(255,165,92,.24)}
 [data-cat="affirm"] .cat-title{color:var(--peach)}
+[data-cat="sub"]{background:rgba(228,255,245,.55);border-color:rgba(77,221,168,.14)}
 [data-cat="sub"] .cat-header{background:rgba(232,255,248,.96);border-color:rgba(77,221,168,.24)}
 [data-cat="sub"] .cat-title{color:var(--mint-deep)}
+[data-cat="life"]{background:rgba(228,244,255,.55);border-color:rgba(99,206,255,.14)}
 [data-cat="life"] .cat-header{background:rgba(232,247,255,.96);border-color:rgba(99,206,255,.24)}
 [data-cat="life"] .cat-title{color:#0A92C2}
 
 /* Category progress bar */
-.cat-progress{display:flex;align-items:center;gap:10px;margin:-4px 0 10px;padding:0 8px}
+.cat-progress{display:flex;align-items:center;gap:10px;margin:-6px 0 12px;padding:0 4px}
 .cp-bar{flex:1;height:5px;background:rgba(176,96,240,.1);border-radius:999px;overflow:hidden}
 .cp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--bubblegum),var(--purple2));transition:width .4s cubic-bezier(.34,1.4,.64,1)}
 .cp-fill.full{background:linear-gradient(90deg,var(--mint),var(--mint-deep))}
@@ -112,23 +117,34 @@ body::after{content:'✦ ✧ ✦ ✧ ✦ ✧';position:fixed;top:8%;left:2%;font
 .cp-done{color:var(--mint-deep)}
 .cp-left{color:var(--purple2)}
 
-/* Item rows */
-.item-row{display:flex;align-items:center;gap:10px;padding:11px 15px;border-radius:18px;border:1.5px solid var(--border);background:var(--card);margin-bottom:6px;transition:all .2s cubic-bezier(.34,1.2,.64,1);backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(255,95,174,.05)}
-.item-row:hover{border-color:rgba(255,95,174,.3);transform:translateX(3px);box-shadow:0 4px 16px rgba(255,95,174,.12)}
-.item-row.checked{opacity:.44;background:rgba(77,221,168,.06);box-shadow:none;border-color:rgba(77,221,168,.2)}
-.item-row.paid-off{opacity:.32;border-style:dashed;border-color:var(--mint);pointer-events:none}
+/* Items grid — corkboard card layout */
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+
+/* Cloud cards ☁️ */
+.cloud-card{position:relative;background:rgba(255,255,255,.92);border:1.5px solid rgba(255,95,174,.16);border-radius:22px;padding:16px 16px 14px;box-shadow:0 4px 18px rgba(255,95,174,.1),0 1px 4px rgba(176,96,240,.07),inset 0 1px 0 rgba(255,255,255,.9);transition:all .22s cubic-bezier(.34,1.4,.64,1);display:flex;flex-direction:column;gap:6px;backdrop-filter:blur(12px)}
+.cloud-card::before{content:'✦';position:absolute;top:9px;right:11px;font-size:.5rem;color:rgba(255,95,174,.28);pointer-events:none}
+.cloud-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 10px 30px rgba(255,95,174,.2),0 3px 10px rgba(176,96,240,.1);border-color:rgba(255,95,174,.28)}
+.cloud-card.checked{opacity:.45;background:rgba(232,255,248,.75);border-color:rgba(77,221,168,.25);box-shadow:none}
+.cloud-card.checked::before{content:'✓';color:rgba(77,221,168,.5)}
+.cloud-card.cc-cleared{opacity:.45;background:rgba(232,255,248,.75);border-color:rgba(77,221,168,.25);box-shadow:none}
+.cloud-card.paid-off-cloud{opacity:.3;border-style:dashed;border-color:var(--mint);pointer-events:none;background:rgba(232,255,248,.5)}
+
+/* Cloud card inner elements */
+.cloud-check-wrap{position:absolute;top:10px;right:10px}
+.cloud-amount{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--text);line-height:1;padding-right:28px}
+.cloud-amount.final-pay{color:var(--mint-deep)}
+.cloud-amount.cleared-lbl{font-size:.85rem;color:var(--mint-deep)}
+.cloud-name{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.cloud-card.checked .cloud-name,.cloud-card.cc-cleared .cloud-name{text-decoration:line-through;text-decoration-color:rgba(2,138,91,.3);color:var(--mint-deep)}
+.cloud-note{font-size:.63rem;color:var(--text3);font-family:var(--mono);line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cloud-footer{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.item-due{font-family:var(--mono);font-size:.63rem;color:var(--text3);white-space:nowrap}
 
 /* Checkbox */
-.item-check{width:22px;height:22px;min-width:22px;border:2px solid rgba(176,96,240,.28);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);background:rgba(255,255,255,.65);user-select:none}
-.item-check:hover{border-color:var(--pink2);transform:scale(1.1);box-shadow:0 0 8px rgba(255,95,174,.22)}
-.item-check.done{border-color:var(--pink);background:linear-gradient(135deg,var(--pink),var(--bubblegum));transform:scale(1.12);box-shadow:0 0 14px rgba(255,95,174,.45)}
+.item-check{width:22px;height:22px;min-width:22px;border:2px solid rgba(176,96,240,.28);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);background:rgba(255,255,255,.8);user-select:none}
+.item-check:hover{border-color:var(--pink2);transform:scale(1.12);box-shadow:0 0 8px rgba(255,95,174,.25)}
+.item-check.done{border-color:var(--pink);background:linear-gradient(135deg,var(--pink),var(--bubblegum));transform:scale(1.12);box-shadow:0 0 14px rgba(255,95,174,.5)}
 .item-check.done::after{content:'✓';font-size:.65rem;color:#fff;font-weight:900}
-.item-name{font-size:.83rem;font-weight:600;color:var(--text);flex:1;min-width:0}
-.item-row.checked .item-name{color:var(--mint-deep);text-decoration:line-through;text-decoration-color:rgba(2,138,91,.3)}
-.item-note{display:block;font-size:.65rem;color:var(--text3);font-weight:400;margin-top:2px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item-due{font-family:var(--mono);font-size:.65rem;color:var(--text3);white-space:nowrap}
-.item-amount{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:900;color:var(--text);text-align:right;min-width:56px}
-.item-amount.final-pay{color:var(--mint-deep)}
 
 /* APR badges */
 .apr-badge{font-family:var(--mono);font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
@@ -139,9 +155,10 @@ body::after{content:'✦ ✧ ✦ ✧ ✦ ✧';position:fixed;top:8%;left:2%;font
 .apr-zero{background:var(--mint-pale);color:var(--mint-deep);border:1.5px solid rgba(77,221,168,.35)}
 .final-badge{font-size:.58rem;font-weight:700;padding:3px 8px;border-radius:999px;background:linear-gradient(135deg,rgba(255,95,174,.1),rgba(176,96,240,.1));color:var(--purple);border:1.5px solid rgba(176,96,240,.28);white-space:nowrap}
 
-/* CC dual-checkbox */
-.cc-checks{display:flex;gap:10px;flex-shrink:0;align-items:center}
-.cc-check-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+/* CC dual-checkbox — pill buttons at card bottom */
+.cc-checks{display:flex;gap:8px;margin-top:auto;padding-top:6px}
+.cc-check-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;padding:6px 4px;border-radius:12px;border:1.5px solid rgba(176,96,240,.12);background:rgba(255,255,255,.55);transition:all .18s}
+.cc-check-item:hover{border-color:rgba(176,96,240,.28);background:rgba(255,255,255,.85);transform:translateY(-1px)}
 .cc-cb{width:20px;height:20px;border:2px solid rgba(176,96,240,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .18s;background:rgba(255,255,255,.65);user-select:none}
 .cc-cb.sched{border-color:var(--amber);background:rgba(245,168,0,.12)}
 .cc-cb.sched::after{content:'📅';font-size:.55rem;line-height:1}
@@ -150,7 +167,17 @@ body::after{content:'✦ ✧ ✦ ✧ ✦ ✧';position:fixed;top:8%;left:2%;font
 .cc-cb-lbl{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-family:var(--mono);white-space:nowrap}
 .cc-check-item:has(.cc-cb.sched) .cc-cb-lbl{color:var(--amber)}
 .cc-check-item:has(.cc-cb.cleared) .cc-cb-lbl{color:var(--mint-deep)}
-.item-row.cc-cleared{opacity:.44;background:rgba(77,221,168,.06)}
+
+/* Variable spending cloud */
+.var-budget-lbl{font-family:var(--mono);font-size:.63rem;color:var(--text3)}
+.var-prefix{font-family:var(--mono);font-size:.72rem;color:var(--text3)}
+.var-input-row{display:flex;align-items:center;gap:5px}
+.var-input{flex:1;min-width:0;background:rgba(255,255,255,.78);border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none;text-align:right;transition:all .2s}
+.var-input:focus{border-color:var(--pink2);box-shadow:0 0 0 2px var(--pink-glow)}
+.var-bar{height:5px;background:rgba(176,96,240,.1);border-radius:999px;overflow:hidden}
+.var-fill{height:100%;border-radius:999px;transition:width .4s cubic-bezier(.34,1.4,.64,1);background:linear-gradient(90deg,var(--pink),var(--bubblegum),var(--purple2))}
+.var-fill.over{background:linear-gradient(90deg,var(--red),var(--peach))}
+.var-status{font-size:.63rem;color:var(--text3);font-family:var(--mono);text-align:right}
 
 /* Balance Tracker */
 .bt{background:linear-gradient(140deg,rgba(255,107,181,.11),rgba(176,96,240,.09),rgba(255,180,220,.07));border:1.5px solid rgba(255,95,174,.28);border-radius:24px;padding:24px;margin-bottom:28px;animation:fadeUp .5s ease both;backdrop-filter:blur(16px);box-shadow:0 12px 42px rgba(255,95,174,.14),0 4px 14px rgba(176,96,240,.10),inset 0 1px 0 rgba(255,255,255,.65)}
@@ -795,12 +822,13 @@ function renderPeriod(pid){
         <div class="cat-line"></div>
         <span class="cat-total">${fmt(catTotal)}</span>
       </div>
-      ${(cat==='cc'||cat==='affirm')?renderCatProgress(pid,p,cat):''}`;
+      ${(cat==='cc'||cat==='affirm')?renderCatProgress(pid,p,cat):''}
+      <div class="items-grid">`;
     items.forEach(item=>{
       const idx=p.items.indexOf(item);
       html+=item.paidOff?renderPaidOff(item):item.variable?renderVariable(item,pid,idx):renderFixed(item,pid,idx);
     });
-    html+=`</div>`;
+    html+=`</div></div>`;
   });
   document.getElementById('periodContent').innerHTML=html;
 }
@@ -921,10 +949,10 @@ function refreshCatProgress(pid,cat){
 }
 
 function renderPaidOff(item){
-  return`<div class="item-row paid-off">
-    <div class="item-check done"></div>
-    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
-    <div class="item-amount" style="color:var(--mint-deep);font-size:.8rem">✅ CLEARED</div>
+  return`<div class="cloud-card paid-off-cloud">
+    <div class="cloud-amount cleared-lbl">✅ CLEARED</div>
+    <div class="cloud-name">${item.name}</div>
+    ${item.note?`<div class="cloud-note">${item.note}</div>`:''}
   </div>`;
 }
 
@@ -933,12 +961,15 @@ function renderFixed(item,pid,idx){
   const checked=getCheck(pid,idx);
   const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
   const finalBadge=item.final?`<span class="final-badge">🎉 FINAL</span>`:'';
-  return`<div class="item-row ${checked?'checked':''}" id="row-${pid}-${idx}">
-    <div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div>
-    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
-    ${aprBadge}${finalBadge}
-    <div class="item-due">${item.due}</div>
-    <div class="item-amount ${item.final?'final-pay':''}">${fmt(item.amount)}</div>
+  return`<div class="cloud-card ${checked?'checked':''}" id="row-${pid}-${idx}">
+    <div class="cloud-check-wrap"><div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div></div>
+    <div class="cloud-amount ${item.final?'final-pay':''}">${fmt(item.amount)}</div>
+    <div class="cloud-name">${item.name}</div>
+    ${item.note?`<div class="cloud-note">${item.note}</div>`:''}
+    <div class="cloud-footer">
+      <span class="item-due">${item.due}</span>
+      ${aprBadge}${finalBadge}
+    </div>
   </div>`;
 }
 
@@ -946,11 +977,14 @@ function renderCC(item,pid,idx){
   const sched=getSched(pid,idx);
   const cleared=getCleared(pid,idx);
   const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
-  return`<div class="item-row ${cleared?'cc-cleared':''}" id="row-${pid}-${idx}">
-    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
-    ${aprBadge}
-    <div class="item-due">${item.due}</div>
-    <div class="item-amount">${fmt(item.amount)}</div>
+  return`<div class="cloud-card ${cleared?'cc-cleared':''}" id="row-${pid}-${idx}">
+    <div class="cloud-amount">${fmt(item.amount)}</div>
+    <div class="cloud-name">${item.name}</div>
+    ${item.note?`<div class="cloud-note">${item.note}</div>`:''}
+    <div class="cloud-footer">
+      <span class="item-due">${item.due}</span>
+      ${aprBadge}
+    </div>
     <div class="cc-checks">
       <div class="cc-check-item" onclick="toggleSched('${pid}',${idx},this)" title="Mark as scheduled">
         <div class="cc-cb ${sched?'sched':''}"></div>
@@ -972,21 +1006,18 @@ function renderVariable(item,pid,idx){
   const pct=Math.min(budget>0?(spentNum/budget)*100:0,100);
   const over=spentNum>budget;
   const statusTxt=spentNum>0?(over?`⚠️ $${(spentNum-budget).toFixed(2)} over`:`$${(budget-spentNum).toFixed(2)} left`):'not started';
-  return`<div class="item-row var-row ${checked?'checked':''}" id="row-${pid}-${idx}">
-    <div class="var-top">
-      <div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div>
-      <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
-      <div class="var-controls">
-        <span class="var-budget-lbl">Budget: ${fmt(budget)}</span>
-        <span class="var-prefix">· $</span>
-        <input class="var-input" type="number" placeholder="0.00" value="${spent}" step="0.01" min="0"
-          oninput="updateSpent('${pid}',${idx},this,${budget})">
-      </div>
+  return`<div class="cloud-card ${checked?'checked':''}" id="row-${pid}-${idx}">
+    <div class="cloud-check-wrap"><div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div></div>
+    <div class="cloud-name">${item.name}</div>
+    ${item.note?`<div class="cloud-note">${item.note}</div>`:''}
+    <div class="var-budget-lbl">Budget: ${fmt(budget)}</div>
+    <div class="var-input-row">
+      <span class="var-prefix">$</span>
+      <input class="var-input" type="number" placeholder="0.00" value="${spent}" step="0.01" min="0"
+        oninput="updateSpent('${pid}',${idx},this,${budget})">
     </div>
-    <div class="var-bottom">
-      <div class="var-bar"><div class="var-fill ${over?'over':''}" style="width:${pct}%" id="vf-${pid}-${idx}"></div></div>
-      <div class="var-status" id="vs-${pid}-${idx}">${statusTxt}</div>
-    </div>
+    <div class="var-bar"><div class="var-fill ${over?'over':''}" style="width:${pct}%" id="vf-${pid}-${idx}"></div></div>
+    <div class="var-status" id="vs-${pid}-${idx}">${statusTxt}</div>
   </div>`;
 }
 

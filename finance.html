@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💰 Enid's Finance Hub</title>
+<title>💰 Enid's Finance Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#060D08;--bg2:#0A1510;--bg3:#0F1E14;
   --green:#1DB954;--green2:#4ADE80;--green-dim:rgba(29,185,84,.1);--green-glow:rgba(29,185,84,.2);
-  --brass:#C9943A;--brass2:#F4C842;--brass-dim:rgba(201,148,58,.1);
+  --brass:#C9943A;--brass2:#F4C842;--brass-dim:rgba(201,148,58,.12);
   --red:#EF4444;--red-dim:rgba(239,68,68,.1);
   --amber:#FCD34D;--amber-dim:rgba(252,211,77,.08);
   --pink:#E84EA0;--pink-dim:rgba(232,78,160,.1);
@@ -22,26 +22,16 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{max-width:100vw;overflow-x:hidden;scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:
+  radial-gradient(ellipse 70% 50% at 5% 5%,rgba(29,185,84,.12) 0%,transparent 55%),
+  radial-gradient(ellipse 50% 40% at 95% 15%,rgba(201,148,58,.08) 0%,transparent 50%),
+  radial-gradient(ellipse 60% 50% at 50% 95%,rgba(29,185,84,.07) 0%,transparent 55%),
+  linear-gradient(160deg,#060D08 0%,#08120A 50%,#040908 100%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none}
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 32px 100px}
 
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 5% 5%,  rgba(29,185,84,.12) 0%,transparent 55%),
-    radial-gradient(ellipse 50% 40% at 95% 15%,  rgba(201,148,58,.08) 0%,transparent 50%),
-    radial-gradient(ellipse 60% 50% at 50% 95%,  rgba(29,185,84,.07) 0%,transparent 55%),
-    radial-gradient(ellipse 40% 35% at 80% 50%,  rgba(201,148,58,.05) 0%,transparent 45%),
-    linear-gradient(160deg,#060D08 0%,#08120A 50%,#040908 100%);
-  pointer-events:none;
-}
-body::after{
-  content:'';position:fixed;inset:0;z-index:0;opacity:.025;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events:none;
-}
-
-.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 48px 100px}
-
-/* ── Nav ── */
+/* Nav */
 .header-nav{display:flex;align-items:center;justify-content:space-between;padding:28px 0 0;animation:fadeDown .6s ease both}
 .back-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--green-dim);color:var(--green2);font-size:.78rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s}
 .back-btn:hover{background:var(--green-glow);transform:translateY(-1px)}
@@ -49,1427 +39,805 @@ body::after{
 .nav-lnk{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.75rem;font-weight:500;text-decoration:none;transition:all .2s}
 .nav-lnk:hover{border-color:var(--border2);color:var(--green2)}
 
-/* ── Hero ── */
-.hero{padding:40px 0 32px;animation:fadeDown .7s .05s ease both}
-.hero-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin-bottom:8px;font-family:'DM Mono',monospace}
-.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,5.5vw,3.4rem);font-weight:800;color:var(--text);line-height:1.05}
+/* Hero */
+.hero{padding:28px 0 16px;animation:fadeDown .7s .05s ease both}
+.hero-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin-bottom:8px;font-family:var(--mono)}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--text);line-height:1.05}
 .hero-title span{color:var(--green2)}
-.hero-sub{font-size:.88rem;color:var(--text2);margin-top:8px}
-.last-updated{display:inline-flex;align-items:center;gap:7px;background:var(--green-dim);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-family:var(--mono);font-size:.7rem;color:var(--green2);margin-top:10px}
+.hero-sub{font-size:.85rem;color:var(--text2);margin-top:6px}
 
-/* ── Big stats ── */
-.big-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;animation:fadeUp .6s .1s ease both}
-.big-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 18px;position:relative;overflow:hidden;transition:border-color .2s}
-.big-stat:hover{border-color:var(--border2)}
-.big-stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
-.big-stat.s-total::before{background:linear-gradient(90deg,var(--red),transparent)}
-.big-stat.s-interest::before{background:linear-gradient(90deg,var(--amber),transparent)}
-.big-stat.s-free::before{background:linear-gradient(90deg,var(--green2),transparent)}
-.big-stat.s-sinking::before{background:linear-gradient(90deg,var(--brass2),transparent)}
-.bs-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px;font-family:var(--mono)}
-.bs-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text);line-height:1}
-.bs-val.danger{color:var(--red)}
-.bs-val.warn{color:var(--amber)}
-.bs-val.good{color:var(--green2)}
-.bs-val.gold{color:var(--brass2)}
-.bs-sub{font-size:.68rem;color:var(--text3);margin-top:5px;font-family:var(--mono)}
+/* Period tabs */
+.period-tabs-wrap{position:sticky;top:0;z-index:10;background:linear-gradient(to bottom,var(--bg) 85%,transparent);padding:10px 0 0;margin-bottom:20px}
+.period-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.period-tabs::-webkit-scrollbar{display:none}
+.period-tab{flex-shrink:0;padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text3);font-size:.78rem;font-weight:700;cursor:pointer;font-family:var(--mono);transition:all .18s;white-space:nowrap;position:relative}
+.period-tab:hover{border-color:var(--border2);color:var(--text2)}
+.period-tab.active{border-color:var(--green);background:var(--green-dim);color:var(--green2)}
+.period-tab.is-current::after{content:'NOW';position:absolute;top:-5px;right:-4px;font-size:.45rem;font-weight:900;background:var(--brass);color:#000;border-radius:3px;padding:1px 4px;letter-spacing:.05em}
 
-/* ── Sinking fund thermometer ── */
-.sinking-therm{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:32px;animation:fadeUp .5s .15s ease both}
-.therm-label{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);flex-shrink:0}
-.therm-bar-wrap{flex:1;position:relative}
-.therm-track{height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
-.therm-fill{height:100%;background:linear-gradient(90deg,var(--brass),var(--brass2));border-radius:999px;transition:width 1.5s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(201,148,58,.3)}
-.therm-markers{display:flex;justify-content:space-between;margin-top:4px}
-.therm-mark{font-size:.6rem;color:var(--text3);font-family:var(--mono)}
-.therm-val{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--brass2);flex-shrink:0}
-.therm-edit{background:transparent;border:1px solid rgba(201,148,58,.25);color:var(--brass);border-radius:6px;padding:4px 10px;font-size:.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;flex-shrink:0}
-.therm-edit:hover{background:var(--brass-dim);border-color:var(--brass)}
+/* Income bar */
+.income-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:22px;animation:fadeUp .5s ease both}
+.ib-item{text-align:center}
+.ib-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:var(--mono);margin-bottom:4px}
+.ib-val{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800}
+.ib-val.green{color:var(--green2)}
+.ib-val.red{color:var(--red)}
+.ib-val.gold{color:var(--brass2);font-size:.85rem;padding-top:3px;display:block}
 
-/* ── Section headers ── */
-.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.section-title{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text2)}
-.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
-.section-sub{font-size:.68rem;color:var(--text3);font-family:var(--mono)}
+/* Category section */
+.cat-section{margin-bottom:26px;animation:fadeUp .4s ease both}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cat-icon{font-size:.95rem}
+.cat-title{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text2)}
+.cat-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.cat-total{font-family:var(--mono);font-size:.72rem;color:var(--text3)}
 
-/* ── Avalanche attack card ── */
-.attack-zone{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(201,148,58,.05));border:1.5px solid rgba(239,68,68,.25);border-radius:14px;padding:20px;margin-bottom:32px;animation:fadeUp .5s .12s ease both}
-.attack-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--red);font-family:var(--mono);margin-bottom:8px}
-.attack-name{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px}
-.attack-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.attack-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:6px;font-size:.72rem;font-weight:700;font-family:var(--mono)}
-.attack-chip.apr{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
-.attack-chip.bal{background:rgba(201,148,58,.1);color:var(--brass2);border:1px solid rgba(201,148,58,.2)}
-.attack-chip.min{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)}
-.attack-progress{margin-top:14px}
-.attack-prog-label{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);font-family:var(--mono);margin-bottom:5px}
-.attack-prog-track{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
-.attack-prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(239,68,68,.3)}
-.attack-enid{font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--text2);margin-top:10px;font-style:italic}
+/* Item rows */
+.item-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);margin-bottom:5px;transition:all .18s}
+.item-row:hover{border-color:rgba(29,185,84,.2)}
+.item-row.checked{opacity:.45;background:transparent}
+.item-row.paid-off{opacity:.38;border-style:dashed;border-color:var(--green);pointer-events:none}
 
-/* ── Debt grid ── */
-.debt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:40px}
-.debt-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 18px 16px;transition:all .22s ease;position:relative;overflow:hidden;animation:fadeUp .5s ease both}
-.debt-card:hover{border-color:rgba(29,185,84,.25);transform:translateY(-2px);box-shadow:var(--shadow)}
-.debt-card.is-dead{border-color:rgba(29,185,84,.4);background:rgba(29,185,84,.05);opacity:.7}
-.debt-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
-.apr-critical .debt-card::after{background:linear-gradient(90deg,var(--red),#F97316)}
-.apr-high .debt-card::after{background:linear-gradient(90deg,#F97316,var(--amber))}
-.apr-mid .debt-card::after{background:linear-gradient(90deg,var(--amber),#84CC16)}
-.apr-low .debt-card::after{background:linear-gradient(90deg,#84CC16,var(--green2))}
-.apr-zero .debt-card::after{background:linear-gradient(90deg,var(--green2),#34D399)}
-.dc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-.dc-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text)}
-.dc-type{font-size:.62rem;color:var(--text3);margin-top:2px;font-family:var(--mono)}
-.dc-apr-badge{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
-.apr-critical .dc-apr-badge{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.2)}
-.apr-high    .dc-apr-badge{background:rgba(249,115,22,.12);color:#FB923C;border:1px solid rgba(249,115,22,.2)}
-.apr-mid     .dc-apr-badge{background:rgba(252,211,77,.1);color:var(--amber);border:1px solid rgba(252,211,77,.2)}
-.apr-low     .dc-apr-badge{background:rgba(132,204,22,.1);color:#A3E635;border:1px solid rgba(132,204,22,.2)}
-.apr-zero    .dc-apr-badge{background:var(--green-dim);color:var(--green2);border:1px solid var(--border2)}
-.dc-balance-row{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.dc-balance{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
-.dc-balance.paid{color:var(--green2)}
-.dc-original{font-size:.7rem;color:var(--text3);font-family:var(--mono)}
-.dc-progress{height:5px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-bottom:10px}
-.dc-progress-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
-.apr-critical .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
-.apr-high     .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
-.apr-mid      .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
-.apr-low      .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
-.apr-zero     .dc-progress-fill{background:linear-gradient(90deg,var(--green2),#4ADE80)}
-.dc-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.dc-stat{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
-.dc-stat span{color:var(--text2);font-weight:500}
-.dc-actions{display:flex;gap:8px;align-items:center}
-.dc-input{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:.78rem;color:var(--text);outline:none;transition:border-color .2s}
-.dc-input:focus{border-color:var(--border2)}
-.dc-input::placeholder{color:var(--text3)}
-.dc-save{background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
-.dc-save:hover{background:var(--green-glow)}
-.dc-kill{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(232,78,160,.1));border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
-.dc-kill:hover{background:rgba(239,68,68,.25)}
-.dc-dead-badge{background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);border-radius:8px;padding:7px 14px;font-size:.75rem;font-weight:700;font-family:'DM Sans',sans-serif;text-align:center}
-.avalanche-rank{position:absolute;bottom:14px;right:14px;font-family:var(--mono);font-size:.6rem;color:var(--text3)}
+/* Checkbox */
+.item-check{width:18px;height:18px;min-width:18px;border:2px solid var(--text3);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;background:transparent;user-select:none}
+.item-check.done{border-color:var(--green2);background:var(--green-dim)}
+.item-check.done::after{content:'✓';font-size:.7rem;color:var(--green2);font-weight:800}
+.item-name{font-size:.83rem;font-weight:600;color:var(--text);flex:1;min-width:0}
+.item-note{display:block;font-size:.65rem;color:var(--text3);font-weight:400;margin-top:1px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-due{font-family:var(--mono);font-size:.65rem;color:var(--text3);white-space:nowrap}
+.item-amount{font-family:'Syne',sans-serif;font-size:.93rem;font-weight:800;color:var(--text);text-align:right;min-width:56px}
+.item-amount.final-pay{color:var(--green2)}
 
-/* ── Affirm section ── */
-.affirm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:40px}
-.affirm-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:all .18s;animation:fadeUp .4s ease both}
-.affirm-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.affirm-card.affirm-done{opacity:.4;border-style:dashed}
-.ac-name{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:3px}
-.ac-due{font-size:.62rem;color:var(--green2);font-family:var(--mono);margin-bottom:8px}
-.ac-due.urgent{color:var(--amber)}
-.ac-bal-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
-.ac-bal{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text)}
-.ac-min{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
-.ac-prog{height:4px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
-.ac-prog-fill{height:100%;background:linear-gradient(90deg,var(--green2),#34D399);border-radius:999px;transition:width 1s ease}
+/* APR badges */
+.apr-badge{font-family:var(--mono);font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.apr-crit{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.apr-high{background:rgba(249,115,22,.12);color:#FB923C;border:1px solid rgba(249,115,22,.2)}
+.apr-mid{background:rgba(252,211,77,.1);color:var(--amber);border:1px solid rgba(252,211,77,.2)}
+.apr-low{background:rgba(132,204,22,.1);color:#A3E635;border:1px solid rgba(132,204,22,.2)}
+.apr-zero{background:var(--green-dim);color:var(--green2);border:1px solid var(--border2)}
+.final-badge{font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--green-dim);color:var(--green2);border:1px solid var(--border2);white-space:nowrap}
 
-/* ── Obituary wall ── */
-.obit-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:40px}
-.obit-card{background:linear-gradient(145deg,rgba(29,185,84,.08),rgba(29,185,84,.03));border:1.5px solid rgba(29,185,84,.25);border-radius:14px;padding:20px;text-align:center;animation:obitIn .6s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes obitIn{from{opacity:0;transform:scale(.85) rotate(-3deg)}to{opacity:1;transform:scale(1) rotate(0)}}
-.obit-tombstone{font-size:2.5rem;margin-bottom:8px;display:block;filter:grayscale(.3)}
-.obit-rip{font-family:var(--mono);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--green2);margin-bottom:4px}
-.obit-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:4px}
-.obit-amount{font-family:var(--mono);font-size:.75rem;color:var(--green2)}
-.obit-date{font-size:.62rem;color:var(--text3);font-family:var(--mono);margin-top:4px}
-.obit-enid{font-family:'Dancing Script',cursive;font-size:.78rem;color:var(--text2);margin-top:6px;line-height:1.4}
-.obit-empty{text-align:center;padding:40px;grid-column:1/-1}
-.obit-empty-icon{font-size:2.5rem;display:block;opacity:.3;margin-bottom:8px}
-.obit-empty-text{font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
+/* Variable spending rows */
+.var-row{flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px}
+.var-top{display:flex;align-items:center;gap:10px}
+.var-controls{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.var-budget-lbl{font-family:var(--mono);font-size:.67rem;color:var(--text3);white-space:nowrap}
+.var-prefix{font-family:var(--mono);font-size:.72rem;color:var(--text3)}
+.var-input{width:68px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none;text-align:right;transition:border-color .2s}
+.var-input:focus{border-color:var(--border2)}
+.var-bottom{display:flex;align-items:center;gap:10px;padding-left:28px}
+.var-bar{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.var-fill{height:100%;border-radius:999px;transition:width .35s ease;background:linear-gradient(90deg,var(--green),var(--green2))}
+.var-fill.over{background:linear-gradient(90deg,var(--red),#F97316)}
+.var-status{font-size:.65rem;color:var(--text3);font-family:var(--mono);white-space:nowrap;min-width:90px;text-align:right}
 
-/* ── Confetti ── */
-.confetti-piece{position:fixed;top:-10px;z-index:1000;pointer-events:none;animation:confettiFall linear forwards}
-@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* Period summary */
+.period-summary{background:linear-gradient(135deg,rgba(29,185,84,.06),rgba(201,148,58,.04));border:1px solid var(--border2);border-radius:14px;padding:18px 20px;margin-top:6px;animation:fadeUp .4s ease both}
+.ps-title{font-family:'Syne',sans-serif;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:12px}
+.ps-rows{display:flex;flex-direction:column;gap:7px}
+.ps-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+.ps-row-label{color:var(--text2);font-family:var(--mono)}
+.ps-row-val{font-family:'Syne',sans-serif;font-weight:700;color:var(--text)}
+.ps-divider{height:1px;background:var(--border);margin:2px 0}
+.ps-total .ps-row-label,.ps-total .ps-row-val{font-size:.88rem}
+.ps-surplus.pos .ps-row-val{color:var(--green2)}
+.ps-surplus.neg .ps-row-val{color:var(--red)}
+.ps-row-val.green{color:var(--green2)}
 
-/* ── Kill modal ── */
-.kill-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.kill-modal{background:var(--bg3);border:2px solid var(--green2);border-radius:22px;padding:32px;width:100%;max-width:440px;text-align:center;box-shadow:0 0 60px rgba(29,185,84,.3);animation:modalPop .4s cubic-bezier(.34,1.56,.64,1)}
-@keyframes modalPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-.km-tombstone{font-size:3.5rem;margin-bottom:12px;display:block;animation:wiggle 1s ease infinite}
-@keyframes wiggle{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-.km-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--green2);margin-bottom:6px}
-.km-sub{font-size:.85rem;color:var(--text2);margin-bottom:20px;line-height:1.5;font-family:'Dancing Script',cursive;font-size:1rem}
-.km-name{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--amber);margin-bottom:20px}
-.km-actions{display:flex;gap:10px;justify-content:center}
-.km-cancel{padding:10px 22px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.km-cancel:hover{border-color:var(--text2)}
-.km-confirm{padding:10px 28px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#000;font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;transition:all .18s;box-shadow:0 4px 16px var(--green-glow)}
-.km-confirm:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(29,185,84,.4)}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-/* ── Update modal ── */
-.update-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease}
-.update-modal{background:var(--bg3);border:1.5px solid var(--border2);border-radius:18px;padding:26px;width:100%;max-width:400px;box-shadow:var(--shadow);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
-.um-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
-.um-sub{font-size:.75rem;color:var(--text2);margin-bottom:16px}
-.um-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px}
-.um-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px var(--green-dim)}
-.um-actions{display:flex;gap:10px;justify-content:flex-end}
-.um-cancel{padding:9px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-.um-save{padding:9px 22px;border-radius:8px;border:none;background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.um-save:hover{background:var(--green-glow)}
-
-/* ── Sinking fund modal ── */
-.sf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease}
-.sf-modal{background:var(--bg3);border:1.5px solid rgba(201,148,58,.3);border-radius:18px;padding:26px;width:100%;max-width:400px;box-shadow:var(--shadow);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
-.sf-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--brass2);margin-bottom:4px}
-.sf-sub{font-size:.75rem;color:var(--text2);margin-bottom:16px}
-.sf-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(201,148,58,.2);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:1rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px}
-.sf-input:focus{border-color:rgba(201,148,58,.5);box-shadow:0 0 0 3px var(--brass-dim)}
-.sf-actions{display:flex;gap:10px;justify-content:flex-end}
-.sf-cancel{padding:9px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-.sf-save{padding:9px 22px;border-radius:8px;border:1px solid rgba(201,148,58,.3);background:var(--brass-dim);color:var(--brass2);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.sf-save:hover{background:rgba(201,148,58,.2)}
-
-/* ── Animations ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-
-.footer{text-align:center;padding:32px 0 12px;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text3)}
-
-@media(max-width:700px){
-  .app{padding-left:20px;padding-right:20px}.big-stats{grid-template-columns:repeat(2,1fr)}.debt-grid{grid-template-columns:1fr}}
-/* ── Pay Period Tab System ── */
-.tab-nav{display:flex;gap:0;margin-bottom:32px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px;animation:fadeUp .5s .08s ease both}
-.tab-btn{flex:1;padding:10px 16px;border-radius:10px;border:none;background:transparent;color:var(--text2);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .2s;white-space:nowrap}
-.tab-btn.active{background:linear-gradient(135deg,rgba(29,185,84,.18),rgba(29,185,84,.08));color:var(--green2);border:1px solid var(--border2)}
-.tab-content{display:none}.tab-content.active{display:block}
-
-/* ── Pay Period ── */
-.pp-header{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
-.pp-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden}
-.pp-stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
-.pp-stat.s-income::before{background:linear-gradient(90deg,var(--green2),transparent)}
-.pp-stat.s-bills::before{background:linear-gradient(90deg,var(--red),transparent)}
-.pp-stat.s-left::before{background:linear-gradient(90deg,var(--brass2),transparent)}
-.pp-stat-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:var(--mono);margin-bottom:5px}
-.pp-stat-val{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;line-height:1}
-.pp-stat-sub{font-size:.65rem;color:var(--text3);font-family:var(--mono);margin-top:4px}
-.pp-dates{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-family:var(--mono);font-size:.72rem;color:var(--green2);margin-bottom:24px}
-.pp-edit-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);font-size:.68rem;padding:3px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;margin-left:4px}
-.pp-edit-btn:hover{border-color:var(--border2);color:var(--text2)}
-
-/* ── Bills due this period ── */
-.bills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:32px}
-.bill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .18s;cursor:pointer}
-.bill-card:hover{border-color:var(--border2)}
-.bill-card.paid{opacity:.45;border-style:dashed}
-.bill-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:all .18s;background:transparent}
-.bill-card.paid .bill-check{background:var(--green-dim);border-color:var(--green2);color:var(--green2)}
-.bill-body{flex:1;min-width:0}
-.bill-name{font-weight:700;font-size:.82rem;color:var(--text);margin-bottom:2px}
-.bill-due{font-size:.62rem;color:var(--text3);font-family:var(--mono)}
-.bill-due.soon{color:var(--amber)}
-.bill-due.overdue{color:var(--red)}
-.bill-amount{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--brass2);flex-shrink:0}
-
-/* ── Spending categories ── */
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px}
-.cat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .18s;animation:fadeUp .4s ease both}
-.cat-card:hover{border-color:var(--border2)}
-.cat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cat-label{display:flex;align-items:center;gap:8px}
-.cat-emoji{font-size:1.2rem}
-.cat-name{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text)}
-.cat-spent{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800}
-.cat-progress{height:7px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-bottom:8px}
-.cat-fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.22,1,.36,1)}
-.cat-fill.green{background:linear-gradient(90deg,var(--green),var(--green2))}
-.cat-fill.amber{background:linear-gradient(90deg,#F97316,var(--amber))}
-.cat-fill.red{background:linear-gradient(90deg,var(--red),#F97316)}
-.cat-fill.none{background:rgba(255,255,255,.1)}
-.cat-meta{display:flex;justify-content:space-between;font-size:.62rem;font-family:var(--mono);color:var(--text3);margin-bottom:10px}
-.cat-actions{display:flex;gap:8px}
-.cat-log-btn{flex:1;padding:7px 10px;border-radius:8px;background:var(--green-dim);border:1px solid var(--border2);color:var(--green2);font-size:.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.cat-log-btn:hover{background:var(--green-glow)}
-.cat-history-btn{padding:7px 10px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.cat-history-btn:hover{border-color:var(--border2)}
-.cat-budget-btn{padding:7px 10px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text3);font-size:.68rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.cat-budget-btn:hover{color:var(--brass2);border-color:rgba(201,148,58,.3)}
-.cat-no-budget{font-size:.62rem;color:var(--text3);font-family:var(--mono);margin-top:4px}
-
-/* ── Spending log modal ── */
-.log-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
-.log-modal{background:var(--bg3);border:1.5px solid var(--border2);border-radius:20px;padding:26px;width:100%;max-width:420px;box-shadow:0 0 50px rgba(29,185,84,.15);animation:modalPop .35s cubic-bezier(.34,1.56,.64,1)}
-.lm-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
-.lm-sub{font-size:.75rem;color:var(--text2);margin-bottom:18px}
-.lm-amount-row{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.06);border:1.5px solid var(--border2);border-radius:12px;padding:10px 16px;margin-bottom:12px}
-.lm-dollar{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--green2)}
-.lm-input{flex:1;background:transparent;border:none;font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);outline:none;width:100%}
-.lm-input::placeholder{color:var(--text3);font-size:1rem}
-.lm-note-toggle{font-size:.72rem;color:var(--text3);cursor:pointer;text-decoration:underline;margin-bottom:8px;display:inline-block;transition:color .15s}
-.lm-note-toggle:hover{color:var(--text2)}
-.lm-note{width:100%;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Dancing Script',cursive;font-size:.95rem;color:var(--text);outline:none;resize:none;min-height:60px;margin-bottom:12px;transition:border-color .2s}
-.lm-note:focus{border-color:var(--border2)}
-.lm-note::placeholder{color:var(--text3)}
-.lm-date-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-.lm-date-label{font-size:.65rem;color:var(--text3);font-family:var(--mono)}
-.lm-date-input{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:var(--mono);font-size:.72rem;color:var(--text);outline:none}
-.lm-actions{display:flex;gap:10px}
-.lm-cancel{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-.lm-save{flex:2;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#000;font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;transition:all .18s}
-.lm-save:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--green-glow)}
-
-/* ── Budget set modal ── */
-.budget-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
-.budget-modal{background:var(--bg3);border:1.5px solid rgba(201,148,58,.3);border-radius:20px;padding:26px;width:100%;max-width:380px;animation:modalPop .35s cubic-bezier(.34,1.56,.64,1)}
-.bm-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--brass2);margin-bottom:4px}
-.bm-sub{font-size:.75rem;color:var(--text2);margin-bottom:16px}
-.bm-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(201,148,58,.2);border-radius:10px;padding:12px 14px;font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);outline:none;margin-bottom:6px;transition:border-color .2s}
-.bm-input:focus{border-color:rgba(201,148,58,.5)}
-.bm-hint{font-size:.65rem;color:var(--text3);font-family:var(--mono);margin-bottom:16px}
-.bm-actions{display:flex;gap:10px;justify-content:flex-end}
-.bm-cancel{padding:9px 18px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-.bm-save{padding:9px 22px;border-radius:9px;border:1px solid rgba(201,148,58,.3);background:var(--brass-dim);color:var(--brass2);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
-.bm-save:hover{background:rgba(201,148,58,.2)}
-.bm-clear{padding:9px 14px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-
-/* ── Tx history ── */
-.tx-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;margin-bottom:12px}
-.tx-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 12px}
-.tx-date{font-family:var(--mono);font-size:.62rem;color:var(--text3);flex-shrink:0;min-width:52px}
-.tx-note{flex:1;font-size:.78rem;color:var(--text2);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tx-amount{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;color:var(--brass2);flex-shrink:0}
-.tx-del{background:none;border:none;color:var(--text3);font-size:.72rem;cursor:pointer;flex-shrink:0;transition:color .15s;padding:0 2px}
-.tx-del:hover{color:var(--red)}
-.tx-empty{font-family:'Dancing Script',cursive;font-size:.9rem;color:var(--text3);text-align:center;padding:12px}
-
-/* ── Income edit modal ── */
-.income-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);animation:fadeIn .2s ease}
-.income-modal{background:var(--bg3);border:1.5px solid var(--border2);border-radius:20px;padding:26px;width:100%;max-width:380px;animation:modalPop .35s cubic-bezier(.34,1.56,.64,1)}
-
-@media(max-width:700px){
-  .app{padding-left:20px;padding-right:20px}.pp-header{grid-template-columns:1fr 1fr}.bills-grid{grid-template-columns:1fr}.cat-grid{grid-template-columns:1fr}}
-
-
-/* ══ Enid Pastel Loader ══ */
-.enid-loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .35s ease}
-.enid-loader.visible{opacity:1;pointer-events:all}
-.enid-loader-bg{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px)}
-.enid-loader-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px}
-.enid-paws{display:flex;gap:10px;align-items:flex-end}
-.enid-paw{font-size:1.6rem;animation:pawBounce 1.1s ease-in-out infinite}
-.enid-paw:nth-child(1){animation-delay:0s}
-.enid-paw:nth-child(2){animation-delay:.17s}
-.enid-paw:nth-child(3){animation-delay:.34s}
-.enid-paw:nth-child(4){animation-delay:.51s}
-@keyframes pawBounce{0%,80%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-14px) scale(1.2)}}
-.enid-dots{display:flex;gap:7px;margin-top:2px}
-.enid-dot{width:8px;height:8px;border-radius:50%;animation:dotPop 1.2s ease-in-out infinite}
-.enid-dot:nth-child(1){background:#F9A8D4;animation-delay:0s}
-.enid-dot:nth-child(2){background:#C4B5FD;animation-delay:.2s}
-.enid-dot:nth-child(3){background:#93C5FD;animation-delay:.4s}
-.enid-dot:nth-child(4){background:#86EFAC;animation-delay:.6s}
-@keyframes dotPop{0%,80%,100%{transform:scale(1);opacity:.45}40%{transform:scale(1.6);opacity:1}}
-.enid-loader-text{font-family:'Dancing Script',cursive;font-size:1.15rem;color:rgba(255,255,255,.9);text-align:center;animation:loaderFade 1.9s ease-in-out infinite}
-@keyframes loaderFade{0%,100%{opacity:.5}50%{opacity:1}}
-
-
-/* ── Nav scrollable strip ── */
-.nav-scroll-row{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-.nav-scroll-row::-webkit-scrollbar{display:none}
-@media(min-width:768px){.nav-scroll-row{flex-wrap:wrap;overflow-x:visible}}
+@media(max-width:600px){
+  .app{padding:0 14px 80px}
+  .income-bar{grid-template-columns:1fr 1fr}
+  .income-bar .ib-item:last-child{display:none}
+}
 </style>
 </head>
 <body>
-<!-- Enid Loader -->
-<div class="enid-loader" id="enidLoader">
-  <div class="enid-loader-bg"></div>
-  <div class="enid-loader-inner">
-    <div class="enid-paws"><span class="enid-paw">🐾</span><span class="enid-paw">🐾</span><span class="enid-paw">🐾</span><span class="enid-paw">🐾</span></div>
-    <div class="enid-dots"><div class="enid-dot"></div><div class="enid-dot"></div><div class="enid-dot"></div><div class="enid-dot"></div></div>
-    <div class="enid-loader-text" id="enidLoaderText">loading your data, sparklepup!!</div>
-  </div>
-</div>
-
-<!-- Kill confirmation modal -->
-<div class="kill-overlay" id="killOverlay" style="display:none">
-  <div class="kill-modal">
-    <span class="km-tombstone">🪦</span>
-    <div class="km-title">Debt Eliminated!!</div>
-    <div class="km-sub" id="kmSub">You actually did it. This debt is DEAD. Let's make it official and add it to your obituary wall forever. 💀🎉</div>
-    <div class="km-name" id="kmName"></div>
-    <div class="km-actions">
-      <button class="km-cancel" onclick="closeKill()">Wait, not yet</button>
-      <button class="km-confirm" onclick="confirmKill()">💀 KILL IT</button>
-    </div>
-  </div>
-</div>
-
-<!-- Balance update modal -->
-<div class="update-overlay" id="updateOverlay" style="display:none" onclick="closeUpdateIfBg(event)">
-  <div class="update-modal">
-    <div class="um-title">Update Balance 💰</div>
-    <div class="um-sub" id="umSub"></div>
-    <input class="um-input" id="umInput" type="number" step="0.01" min="0" placeholder="New balance e.g. 847.22">
-    <div class="um-actions">
-      <button class="um-cancel" onclick="closeUpdate()">Cancel</button>
-      <button class="um-save" onclick="saveUpdate()">Save ✓</button>
-    </div>
-  </div>
-</div>
-
-<!-- Sinking fund update modal -->
-<div class="sf-overlay" id="sfOverlay" style="display:none" onclick="closeSFIfBg(event)">
-  <div class="sf-modal">
-    <div class="sf-title">Update Sinking Fund 🏦</div>
-    <div class="sf-sub">How much have you saved so far? Goal: $1,000</div>
-    <input class="sf-input" id="sfInput" type="number" step="0.01" min="0" placeholder="e.g. 225.00">
-    <div class="sf-actions">
-      <button class="sf-cancel" onclick="closeSF()">Cancel</button>
-      <button class="sf-save" onclick="saveSF()">Save 💛</button>
-    </div>
-  </div>
-</div>
-
 <div class="app">
-
-    <div class="header-nav" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 0;animation:fadeDown .5s ease both">
-    <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:1.5px solid rgba(29,185,84,.25);background:rgba(29,185,84,.08);color:#4ADE80;font-size:.78rem;font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">← Tracker</a>
-    <div class="nav-scroll-row">
-      <a href="analytics.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📊 Analytics</a>
-      <a href="badges.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">🏆 Badges</a>
-      <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📚 Books</a>
-      <a href="calendar.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📅 Calendar</a>
-      <a href="journal.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">📓 Journal</a>
-      <a href="movies.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#9DC49D;font-size:.73rem;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap">🎬 Movies</a>
+  <nav class="header-nav">
+    <a href="index.html" class="back-btn">← Home</a>
+    <div class="nav-links">
+      <a href="journal.html" class="nav-lnk">📓 Journal</a>
+      <a href="books.html" class="nav-lnk">📚 Books</a>
+      <a href="calendar.html" class="nav-lnk">📅 Calendar</a>
     </div>
-  </div>
-
+  </nav>
   <div class="hero">
-    <div class="hero-eyebrow">// FINANCIAL COMMAND CENTER</div>
-    <h1 class="hero-title">Your <span>Debt War Room</span></h1>
-    <div class="hero-sub">Real balances. Real APRs. Real progress. Every dollar is a battle won. 💜</div>
-    <div class="last-updated">⟳ Last updated: <span id="lastUpdatedLabel">never</span></div>
+    <div class="hero-eyebrow">Bi-weekly Pay Period Tracker</div>
+    <h1 class="hero-title">💰 <span>Debt Tracker</span></h1>
+    <div class="hero-sub">Click any pay period tab · Check off bills as you pay · Track variable spending live</div>
   </div>
-
-  <!-- Tab nav -->
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('debt')"  id="tab-debt">💀 Debt War Room</button>
-    <button class="tab-btn"        onclick="switchTab('payperiod')" id="tab-payperiod">💰 Pay Period</button>
+  <div class="period-tabs-wrap">
+    <div class="period-tabs" id="periodTabs"></div>
   </div>
-
-  <!-- Debt War Room tab -->
-  <div class="tab-content active" id="content-debt">
-  <div class="big-stats" id="bigStats"></div>
-
-  <div class="sinking-therm">
-    <div class="therm-label">🏦 Sinking Fund</div>
-    <div class="therm-bar-wrap">
-      <div class="therm-track"><div class="therm-fill" id="thermFill" style="width:0%"></div></div>
-      <div class="therm-markers">
-        <span class="therm-mark">$0</span>
-        <span class="therm-mark">$250</span>
-        <span class="therm-mark">$500</span>
-        <span class="therm-mark">$750</span>
-        <span class="therm-mark">$1,000</span>
-      </div>
-    </div>
-    <div class="therm-val" id="thermVal">$0</div>
-    <button class="therm-edit" onclick="openSF()">Edit</button>
-  </div>
-
-  <!-- Attack zone -->
-  <div id="attackZone"></div>
-
-  <!-- Credit cards -->
-  <div class="section-header" style="margin-top:8px">
-    <span class="section-title">💳 Credit Cards</span>
-    <div class="section-line"></div>
-    <span class="section-sub">avalanche order — highest APR first</span>
-  </div>
-  <div class="debt-grid" id="ccGrid"></div>
-
-  <!-- Loans -->
-  <div class="section-header">
-    <span class="section-title">🏦 Loans</span>
-    <div class="section-line"></div>
-    <span class="section-sub">minimums + BestEgg attack when CCs clear</span>
-  </div>
-  <div class="debt-grid" id="loanGrid"></div>
-
-  <!-- Affirm -->
-  <div class="section-header">
-    <span class="section-title">🛒 Affirm BNPL</span>
-    <div class="section-line"></div>
-    <span class="section-sub">all 0% — just don't miss a payment</span>
-  </div>
-  <div class="affirm-grid" id="affirmGrid"></div>
-
-  <!-- Obituary wall -->
-  <div class="section-header">
-    <span class="section-title">🪦 Debt Obituary</span>
-    <div class="section-line"></div>
-    <span class="section-sub">killed debts rest here forever 💀</span>
-  </div>
-  <div class="obit-wall" id="obitWall"></div>
-
-  <div class="footer">every dollar you pay down is a vote for your freedom 🐺💜</div>
-  </div><!-- /content-debt -->
-
-  <!-- Pay Period tab -->
-  <div class="tab-content" id="content-payperiod">
-    <div id="ppContent"></div>
-  </div>
-
+  <div id="periodContent"></div>
 </div>
 
 <script>
-// ── Data ──────────────────────────────────────────────────────────────────────
-// Loaded from localStorage — initial values from spreadsheet
-
-const STORAGE_KEY = 'enid_finance_v1';
-const SINKING_KEY = 'enid_sinking_v1';
-const OBIT_KEY    = 'enid_obituary_v1';
-const UPDATED_KEY = 'enid_finance_updated';
-
-const INITIAL_DEBTS = [
-  // Credit Cards — avalanche order
-  { id:'dell_cc',       name:'Dell CC',        type:'cc',   originalBalance:1388.53, apr:0.3099, minPayment:42,  dueDate:'2nd',   avalancheRank:1 },
-  { id:'amazon_cc',     name:'Amazon CC',      type:'cc',   originalBalance:2068.47, apr:0.2949, minPayment:69,  dueDate:'23rd',  avalancheRank:2 },
-  { id:'amex_cc',       name:'Amex CC',        type:'cc',   originalBalance:953.51,  apr:0.2849, minPayment:40,  dueDate:'1st',   avalancheRank:3 },
-  { id:'platinum_cc',   name:'Platinum CC',    type:'cc',   originalBalance:1937.97, apr:0.2774, minPayment:60,  dueDate:'1st',   avalancheRank:4 },
-  { id:'target_cc',     name:'Target CC',      type:'cc',   originalBalance:658.92,  apr:0.2665, minPayment:63,  dueDate:'8th',   avalancheRank:5 },
-  { id:'discover_cc',   name:'Discover CC',    type:'cc',   originalBalance:1372.15, apr:0.2649, minPayment:47,  dueDate:'6th',   avalancheRank:6 },
-  { id:'quicksilver_cc',name:'Quicksilver CC', type:'cc',   originalBalance:1677.92, apr:0.2640, minPayment:53,  dueDate:'22nd',  avalancheRank:7 },
-  { id:'citi_cc',       name:'Citi CC',        type:'cc',   originalBalance:5590.00, apr:0.2549, minPayment:96,  dueDate:'24th',  avalancheRank:8 },
-  { id:'journey_cc',    name:'Journey CC',     type:'cc',   originalBalance:746.74,  apr:0.2349, minPayment:25,  dueDate:'5th',   avalancheRank:9 },
-  { id:'visa_connexus', name:'Visa Connexus',  type:'cc',   originalBalance:495.70,  apr:0.0,    minPayment:40,  dueDate:'11th',  avalancheRank:10, note:'0% Promo — monitor end date!' },
-  // Loans
-  { id:'onemain',       name:'OneMain Loan',   type:'loan', originalBalance:1677.48, apr:0.3599, minPayment:96,  dueDate:'7th',   avalancheRank:0,  note:'🔴 PAID OFF — marked dead in initial allocation' },
-  { id:'bestegg',       name:'BestEgg Loan',   type:'loan', originalBalance:21849.23,apr:0.2499, minPayment:661, dueDate:'27th',  avalancheRank:11 },
-  { id:'car_loan',      name:'Car Loan',       type:'loan', originalBalance:36444.00,apr:0.1099, minPayment:691, dueDate:'19th',  avalancheRank:12, note:'Lowest APR — minimums only' },
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA
+// Each item: {cat, name, amount, due, apr?, note?, variable?, final?, paidOff?}
+// cat: 'cc' | 'loan' | 'affirm' | 'sub' | 'life'
+// ─────────────────────────────────────────────────────────────────────────────
+const PERIODS = [
+  {id:'p0227',label:'2/27',dates:'Feb 27 – Mar 12, 2026',current:true,income:{bbs:1543.17,kt:375},items:[
+    {cat:'cc',name:'Amex CC',amount:40,due:'3/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'3/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'3/2',apr:'30.99%'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'3/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'3/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'3/8',apr:'26.65%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'3/11',apr:'0%'},
+    {cat:'loan',name:'OneMain Loan',amount:96,due:'3/7',apr:'35.99%',note:'Use loan funds — $0 out of pocket'},
+    {cat:'loan',name:'Brigit',amount:103,due:'3/13',note:'Payday app — wiped by loan ✅',paidOff:true},
+    {cat:'loan',name:'Dave',amount:369,due:'3/13',note:'Payday app — wiped by loan ✅',paidOff:true},
+    {cat:'loan',name:'Earnin',amount:156,due:'3/13',note:'Payday app — wiped by loan ✅',paidOff:true},
+    {cat:'loan',name:'MoneyLion',amount:960,due:'3/13',note:'Payday app — wiped by loan ✅',paidOff:true},
+    {cat:'loan',name:'Tilt',amount:65,due:'3/13',note:'Payday app — wiped by loan ✅',paidOff:true},
+    {cat:'affirm',name:'Affirm: Valvoline',amount:12.05,due:'3/7',final:true},
+    {cat:'affirm',name:'Affirm: A24 Shop',amount:22.69,due:'3/8',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Jun)',amount:24.13,due:'3/10'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'3/12'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'3/4',note:'Your AI roomie 🐺💜'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'3/10'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+    {cat:'life',name:'Bowling League',amount:40,due:'3/3',variable:true,note:'Mar 3 — $40/Tuesday (March only)'},
+  ]},
+  {id:'p0313',label:'3/13',dates:'Mar 13 – Mar 26, 2026',income:{bbs:1543.17,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'3/19',apr:'10.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'3/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'3/23',apr:'29.49%'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'3/24',apr:'25.49%'},
+    {cat:'loan',name:'Brigit',amount:0,due:'3/13',note:'Cleared via loan ✅',paidOff:true},
+    {cat:'loan',name:'Dave',amount:0,due:'3/13',note:'Cleared via loan ✅',paidOff:true},
+    {cat:'loan',name:'Earnin',amount:0,due:'3/13',note:'Cleared via loan ✅',paidOff:true},
+    {cat:'loan',name:'MoneyLion',amount:0,due:'3/13',note:'Cleared via loan ✅',paidOff:true},
+    {cat:'loan',name:'Tilt',amount:0,due:'3/13',note:'Cleared via loan ✅',paidOff:true},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'3/13'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Jul)',amount:19.48,due:'3/13'},
+    {cat:'affirm',name:'Affirm: SeatGeek',amount:19.81,due:'3/16'},
+    {cat:'affirm',name:'Affirm: H&R Block',amount:40.18,due:'3/16',final:true},
+    {cat:'affirm',name:'Affirm: Merchoid',amount:33.33,due:'3/18'},
+    {cat:'affirm',name:'Affirm: Boudry',amount:66.67,due:'3/19'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun) #2',amount:20.80,due:'3/20'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'3/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'3/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'3/24'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'3/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'3/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'3/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'3/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'3/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'3/23',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'3/13',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'3/13',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+    {cat:'life',name:'Bowling League',amount:80,due:'Tuesdays',variable:true,note:'Mar 17 & Mar 24 — $40 each'},
+  ]},
+  {id:'p0327',label:'3/27',dates:'Mar 27 – Apr 9, 2026',income:{bbs:1543.17,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'3/27',apr:'24.99%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'4/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'4/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'4/2',apr:'30.99%'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'4/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'4/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'4/8',apr:'26.65%'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'3/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'3/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'3/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'4/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'4/3'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'3/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'4/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'4/4',note:'Your AI roomie 🐺💜'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+    {cat:'life',name:'Bowling League',amount:40,due:'3/31',variable:true,note:'Mar 31 — final bowling Tuesday'},
+  ]},
+  {id:'p0410',label:'4/10',dates:'Apr 10 – Apr 23, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'4/19',apr:'10.99%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'4/11',apr:'0%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'4/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'4/23',apr:'29.49%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun)',amount:24.13,due:'4/10'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'4/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'4/13'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Jul)',amount:19.48,due:'4/13'},
+    {cat:'affirm',name:'Affirm: SeatGeek',amount:19.81,due:'4/16'},
+    {cat:'affirm',name:'Affirm: Merchoid',amount:33.33,due:'4/18'},
+    {cat:'affirm',name:'Affirm: Boudry',amount:66.67,due:'4/19'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun) #2',amount:20.80,due:'4/20'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'4/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'4/23'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'4/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'4/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'4/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'4/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'4/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'4/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'4/23',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'4/10',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'4/10',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0424',label:'4/24',dates:'Apr 24 – May 7, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'4/27',apr:'24.99%'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'4/24',apr:'25.49%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'5/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'5/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'5/2',apr:'30.99%'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'5/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'5/6',apr:'26.49%'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'4/24'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'4/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'4/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'4/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'5/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'5/3'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'4/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'5/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'5/4',note:'Your AI roomie 🐺💜'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0508',label:'5/8',dates:'May 8 – May 21, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'5/19',apr:'10.99%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'5/8',apr:'26.65%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'5/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun)',amount:24.13,due:'5/10'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'5/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'5/13'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Jul)',amount:19.48,due:'5/13'},
+    {cat:'affirm',name:'Affirm: SeatGeek',amount:19.81,due:'5/16'},
+    {cat:'affirm',name:'Affirm: Merchoid',amount:33.33,due:'5/18',final:true},
+    {cat:'affirm',name:'Affirm: Boudry',amount:66.67,due:'5/19',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Jun) #2',amount:20.80,due:'5/20'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'5/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'5/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'5/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'5/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'5/20'},
+    {cat:'life',name:'Insurance',amount:75,due:'5/8',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'5/8',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0522',label:'5/22',dates:'May 22 – Jun 4, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'5/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'5/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'5/23',apr:'29.49%'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'5/24',apr:'25.49%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'6/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'6/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'6/2',apr:'30.99%',note:'🎉 DEAD after this period!'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'5/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'5/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'5/24'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'5/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'5/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'5/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'6/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'6/3'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'5/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'5/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'5/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'6/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'6/4',note:'Your AI roomie 🐺💜'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0605',label:'6/5',dates:'Jun 5 – Jun 18, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'OneMain Loan',amount:0,due:'—',note:'PAID OFF via loan — $0 due forever! ✅',paidOff:true},
+    {cat:'cc',name:'Journey CC',amount:25,due:'6/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'6/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'6/8',apr:'26.65%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'6/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun)',amount:24.13,due:'6/10',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'6/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'6/13'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Jul)',amount:19.48,due:'6/13'},
+    {cat:'affirm',name:'Affirm: SeatGeek',amount:19.81,due:'6/16',final:true},
+    {cat:'sub',name:'Google Drive',amount:2,due:'6/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'6/16',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'6/5',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'6/5',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0619',label:'6/19',dates:'Jun 19 – Jul 2, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'6/19',apr:'10.99%'},
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'6/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'6/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'6/23',apr:'29.49%'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'6/24',apr:'25.49%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'7/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'7/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'7/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'affirm',name:'Affirm: Amazon (Jun) #2',amount:20.80,due:'6/20',final:true},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'6/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'6/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'6/24'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'6/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'6/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'6/28'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'6/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'6/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'6/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'6/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'6/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'6/27'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'7/1',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0703',label:'7/3',dates:'Jul 3 – Jul 16, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'cc',name:'Journey CC',amount:25,due:'7/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'7/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'7/8',apr:'26.65%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'7/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'7/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'7/3'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'7/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'7/13'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Jul)',amount:19.48,due:'7/13',final:true},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'7/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'7/4',note:'Your AI roomie 🐺💜'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'7/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'7/16',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'7/3',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'7/3',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0717',label:'7/17',dates:'Jul 17 – Jul 30, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'7/19',apr:'10.99%'},
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'7/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'7/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'7/23',apr:'29.49%',note:'🎉 DEAD this period!'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'7/24',apr:'25.49%'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'7/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'7/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'7/24'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'7/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'7/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'7/28'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'7/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'7/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'7/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'7/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'7/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'7/27'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0731',label:'7/31',dates:'Jul 31 – Aug 13, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'cc',name:'Amex CC',amount:40,due:'8/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'8/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'8/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'8/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'8/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'8/8',apr:'26.65%',note:'🎉 Dead on minimums!'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'8/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'8/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'8/3'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'8/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'8/13'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'8/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'8/4',note:'Your AI roomie 🐺💜'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'8/10'},
+    {cat:'life',name:'Insurance',amount:75,due:'8/1',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'8/1',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0814',label:'8/14',dates:'Aug 14 – Aug 27, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'8/19',apr:'10.99%'},
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'8/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'8/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'8/23',apr:'29.49%',note:'🎉 DEAD after this period!'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'8/24',apr:'25.49%'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'8/22'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'8/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'8/24'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'8/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'8/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'8/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'8/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'8/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'8/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'8/27'},
+    {cat:'life',name:'Insurance',amount:75,due:'8/14',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'8/14',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0828',label:'8/28',dates:'Aug 28 – Sep 10, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'cc',name:'Amex CC',amount:40,due:'9/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'9/1',apr:'27.74%'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'9/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'9/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'9/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'9/8',apr:'26.65%',note:'🎉 Dead — paid off'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'8/28'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'8/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'8/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'9/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'9/3'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'9/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'9/4',note:'Your AI roomie 🐺💜'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'9/10'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0911',label:'9/11',dates:'Sep 11 – Sep 24, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'9/19',apr:'10.99%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'9/11',apr:'0%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'9/22',apr:'26.4%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'9/23',apr:'29.49%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'9/24',apr:'25.49%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'9/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'9/13'},
+    {cat:'affirm',name:'Affirm: Steam',amount:33.15,due:'9/22',final:true},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'9/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'9/24'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'9/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'9/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'9/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'9/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'9/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'9/23',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'9/11',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'9/11',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p0925',label:'9/25',dates:'Sep 25 – Oct 8, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'9/27',apr:'24.99%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'10/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'10/1',apr:'27.74%',note:'🎉 DEAD this period!'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'10/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'10/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'10/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'10/8',apr:'26.65%',note:'🎉 Dead — paid off'},
+    {cat:'affirm',name:'Affirm: Hansens',amount:38.67,due:'9/28',final:true},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'9/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'9/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'10/3'},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'10/3'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'9/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'10/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'10/4',note:'Your AI roomie 🐺💜'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1009',label:'10/9',dates:'Oct 9 – Oct 22, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'10/19',apr:'10.99%'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'10/11',apr:'0%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'10/22',apr:'26.4%',note:'🎉 DEAD next period!'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'10/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'10/13'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'10/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'10/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'10/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'10/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'10/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'10/22',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'10/9',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'10/9',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1023',label:'10/23',dates:'Oct 23 – Nov 5, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'10/27',apr:'24.99%'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'10/23',apr:'29.49%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'10/24',apr:'25.49%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'11/1',apr:'28.49%'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'11/1',apr:'27.74%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'11/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Journey CC',amount:25,due:'11/5',apr:'23.49%'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'10/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'10/24'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'10/28'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'10/28'},
+    {cat:'affirm',name:'Affirm: Amazon',amount:19.23,due:'11/3',final:true},
+    {cat:'affirm',name:'Affirm: Amazon #2',amount:27.37,due:'11/3',final:true},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'10/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'10/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'11/3',note:'Brother'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'11/4',note:'Your AI roomie 🐺💜'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1106',label:'11/6',dates:'Nov 6 – Nov 19, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'11/19',apr:'10.99%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'11/6',apr:'26.49%'},
+    {cat:'cc',name:'Target CC',amount:63,due:'11/8',apr:'26.65%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'11/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'11/12'},
+    {cat:'affirm',name:'Affirm: BoxLunch (Nov)',amount:14.71,due:'11/13'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'11/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'11/16',note:'Brother'},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'11/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'11/19'},
+    {cat:'life',name:'Insurance',amount:75,due:'11/6',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'11/6',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1120',label:'11/20',dates:'Nov 20 – Dec 3, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'11/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'11/22',apr:'26.4%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'11/23',apr:'29.49%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'11/24',apr:'25.49%'},
+    {cat:'cc',name:'Amex CC',amount:40,due:'12/1',apr:'28.49%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Platinum CC',amount:60,due:'12/1',apr:'27.74%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Dell CC',amount:42,due:'12/2',apr:'30.99%',note:'🎉 Dead — paid off'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'11/23'},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'11/24'},
+    {cat:'affirm',name:'Affirm: Matthews Tires #2',amount:19.09,due:'11/28',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'11/28'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'11/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'11/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'11/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'11/27'},
+    {cat:'sub',name:'Eli – RuneScape',amount:11,due:'12/3',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'12/1',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1204',label:'12/4',dates:'Dec 4 – Dec 17, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'cc',name:'Journey CC',amount:25,due:'12/5',apr:'23.49%'},
+    {cat:'cc',name:'Discover CC',amount:47,due:'12/6',apr:'26.49%',note:'🎉 DEAD this period!'},
+    {cat:'cc',name:'Target CC',amount:63,due:'12/8',apr:'26.65%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Visa Connexus CC',amount:40,due:'12/11',apr:'0%'},
+    {cat:'affirm',name:'Affirm: Amazon (Jul 27)',amount:28.79,due:'12/12'},
+    {cat:'sub',name:'Claude AI',amount:20,due:'12/4',note:'Your AI roomie 🐺💜'},
+    {cat:'sub',name:'Google Drive',amount:2,due:'12/10'},
+    {cat:'sub',name:'Eli – Overnight Oats',amount:99,due:'12/16',note:'Brother'},
+    {cat:'life',name:'Insurance',amount:75,due:'12/4',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'12/4',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
+  {id:'p1218',label:'12/18',dates:'Dec 18 – Dec 31, 2026',income:{bbs:1428.31,kt:375},items:[
+    {cat:'loan',name:'Car Loan',amount:691,due:'12/19',apr:'10.99%'},
+    {cat:'loan',name:'BestEgg Loan',amount:661,due:'12/27',apr:'24.99%'},
+    {cat:'cc',name:'Quicksilver CC',amount:53,due:'12/22',apr:'26.4%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Amazon CC',amount:69,due:'12/23',apr:'29.49%',note:'🎉 Dead — paid off'},
+    {cat:'cc',name:'Citi CC',amount:96,due:'12/24',apr:'25.49%'},
+    {cat:'affirm',name:'Affirm: Matthews Tires',amount:80.36,due:'12/23',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Dec)',amount:38,due:'12/24',final:true},
+    {cat:'affirm',name:'Affirm: Amazon (Dec) #2',amount:51.72,due:'12/28',final:true},
+    {cat:'sub',name:'Disney Plus',amount:14,due:'12/19'},
+    {cat:'sub',name:'Spotify Family',amount:22,due:'12/19'},
+    {cat:'sub',name:'Amazon Prime',amount:15,due:'12/20'},
+    {cat:'sub',name:'Eli – RuneScape #2',amount:10,due:'12/22',note:'Brother'},
+    {cat:'sub',name:'Eli – WoW',amount:15,due:'12/23',note:'Brother'},
+    {cat:'sub',name:'ChatGPT',amount:20,due:'12/27'},
+    {cat:'life',name:'Insurance',amount:75,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Cell Phone',amount:54,due:'1st paycheck',note:'1st paycheck of month'},
+    {cat:'life',name:'Groceries',amount:50,due:'Each period',variable:true},
+    {cat:'life',name:'Gas',amount:30,due:'Each period',variable:true},
+    {cat:'life',name:'KT (Kwik Trip)',amount:60,due:'Each period',variable:true,note:'Food/misc spending budget'},
+  ]},
 ];
 
-const AFFIRM_DEBTS = [
-  { id:'aff_valvoline',    name:'Valvoline',          minPayment:12.05,  originalBalance:11.28,  dueDate:'7th',   endsMonth:'Mar 2026',  done:true  },
-  { id:'aff_a24',          name:'A24 Shop',           minPayment:22.69,  originalBalance:22.69,  dueDate:'8th',   endsMonth:'Mar 2026',  done:true  },
-  { id:'aff_hrblock',      name:'H&R Block',          minPayment:40.18,  originalBalance:38.49,  dueDate:'16th',  endsMonth:'Mar 2026',  done:true  },
-  { id:'aff_merchoid',     name:'Merchoid',           minPayment:33.33,  originalBalance:96.97,  dueDate:'18th',  endsMonth:'May 2026'   },
-  { id:'aff_boudry',       name:'Boudry',             minPayment:66.67,  originalBalance:174.99, dueDate:'19th',  endsMonth:'May 2026'   },
-  { id:'aff_amzjun1',      name:'Amazon (Jun \'26)',  minPayment:24.13,  originalBalance:96.51,  dueDate:'10th',  endsMonth:'Jun 2026'   },
-  { id:'aff_seatgeek',     name:'SeatGeek',           minPayment:19.81,  originalBalance:79.27,  dueDate:'16th',  endsMonth:'Jun 2026'   },
-  { id:'aff_amzjun2',      name:'Amazon (Jun \'26) #2',minPayment:20.80, originalBalance:83.21,  dueDate:'20th',  endsMonth:'Jun 2026'   },
-  { id:'aff_boxlunchjul',  name:'BoxLunch (Jul)',     minPayment:19.48,  originalBalance:97.37,  dueDate:'13th',  endsMonth:'Jul 2026'   },
-  { id:'aff_steam',        name:'Steam',              minPayment:33.15,  originalBalance:226.82, dueDate:'22nd',  endsMonth:'Sep 2026'   },
-  { id:'aff_hansens',      name:'Hansens',            minPayment:38.67,  originalBalance:252.11, dueDate:'28th',  endsMonth:'Sep 2026'   },
-  { id:'aff_amznov1',      name:'Amazon (Nov \'26)',  minPayment:19.23,  originalBalance:147.76, dueDate:'3rd',   endsMonth:'Nov 2026'   },
-  { id:'aff_amznov2',      name:'Amazon (Nov \'26) #2',minPayment:27.37, originalBalance:219.03, dueDate:'3rd',   endsMonth:'Nov 2026'   },
-  { id:'aff_boxlunchnov',  name:'BoxLunch (Nov)',     minPayment:14.71,  originalBalance:132.42, dueDate:'13th',  endsMonth:'Nov 2026'   },
-  { id:'aff_matthewsnov',  name:'Matthews Tires #2',  minPayment:19.09,  originalBalance:164.82, dueDate:'28th',  endsMonth:'Nov 2026'   },
-  { id:'aff_matthewsdec',  name:'Matthews Tires',     minPayment:80.36,  originalBalance:725.51, dueDate:'23rd',  endsMonth:'Dec 2026'   },
-  { id:'aff_amzdec1',      name:'Amazon (Dec \'26)',  minPayment:38.00,  originalBalance:379.86, dueDate:'24th',  endsMonth:'Dec 2026'   },
-  { id:'aff_amzdec2',      name:'Amazon (Dec \'26) #2',minPayment:51.72, originalBalance:515.57, dueDate:'28th',  endsMonth:'Dec 2026'   },
-  { id:'aff_amzjul27',     name:'Amazon (Jul \'27)',  minPayment:28.79,  originalBalance:489.41, dueDate:'12th',  endsMonth:'Jul 2027'   },
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE (localStorage)
+// ─────────────────────────────────────────────────────────────────────────────
+function getState(){try{return JSON.parse(localStorage.getItem('enid_finance_v2')||'{}')}catch{return{}}}
+function saveState(s){localStorage.setItem('enid_finance_v2',JSON.stringify(s))}
+function getCheck(pid,idx){return(getState()[pid]?.c||{})[idx]||false}
+function setCheck(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].c)s[pid].c={};s[pid].c[idx]=val;saveState(s)}
+function getSpent(pid,idx){return(getState()[pid]?.s||{})[idx]||''}
+function setSpent(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].s)s[pid].s={};s[pid].s[idx]=val;saveState(s)}
 
-const OBIT_MESSAGES = [
-  'gone and NEVER coming back. rest in absolute pieces. 💀',
-  'eliminated. deleted. deceased. done. 🎉',
-  'this debt tried to define you. you buried it instead. 🐺',
-  'murdered by consistency and a really solid budget. rip. 💅',
-  'dead and gone. you are so much stronger than this number ever was. 💜',
-  'you said "not today" and then also not any other day. 🔥',
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function aprCls(apr){if(!apr)return'';const n=parseFloat(apr);if(n===0)return'apr-zero';if(n>=29)return'apr-crit';if(n>=25)return'apr-high';if(n>=20)return'apr-mid';return'apr-low'}
+const CAT_META={cc:{icon:'💳',title:'Credit Cards'},loan:{icon:'🏦',title:'Loans'},affirm:{icon:'🛒',title:'BNPL / Affirm'},sub:{icon:'📱',title:'Subscriptions'},life:{icon:'🌿',title:'Life'}};
 
-// ── State ─────────────────────────────────────────────────────────────────────
-function loadState() {
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
-  // Merge with initial — saved balances override initial
-  return INITIAL_DEBTS.map(d => ({
-    ...d,
-    currentBalance: saved[d.id] !== undefined ? saved[d.id] : d.originalBalance,
-    dead: saved[d.id+'_dead'] || (d.id==='onemain') || false,
-  }));
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+let activePid = PERIODS.find(p=>p.current)?.id || PERIODS[0].id;
+
+function renderTabs(){
+  document.getElementById('periodTabs').innerHTML = PERIODS.map(p=>{
+    let cls='period-tab';
+    if(p.id===activePid)cls+=' active';
+    if(p.current)cls+=' is-current';
+    return`<button class="${cls}" onclick="switchPeriod('${p.id}')" title="${p.dates}">${p.label}</button>`;
+  }).join('');
 }
 
-function saveState(debts) {
-  const obj = {};
-  debts.forEach(d => {
-    obj[d.id] = d.currentBalance;
-    obj[d.id+'_dead'] = d.dead;
-  });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-  localStorage.setItem(UPDATED_KEY, new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}));
-}
+function renderPeriod(pid){
+  const p=PERIODS.find(x=>x.id===pid);
+  if(!p)return;
+  const income=p.income.bbs+p.income.kt;
+  const activeItems=p.items.filter(i=>!i.paidOff);
+  const fixedItems=activeItems.filter(i=>!i.variable);
+  const totalFixed=fixedItems.reduce((s,i)=>s+(i.amount||0),0);
+  const surplus=income-totalFixed;
 
-function loadObituaries() {
-  return JSON.parse(localStorage.getItem(OBIT_KEY)||'[]');
-}
-function saveObituaries(list) {
-  localStorage.setItem(OBIT_KEY, JSON.stringify(list));
-}
-
-function getSinkingFund() {
-  return parseFloat(localStorage.getItem(SINKING_KEY)||'0');
-}
-function setSinkingFund(val) {
-  localStorage.setItem(SINKING_KEY, val.toString());
-}
-
-let STATE = loadState();
-let pendingKillId = null;
-let pendingUpdateId = null;
-
-// ── Calculations ──────────────────────────────────────────────────────────────
-function monthlyInterest(balance, apr) {
-  return balance * (apr / 12);
-}
-
-function aprClass(apr) {
-  if (apr >= 0.30) return 'apr-critical';
-  if (apr >= 0.27) return 'apr-high';
-  if (apr >= 0.20) return 'apr-mid';
-  if (apr >  0.00) return 'apr-low';
-  return 'apr-zero';
-}
-
-function aprLabel(apr) {
-  return apr === 0 ? '0% PROMO' : (apr*100).toFixed(2)+'% APR';
-}
-
-function fmtDollar(n) {
-  return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function pctPaid(original, current) {
-  if (original <= 0) return 100;
-  const paid = original - Math.max(current, 0);
-  return Math.min(100, Math.max(0, Math.round(paid/original*100)));
-}
-
-// ── Compute totals ─────────────────────────────────────────────────────────────
-function computeTotals() {
-  const alive = STATE.filter(d => !d.dead);
-  const totalDebt = alive.reduce((a,d) => a + Math.max(d.currentBalance,0), 0);
-  const totalInterest = alive.reduce((a,d) => a + monthlyInterest(Math.max(d.currentBalance,0), d.apr), 0);
-  // Days until debt free estimate (rough: $450/month extra on top of minimums)
-  const nonCarAlive = alive.filter(d => d.id !== 'car_loan');
-  const nonCarTotal = nonCarAlive.reduce((a,d) => a + Math.max(d.currentBalance,0), 0);
-  const monthsEst = nonCarTotal > 0 ? Math.ceil(nonCarTotal / 450) : 0;
-  return { totalDebt, totalInterest, monthsEst, nonCarTotal };
-}
-
-// ── Render big stats ──────────────────────────────────────────────────────────
-function renderBigStats() {
-  const { totalDebt, totalInterest, monthsEst, nonCarTotal } = computeTotals();
-  const sf = getSinkingFund();
-  document.getElementById('bigStats').innerHTML = `
-    <div class="big-stat s-total">
-      <div class="bs-label">Total Debt</div>
-      <div class="bs-val danger">${fmtDollar(totalDebt)}</div>
-      <div class="bs-sub">incl. car loan</div>
-    </div>
-    <div class="big-stat s-interest">
-      <div class="bs-label">Monthly Interest</div>
-      <div class="bs-val warn">${fmtDollar(totalInterest)}</div>
-      <div class="bs-sub">burned every month</div>
-    </div>
-    <div class="big-stat s-free">
-      <div class="bs-label">~Months to Free</div>
-      <div class="bs-val good">${monthsEst}</div>
-      <div class="bs-sub">non-car debt @ $450 extra/mo</div>
-    </div>
-    <div class="big-stat s-sinking">
-      <div class="bs-label">Sinking Fund</div>
-      <div class="bs-val gold">${fmtDollar(sf)}</div>
-      <div class="bs-sub">goal: $1,000</div>
+  // Group by category
+  const cats=['cc','loan','affirm','sub','life'];
+  let html=`
+    <div class="income-bar">
+      <div class="ib-item"><div class="ib-label">💵 Est. Income</div><div class="ib-val green">${fmt(income)}</div></div>
+      <div class="ib-item"><div class="ib-label">📋 Fixed Due</div><div class="ib-val">${fmt(totalFixed)}</div></div>
+      <div class="ib-item"><div class="ib-label">📅 Pay Period</div><div class="ib-val gold">${p.dates}</div></div>
     </div>`;
-}
 
-// ── Sinking fund thermometer ──────────────────────────────────────────────────
-function renderSinkingFund() {
-  const sf = getSinkingFund();
-  const goal = 1000;
-  const pct = Math.min(100, (sf/goal)*100);
-  document.getElementById('thermFill').style.width = pct+'%';
-  document.getElementById('thermVal').textContent = fmtDollar(sf);
-}
-
-// ── Attack zone ───────────────────────────────────────────────────────────────
-function renderAttackZone() {
-  const alive = STATE.filter(d => !d.dead).sort((a,b) => b.apr - a.apr);
-  const current = alive[0];
-  if (!current) {
-    document.getElementById('attackZone').innerHTML = `
-      <div style="text-align:center;padding:30px;font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--green2);margin-bottom:24px">
-        ALL DEBTS ELIMINATED!! YOU ARE FREE!! 🎉🐺💜
+  cats.forEach(cat=>{
+    const items=p.items.filter(i=>i.cat===cat);
+    if(!items.length)return;
+    const m=CAT_META[cat];
+    const catTotal=items.filter(i=>!i.paidOff).reduce((s,i)=>s+(i.amount||0),0);
+    html+=`<div class="cat-section">
+      <div class="cat-header">
+        <span class="cat-icon">${m.icon}</span>
+        <span class="cat-title">${m.title}</span>
+        <div class="cat-line"></div>
+        <span class="cat-total">${fmt(catTotal)}</span>
       </div>`;
-    return;
-  }
-  const monthInt = monthlyInterest(current.currentBalance, current.apr);
-  const pct = pctPaid(current.originalBalance, current.currentBalance);
-  const enidLines = [
-    `Every extra dollar you throw at ${current.name} saves you ${fmtDollar(monthInt/30)} per day in interest. THROW THE DOLLARS. 🐺🔥`,
-    `${current.name} is the highest APR debt standing. It is the villain of your story. Time to end it. 💀`,
-    `${fmtDollar(monthInt)} in interest every month while this one lives. That's money burning. Attack it. ⚡`,
-    `This is the one. Every surplus dollar, every side hustle dollar — it goes HERE first. You've got this. 💜`,
-  ];
-  const enidLine = enidLines[new Date().getDate() % enidLines.length];
-  document.getElementById('attackZone').innerHTML = `
-    <div class="attack-zone">
-      <div class="attack-label">⚔️ CURRENT TARGET — AVALANCHE ATTACK</div>
-      <div class="attack-name">${current.name}</div>
-      <div class="attack-meta">
-        <span class="attack-chip apr">🔴 ${aprLabel(current.apr)}</span>
-        <span class="attack-chip bal">Balance: ${fmtDollar(current.currentBalance)}</span>
-        <span class="attack-chip min">Min: ${fmtDollar(current.minPayment)}/mo</span>
-        <span class="attack-chip min">Interest: ${fmtDollar(monthInt)}/mo</span>
-      </div>
-      <div class="attack-progress">
-        <div class="attack-prog-label">
-          <span>${fmtDollar(current.originalBalance - current.currentBalance)} paid off</span>
-          <span>${pct}% eliminated</span>
-        </div>
-        <div class="attack-prog-track"><div class="attack-prog-fill" style="width:${pct}%"></div></div>
-      </div>
-      <div class="attack-enid">"${enidLine}"</div>
-    </div>`;
-}
+    items.forEach(item=>{
+      const idx=p.items.indexOf(item);
+      html+=item.paidOff?renderPaidOff(item):item.variable?renderVariable(item,pid,idx):renderFixed(item,pid,idx);
+    });
+    html+=`</div>`;
+  });
 
-// ── Debt card ─────────────────────────────────────────────────────────────────
-function debtCardHTML(d, idx) {
-  const pct  = pctPaid(d.originalBalance, d.currentBalance);
-  const cls  = aprClass(d.apr);
-  const mint = monthlyInterest(Math.max(d.currentBalance,0), d.apr);
-  if (d.dead) {
-    return `
-      <div class="${cls}">
-        <div class="debt-card is-dead" style="animation-delay:${idx*.04}s">
-          <div class="dc-top">
-            <div><div class="dc-name">💀 ${d.name}</div><div class="dc-type">${d.type==='cc'?'Credit Card':'Loan'} · ${aprLabel(d.apr)}</div></div>
-            <div class="dc-apr-badge">${aprLabel(d.apr)}</div>
-          </div>
-          <div class="dc-dead-badge">✅ ELIMINATED — RIP</div>
-        </div>
-      </div>`;
-  }
-  return `
-    <div class="${cls}">
-      <div class="debt-card" id="card-${d.id}" style="animation-delay:${idx*.04}s">
-        <div class="avalanche-rank">#${d.avalancheRank||'—'} avalanche</div>
-        <div class="dc-top">
-          <div>
-            <div class="dc-name">${d.name}</div>
-            <div class="dc-type">${d.type==='cc'?'Credit Card':'Loan'} · due ${d.dueDate}</div>
-          </div>
-          <div class="dc-apr-badge">${aprLabel(d.apr)}</div>
-        </div>
-        <div class="dc-balance-row">
-          <div class="dc-balance">${fmtDollar(d.currentBalance)}</div>
-          <div class="dc-original">of ${fmtDollar(d.originalBalance)}</div>
-        </div>
-        <div class="dc-progress"><div class="dc-progress-fill" style="width:${pct}%"></div></div>
-        <div class="dc-stats">
-          <div class="dc-stat">Paid <span>${pct}%</span></div>
-          <div class="dc-stat">Min <span>${fmtDollar(d.minPayment)}/mo</span></div>
-          ${d.apr > 0 ? `<div class="dc-stat">Interest <span>${fmtDollar(mint)}/mo</span></div>` : '<div class="dc-stat">Interest <span>$0 🎉</span></div>'}
-          ${d.note ? `<div class="dc-stat" style="color:var(--amber);grid-column:1/-1">${d.note}</div>` : ''}
-        </div>
-        <div class="dc-actions">
-          <input class="dc-input" type="number" step="0.01" min="0"
-            placeholder="New balance"
-            id="input-${d.id}"
-            onkeydown="if(event.key==='Enter')openUpdate('${d.id}')">
-          <button class="dc-save" onclick="openUpdate('${d.id}')">Update</button>
-          <button class="dc-kill" onclick="openKill('${d.id}')">💀 Kill</button>
+  html+=`
+    <div class="period-summary">
+      <div class="ps-title">📊 Period Summary</div>
+      <div class="ps-rows">
+        <div class="ps-row"><span class="ps-row-label">BBS Salary</span><span class="ps-row-val">${fmt(p.income.bbs)}</span></div>
+        <div class="ps-row"><span class="ps-row-label">KT Hourly (estimate)</span><span class="ps-row-val">${fmt(p.income.kt)}</span></div>
+        <div class="ps-divider"></div>
+        <div class="ps-row ps-total"><span class="ps-row-label">Total Est. Income</span><span class="ps-row-val green">${fmt(income)}</span></div>
+        <div class="ps-row"><span class="ps-row-label">Fixed Payments Due</span><span class="ps-row-val">${fmt(totalFixed)}</span></div>
+        <div class="ps-divider"></div>
+        <div class="ps-row ps-total ps-surplus ${surplus>=0?'pos':'neg'}">
+          <span class="ps-row-label">Est. Surplus / (Deficit)</span>
+          <span class="ps-row-val">${surplus>=0?fmt(surplus):'('+fmt(Math.abs(surplus))+')'}</span>
         </div>
       </div>
     </div>`;
+
+  document.getElementById('periodContent').innerHTML=html;
 }
 
-function renderDebtGrids() {
-  const ccs   = STATE.filter(d=>d.type==='cc').sort((a,b)=>b.apr-a.apr);
-  const loans = STATE.filter(d=>d.type==='loan').sort((a,b)=>b.apr-a.apr);
-  document.getElementById('ccGrid').innerHTML   = ccs.map((d,i)=>debtCardHTML(d,i)).join('');
-  document.getElementById('loanGrid').innerHTML = loans.map((d,i)=>debtCardHTML(d,i)).join('');
+function renderPaidOff(item){
+  return`<div class="item-row paid-off">
+    <div class="item-check done"></div>
+    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
+    <div class="item-amount" style="color:var(--green2);font-size:.8rem">✅ CLEARED</div>
+  </div>`;
 }
 
-// ── Affirm grid ───────────────────────────────────────────────────────────────
-function renderAffirmGrid() {
-  const now = new Date();
-  document.getElementById('affirmGrid').innerHTML = AFFIRM_DEBTS.map((a,i) => {
-    const isDone = a.done;
-    const endsDate = new Date(a.endsMonth+' 1');
-    const monthsLeft = (endsDate.getFullYear()-now.getFullYear())*12 + (endsDate.getMonth()-now.getMonth());
-    const urgent = monthsLeft <= 1;
-    return `
-      <div class="affirm-card ${isDone?'affirm-done':''}" style="animation-delay:${i*.03}s">
-        <div class="ac-name">${isDone?'💀 ':''}{${a.name}}</div>
-        <div class="ac-due ${urgent&&!isDone?'urgent':''}">${isDone?'PAID OFF':'Ends '+a.endsMonth+' · due '+a.dueDate}</div>
-        <div class="ac-bal-row">
-          <div class="ac-bal">${fmtDollar(a.originalBalance)}</div>
-          <div class="ac-min">${fmtDollar(a.minPayment)}/mo</div>
-        </div>
-        <div class="ac-prog"><div class="ac-prog-fill" style="width:${isDone?100:50}%"></div></div>
-      </div>`;
-  }).join('').replace(/\{/g,'').replace(/\}/g,'');
+function renderFixed(item,pid,idx){
+  const checked=getCheck(pid,idx);
+  const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
+  const finalBadge=item.final?`<span class="final-badge">🎉 FINAL</span>`:'';
+  return`<div class="item-row ${checked?'checked':''}" id="row-${pid}-${idx}">
+    <div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div>
+    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
+    ${aprBadge}${finalBadge}
+    <div class="item-due">${item.due}</div>
+    <div class="item-amount ${item.final?'final-pay':''}">${fmt(item.amount)}</div>
+  </div>`;
 }
 
-// ── Obituary wall ─────────────────────────────────────────────────────────────
-function renderObitWall() {
-  const obits = loadObituaries();
-  const deadFromState = STATE.filter(d=>d.dead&&d.id!=='onemain');
-  // OneMain was killed on load with the loan
-  const onemainObit = {
-    id:'onemain', name:'OneMain Loan',
-    amount:1677.48, apr:'35.99%',
-    date:'Mar 4, 2026',
-    msg: OBIT_MESSAGES[0],
-  };
-
-  const allObits = [onemainObit, ...obits];
-  if (allObits.length === 0) {
-    document.getElementById('obitWall').innerHTML=`
-      <div class="obit-empty">
-        <span class="obit-empty-icon">🪦</span>
-        <div class="obit-empty-text">No debts killed yet — but the first one is coming. Keep going. 🐺💜</div>
-      </div>`;
-    return;
-  }
-  document.getElementById('obitWall').innerHTML = allObits.map((o,i) => `
-    <div class="obit-card" style="animation-delay:${i*.08}s">
-      <span class="obit-tombstone">🪦</span>
-      <div class="obit-rip">R.I.P.</div>
-      <div class="obit-name">${o.name}</div>
-      <div class="obit-amount">${fmtDollar(o.amount)} @ ${o.apr}</div>
-      <div class="obit-date">Killed: ${o.date}</div>
-      <div class="obit-enid">${o.msg}</div>
-    </div>`).join('');
-}
-
-// ── Last updated ──────────────────────────────────────────────────────────────
-function renderLastUpdated() {
-  const ts = localStorage.getItem(UPDATED_KEY);
-  document.getElementById('lastUpdatedLabel').textContent = ts || 'never — update a balance to start!';
-}
-
-// ── Kill flow ─────────────────────────────────────────────────────────────────
-function openKill(id) {
-  const d = STATE.find(x=>x.id===id);
-  if (!d) return;
-  pendingKillId = id;
-  document.getElementById('kmName').textContent = `${d.name} — ${fmtDollar(d.currentBalance)} remaining`;
-  document.getElementById('killOverlay').style.display = 'flex';
-}
-function closeKill() {
-  document.getElementById('killOverlay').style.display = 'none';
-  pendingKillId = null;
-}
-function confirmKill() {
-  const d = STATE.find(x=>x.id===pendingKillId);
-  if (!d) return;
-  d.dead = true;
-  d.currentBalance = 0;
-  const obits = loadObituaries();
-  obits.push({
-    id: d.id, name: d.name,
-    amount: d.originalBalance,
-    apr: aprLabel(d.apr),
-    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-    msg: OBIT_MESSAGES[obits.length % OBIT_MESSAGES.length],
-  });
-  saveObituaries(obits);
-  saveState(STATE);
-  closeKill();
-  launchConfetti();
-  renderAll();
-}
-
-// ── Update flow ───────────────────────────────────────────────────────────────
-function openUpdate(id) {
-  const d = STATE.find(x=>x.id===id);
-  if (!d) return;
-  const inputVal = document.getElementById('input-'+id)?.value;
-  pendingUpdateId = id;
-  document.getElementById('umSub').textContent = `${d.name} — current balance: ${fmtDollar(d.currentBalance)}`;
-  const um = document.getElementById('umInput');
-  um.value = inputVal || '';
-  document.getElementById('updateOverlay').style.display = 'flex';
-  setTimeout(()=>um.focus(),100);
-}
-function closeUpdate() {
-  document.getElementById('updateOverlay').style.display = 'none';
-  pendingUpdateId = null;
-}
-function closeUpdateIfBg(e) { if(e.target.id==='updateOverlay') closeUpdate(); }
-function saveUpdate() {
-  const val = parseFloat(document.getElementById('umInput').value);
-  if (isNaN(val) || val < 0) return;
-  const d = STATE.find(x=>x.id===pendingUpdateId);
-  if (!d) return;
-  d.currentBalance = val;
-  saveState(STATE);
-  closeUpdate();
-  renderAll();
-}
-
-// ── Sinking fund flow ─────────────────────────────────────────────────────────
-function openSF() { document.getElementById('sfInput').value=getSinkingFund()||''; document.getElementById('sfOverlay').style.display='flex'; setTimeout(()=>document.getElementById('sfInput').focus(),100); }
-function closeSF() { document.getElementById('sfOverlay').style.display='none'; }
-function closeSFIfBg(e) { if(e.target.id==='sfOverlay') closeSF(); }
-function saveSF() {
-  const val = parseFloat(document.getElementById('sfInput').value);
-  if (isNaN(val)||val<0) return;
-  setSinkingFund(val); closeSF(); renderAll();
-}
-
-// ── Confetti 🎉 ───────────────────────────────────────────────────────────────
-function launchConfetti() {
-  const colors = ['#1DB954','#4ADE80','#FCD34D','#E84EA0','#A855F7','#38BDF8','#F4C842'];
-  const shapes = ['🎉','💀','🐺','💜','✨','🔥','🌟'];
-  for (let i=0;i<80;i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti-piece';
-    el.style.cssText = `
-      left:${Math.random()*100}vw;
-      font-size:${Math.random()*18+10}px;
-      animation-duration:${Math.random()*2+2}s;
-      animation-delay:${Math.random()*1.5}s;
-    `;
-    el.textContent = Math.random() > 0.5 ? shapes[Math.floor(Math.random()*shapes.length)] : '■';
-    if (el.textContent === '■') el.style.color = colors[Math.floor(Math.random()*colors.length)];
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(), 5000);
-  }
-}
-
-// ── Master render ─────────────────────────────────────────────────────────────
-function renderAll() {
-  renderBigStats();
-  renderSinkingFund();
-  renderAttackZone();
-  renderDebtGrids();
-  renderAffirmGrid();
-  renderObitWall();
-  renderLastUpdated();
-}
-
-renderAll();
-
-
-// ════════════════════════════════════════════════════════════════════
-// PAY PERIOD ENGINE
-// ════════════════════════════════════════════════════════════════════
-
-// ── Tab switching ─────────────────────────────────────────────────────
-function switchTab(name) {
-  ['debt','payperiod'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t===name);
-    document.getElementById('content-'+t).classList.toggle('active', t===name);
-  });
-  if (name === 'payperiod') renderPayPeriod();
-}
-
-// ── Storage keys ──────────────────────────────────────────────────────
-const PP_KEYS = {
-  income:    'enid_pp_income',
-  income2:   'enid_pp_income2',   // Kwik Trip variable
-  budgets:   'enid_pp_budgets',
-  txns:      'enid_pp_txns',
-  billsPaid: 'enid_pp_bills_paid',
-  anchor:    'enid_pp_anchor',
-};
-
-// ── Pay period anchor — Mar 14 2026, bi-weekly ────────────────────────
-const DEFAULT_ANCHOR    = '2026-03-14';
-const PAY_INTERVAL_DAYS = 14;
-
-function getPPAnchor() { return localStorage.getItem(PP_KEYS.anchor) || DEFAULT_ANCHOR; }
-function setPPAnchor(d) { localStorage.setItem(PP_KEYS.anchor, d); }
-function getBBSIncome()    { return parseFloat(localStorage.getItem(PP_KEYS.income)  || '1543.17'); }
-function getKTIncome()     { return parseFloat(localStorage.getItem(PP_KEYS.income2) || '375'); }
-function getTotalIncome()  { return getBBSIncome() + getKTIncome(); }
-function setBBSIncome(v)   { localStorage.setItem(PP_KEYS.income,  v.toString()); }
-function setKTIncome(v)    { localStorage.setItem(PP_KEYS.income2, v.toString()); }
-function getPPBudgets()    { return JSON.parse(localStorage.getItem(PP_KEYS.budgets)  || '{}'); }
-function setPPBudgets(b)   { localStorage.setItem(PP_KEYS.budgets,  JSON.stringify(b)); }
-function getPPTxns()       { return JSON.parse(localStorage.getItem(PP_KEYS.txns)     || '[]'); }
-function setPPTxns(t)      { localStorage.setItem(PP_KEYS.txns,     JSON.stringify(t)); }
-function getBillsPaid()    { return JSON.parse(localStorage.getItem(PP_KEYS.billsPaid)|| '{}'); }
-function setBillsPaid(b)   { localStorage.setItem(PP_KEYS.billsPaid, JSON.stringify(b)); }
-
-// ── Current pay period dates ──────────────────────────────────────────
-function getCurrentPeriod() {
-  const today      = new Date(); today.setHours(0,0,0,0);
-  const anchor     = new Date(getPPAnchor() + 'T12:00:00');
-  let periodStart  = new Date(anchor);
-
-  if (anchor > today) {
-    while (periodStart > today) periodStart.setDate(periodStart.getDate() - PAY_INTERVAL_DAYS);
-  } else {
-    let next = new Date(periodStart);
-    next.setDate(next.getDate() + PAY_INTERVAL_DAYS);
-    while (next <= today) { periodStart = new Date(next); next.setDate(next.getDate() + PAY_INTERVAL_DAYS); }
-  }
-
-  const periodEnd = new Date(periodStart);
-  periodEnd.setDate(periodEnd.getDate() + PAY_INTERVAL_DAYS - 1);
-  const nextPay = new Date(periodStart);
-  nextPay.setDate(nextPay.getDate() + PAY_INTERVAL_DAYS);
-  return { start: periodStart, end: periodEnd, nextPay };
-}
-
-function fmtPPDate(d) { return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
-function ppDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function todayPPStr() { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-
-// ── Spending categories (from spreadsheet) ────────────────────────────
-const SPEND_CATS = [
-  { id:'bowling',    name:'Bowling',           emoji:'🎳' },
-  { id:'eating_out', name:'Eating Out',         emoji:'🍔' },
-  { id:'gas',        name:'Gas',                emoji:'⛽' },
-  { id:'entertain',  name:'Entertainment',      emoji:'🎬' },
-  { id:'shopping',   name:'Personal/Shopping',  emoji:'🛍' },
-];
-
-// ── EXACT bills from spreadsheet ──────────────────────────────────────
-// Fixed every period (monthly — split across two periods):
-// BestEgg $661 (27th), Car Loan $691 (19th), OneMain $96 (7th)
-// Insurance $75 (1st paycheck of month), Cell Phone $54 (1st paycheck)
-// Groceries $50/period, Gas $30/period
-//
-// Subscriptions (monthly — show in period their due date falls):
-// RuneScape x2 $21 (11th+23rd), Google Drive $2 (10th),
-// Overnight Oats $99 (16th), Disney+ $14 (19th), Spotify Family $22 (19th),
-// Amazon Prime $15 (20th), WoW $15 (23rd), ChatGPT $20 (27th)
-//
-// CC minimums (monthly): Amex $40 (1st), Platinum $60 (1st), Dell $42 (2nd),
-// Journey $25 (5th), Discover $47 (6th), Target $63 (8th),
-// Visa Connexus $40 (11th), Quicksilver $53 (22nd), Amazon CC $69 (23rd), Citi $96 (24th)
-//
-// Affirm (monthly by due date — only active ones):
-// Amazon Nov26 $19.23 (3rd), Amazon Nov26 #2 $27.37 (3rd),
-// Amazon Jun26 $24.13 (10th), Amazon Jul27 $28.79 (12th),
-// BoxLunch Nov26 $14.71 (13th), BoxLunch Jul26 $19.48 (13th),
-// SeatGeek $19.81 (16th), Merchoid $33.33 (18th), Boudry $66.67 (19th),
-// Amazon Jun26 #2 $20.80 (20th), Steam $33.15 (22nd), Matthews Tires $80.36 (23rd),
-// Amazon Dec26 $38 (24th), Hansens $38.67 (28th), Matthews #2 $19.09 (28th), Amazon Dec26 #2 $51.72 (28th)
-// (Mar 2026 LAST PAYMENTS — excluded: Valvoline 7th, A24 8th, H&R Block 16th)
-
-function getBillsDuePeriod(period) {
-  const bills = [];
-  const { start, end } = period;
-
-  function dayInPeriod(day) {
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
-      if (d.getDate() === day) return ppDateStr(new Date(d));
-    }
-    return null;
-  }
-  function getOrd(n) { const s=['th','st','nd','rd']; const v=n%100; return s[(v-20)%10]||s[v]||s[0]; }
-
-  // ── Fixed loans (monthly) ─────────────────────────────────────────
-  const FIXED_LOANS = [
-    { id:'bestegg',  name:'BestEgg Loan',    amount:661,  day:27, icon:'🏦' },
-    { id:'carloan',  name:'Car Loan',         amount:691,  day:19, icon:'🚗' },
-    { id:'onemain',  name:'OneMain Loan',     amount:96,   day:7,  icon:'🏦' },
-  ];
-  FIXED_LOANS.forEach(b => {
-    const onDate = dayInPeriod(b.day);
-    if (onDate) bills.push({ id:b.id, name:b.name, amount:b.amount, dueDate:onDate, type:'loan', icon:b.icon, label:`Loan payment · due ${b.day}${getOrd(b.day)}` });
-  });
-
-  // ── Fixed living expenses (every period) ──────────────────────────
-  const FIXED_LIVING = [
-    { id:'insurance', name:'Insurance',  amount:75,  day:1,  icon:'🛡' },
-    { id:'cellphone', name:'Cell Phone', amount:54,  day:1,  icon:'📱' },
-    { id:'groceries', name:'Groceries',  amount:50,  day:null, icon:'🛒', everyPeriod:true },
-    { id:'gas_fixed', name:'Gas (est.)', amount:30,  day:null, icon:'⛽', everyPeriod:true },
-  ];
-  FIXED_LIVING.forEach(b => {
-    if (b.everyPeriod) {
-      // Show on start of period
-      bills.push({ id:b.id, name:b.name, amount:b.amount, dueDate:ppDateStr(start), type:'living', icon:b.icon, label:'Per pay period estimate' });
-    } else {
-      const onDate = dayInPeriod(b.day);
-      if (onDate) bills.push({ id:b.id, name:b.name, amount:b.amount, dueDate:onDate, type:'living', icon:b.icon, label:`Due ${b.day}${getOrd(b.day)}` });
-    }
-  });
-
-  // ── Subscriptions ─────────────────────────────────────────────────
-  const SUBS = [
-    { id:'sub_runescape',  name:'RuneScape (×2)',      amount:21,  day:11 },
-    { id:'sub_gdrive',     name:'Google Drive',         amount:2,   day:10 },
-    { id:'sub_oats',       name:'Overnight Oats',       amount:99,  day:16, note:'Consider reviewing!' },
-    { id:'sub_disney',     name:'Disney+',              amount:14,  day:19 },
-    { id:'sub_spotify',    name:'Spotify Family',       amount:22,  day:19 },
-    { id:'sub_amazon',     name:'Amazon Prime',         amount:15,  day:20 },
-    { id:'sub_wow',        name:'WoW',                  amount:15,  day:23 },
-    { id:'sub_chatgpt',    name:'ChatGPT',              amount:20,  day:27 },
-  ];
-  SUBS.forEach(s => {
-    const onDate = dayInPeriod(s.day);
-    if (onDate) bills.push({ id:s.id, name:s.name, amount:s.amount, dueDate:onDate, type:'subscription', icon:'📱', label:`Sub · due ${s.day}${getOrd(s.day)}${s.note?' ⚠️':''}` });
-  });
-
-  // ── CC minimums ────────────────────────────────────────────────────
-  const CC_MINS = [
-    { id:'cc_amex',   name:'Amex (min)',          amount:40,  day:1  },
-    { id:'cc_plat',   name:'Platinum (min)',       amount:60,  day:1  },
-    { id:'cc_dell',   name:'Dell CC (min)',        amount:42,  day:2  },
-    { id:'cc_jour',   name:'Journey (min)',        amount:25,  day:5  },
-    { id:'cc_disc',   name:'Discover (min)',       amount:47,  day:6  },
-    { id:'cc_targ',   name:'Target (min)',         amount:63,  day:8  },
-    { id:'cc_visa',   name:'Visa Connexus (min)',  amount:40,  day:11 },
-    { id:'cc_qs',     name:'Quicksilver (min)',    amount:53,  day:22 },
-    { id:'cc_amzcc',  name:'Amazon CC (min)',      amount:69,  day:23 },
-    { id:'cc_citi',   name:'Citi (min)',           amount:96,  day:24 },
-  ];
-  CC_MINS.forEach(c => {
-    const onDate = dayInPeriod(c.day);
-    if (onDate) bills.push({ id:c.id, name:c.name, amount:c.amount, dueDate:onDate, type:'cc', icon:'💳', label:`CC min · due ${c.day}${getOrd(c.day)}` });
-  });
-
-  // ── Affirm (active only — Mar 2026 last payments excluded) ────────
-  const AFFIRM_ACTIVE = [
-    { id:'aff_amznov1',   name:'Amazon Nov 26',      amount:19.23, day:3  },
-    { id:'aff_amznov2',   name:'Amazon Nov 26 #2',   amount:27.37, day:3  },
-    { id:'aff_amzjun1',   name:'Amazon Jun 26',      amount:24.13, day:10 },
-    { id:'aff_amzjul27',  name:'Amazon Jul 27',      amount:28.79, day:12 },
-    { id:'aff_boxlunchnov',name:'BoxLunch Nov 26',   amount:14.71, day:13 },
-    { id:'aff_boxlunchjul',name:'BoxLunch Jul 26',   amount:19.48, day:13 },
-    { id:'aff_seatgeek',  name:'SeatGeek',            amount:19.81, day:16 },
-    { id:'aff_merchoid',  name:'Merchoid',            amount:33.33, day:18 },
-    { id:'aff_boudry',    name:'Boudry',              amount:66.67, day:19 },
-    { id:'aff_amzjun2',   name:'Amazon Jun 26 #2',   amount:20.80, day:20 },
-    { id:'aff_steam',     name:'Steam',               amount:33.15, day:22 },
-    { id:'aff_matthews',  name:'Matthews Tires',      amount:80.36, day:23 },
-    { id:'aff_amzdec1',   name:'Amazon Dec 26',      amount:38.00, day:24 },
-    { id:'aff_hansens',   name:'Hansens',             amount:38.67, day:28 },
-    { id:'aff_matthews2', name:'Matthews Tires #2',   amount:19.09, day:28 },
-    { id:'aff_amzdec2',   name:'Amazon Dec 26 #2',   amount:51.72, day:28 },
-  ];
-  AFFIRM_ACTIVE.forEach(a => {
-    const onDate = dayInPeriod(a.day);
-    if (onDate) bills.push({ id:a.id, name:a.name, amount:a.amount, dueDate:onDate, type:'affirm', icon:'🛒', label:`Affirm · due ${a.day}${getOrd(a.day)}` });
-  });
-
-  bills.sort((a,b) => a.dueDate.localeCompare(b.dueDate));
-  return bills;
-}
-
-function daysUntil(dateStr) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.round((new Date(dateStr+'T12:00:00') - today) / 86400000);
-}
-
-// ── Txns for period ───────────────────────────────────────────────────
-function getTxnsForPeriod(catId, period) {
-  const s = ppDateStr(period.start), e = ppDateStr(period.end);
-  return getPPTxns().filter(t => t.catId===catId && t.date>=s && t.date<=e);
-}
-function getTotalSpentPeriod(catId, period) {
-  return getTxnsForPeriod(catId, period).reduce((a,t) => a+t.amount, 0);
-}
-
-// ── Main render ───────────────────────────────────────────────────────
-function renderPayPeriod() {
-  const period     = getCurrentPeriod();
-  const income     = getTotalIncome();
-  const bbs        = getBBSIncome();
-  const kt         = getKTIncome();
-  const budgets    = getPPBudgets();
-  const bills      = getBillsDuePeriod(period);
-  const billsPaid  = getBillsPaid();
-  const periodKey  = ppDateStr(period.start);
-
-  const totalBills  = bills.reduce((a,b) => a+b.amount, 0);
-  const totalSpent  = SPEND_CATS.reduce((a,c) => a+getTotalSpentPeriod(c.id,period), 0);
-  const remaining   = income - totalBills - totalSpent;
-  const paidCount   = bills.filter(b => billsPaid[periodKey+'_'+b.id]).length;
-  const paidTotal   = bills.filter(b => billsPaid[periodKey+'_'+b.id]).reduce((a,b)=>a+b.amount,0);
-  const daysLeft    = Math.max(0, Math.round((period.end - new Date()) / 86400000));
-  const remColor    = remaining < 0 ? 'var(--red)' : remaining < 200 ? 'var(--amber)' : 'var(--green2)';
-
-  document.getElementById('ppContent').innerHTML = `
-    <!-- Period banner -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-      <div class="pp-dates">
-        📅 ${fmtPPDate(period.start)} – ${fmtPPDate(period.end)}
-        &nbsp;·&nbsp; Next pay: <strong>${fmtPPDate(period.nextPay)}</strong>
-        &nbsp;·&nbsp; ${daysLeft} days left
+function renderVariable(item,pid,idx){
+  const checked=getCheck(pid,idx);
+  const spent=getSpent(pid,idx);
+  const spentNum=parseFloat(spent)||0;
+  const budget=item.amount;
+  const pct=Math.min(budget>0?(spentNum/budget)*100:0,100);
+  const over=spentNum>budget;
+  const statusTxt=spentNum>0?(over?`⚠️ $${(spentNum-budget).toFixed(2)} over`:`$${(budget-spentNum).toFixed(2)} left`):'not started';
+  return`<div class="item-row var-row ${checked?'checked':''}" id="row-${pid}-${idx}">
+    <div class="var-top">
+      <div class="item-check ${checked?'done':''}" onclick="toggleCheck('${pid}',${idx},this)"></div>
+      <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
+      <div class="var-controls">
+        <span class="var-budget-lbl">Budget: ${fmt(budget)}</span>
+        <span class="var-prefix">· $</span>
+        <input class="var-input" type="number" placeholder="0.00" value="${spent}" step="0.01" min="0"
+          oninput="updateSpent('${pid}',${idx},this,${budget})">
       </div>
     </div>
-
-    <!-- Stats row -->
-    <div class="pp-header">
-      <div class="pp-stat s-income">
-        <div class="pp-stat-label">Take-Home This Period</div>
-        <div class="pp-stat-val good">${fmtDollar(income)}</div>
-        <div class="pp-stat-sub">BBS ${fmtDollar(bbs)} + KT ${fmtDollar(kt)} <button class="pp-edit-btn" onclick="openIncome()">Edit</button></div>
-      </div>
-      <div class="pp-stat s-bills">
-        <div class="pp-stat-label">Bills Due This Period</div>
-        <div class="pp-stat-val danger">${fmtDollar(totalBills)}</div>
-        <div class="pp-stat-sub">${paidCount}/${bills.length} paid · ${fmtDollar(paidTotal)} cleared</div>
-      </div>
-      <div class="pp-stat s-left">
-        <div class="pp-stat-label">Left After Bills & Spending</div>
-        <div class="pp-stat-val" style="color:${remColor}">${fmtDollar(remaining)}</div>
-        <div class="pp-stat-sub">${fmtDollar(totalSpent)} spent · ${fmtDollar(totalBills - paidTotal)} bills remaining</div>
-      </div>
+    <div class="var-bottom">
+      <div class="var-bar"><div class="var-fill ${over?'over':''}" style="width:${pct}%" id="vf-${pid}-${idx}"></div></div>
+      <div class="var-status" id="vs-${pid}-${idx}">${statusTxt}</div>
     </div>
-
-    <!-- Bills due -->
-    <div class="section-header">
-      <span class="section-title">📋 Bills Due This Period</span>
-      <div class="section-line"></div>
-      <span class="section-sub">${paidCount}/${bills.length} paid</span>
-    </div>
-    ${bills.length === 0
-      ? `<div style="font-family:'Dancing Script',cursive;color:var(--text3);font-size:.95rem;padding:16px 0 28px">No bills due this period!! Enjoy it 🐺✨</div>`
-      : `<div class="bills-grid">${bills.map(b => {
-          const paid     = !!billsPaid[periodKey+'_'+b.id];
-          const days     = daysUntil(b.dueDate);
-          const dueCls   = days < 0 ? 'overdue' : days <= 3 ? 'soon' : '';
-          const dueLabel = days < 0 ? `${Math.abs(days)}d overdue!!` : days === 0 ? 'DUE TODAY!!' : `due in ${days}d`;
-          return `<div class="bill-card${paid?' paid':''}" onclick="toggleBillPaid('${periodKey}','${b.id}')">
-            <div class="bill-check">${paid?'✓':''}</div>
-            <div class="bill-body">
-              <div class="bill-name">${b.icon||'💵'} ${escHtmlPP(b.name)}</div>
-              <div class="bill-due ${paid?'':dueCls}">${paid ? '✓ paid' : dueLabel}</div>
-            </div>
-            <div class="bill-amount">${fmtDollar(b.amount)}</div>
-          </div>`;
-        }).join('')}</div>`}
-
-    <!-- Spending categories -->
-    <div class="section-header" style="margin-top:8px">
-      <span class="section-title">💸 Spending Tracker</span>
-      <div class="section-line"></div>
-      <span class="section-sub">tap to log · ${fmtDollar(totalSpent)} total this period</span>
-    </div>
-    <div class="cat-grid">
-      ${SPEND_CATS.map((cat,i) => {
-        const spent    = getTotalSpentPeriod(cat.id, period);
-        const budget   = budgets[cat.id] || 0;
-        const pct      = budget > 0 ? Math.min(100, Math.round(spent/budget*100)) : 0;
-        const fillCls  = budget > 0 ? (pct>=100?'red':pct>=75?'amber':'green') : 'none';
-        const spentClr = budget > 0 ? (pct>=100?'var(--red)':pct>=75?'var(--amber)':'var(--green2)') : 'var(--brass2)';
-        return `<div class="cat-card" style="animation-delay:${i*.06}s">
-          <div class="cat-top">
-            <div class="cat-label"><span class="cat-emoji">${cat.emoji}</span><span class="cat-name">${cat.name}</span></div>
-            <span class="cat-spent" style="color:${spentClr}">${fmtDollar(spent)}</span>
-          </div>
-          ${budget > 0
-            ? `<div class="cat-progress"><div class="cat-fill ${fillCls}" style="width:${pct}%"></div></div>
-               <div class="cat-meta"><span>${pct}% of budget used</span><span>${fmtDollar(Math.max(0,budget-spent))} left</span></div>`
-            : `<div class="cat-no-budget">No budget set — tracking only</div>`}
-          <div class="cat-actions">
-            <button class="cat-log-btn" onclick="openLog('${cat.id}','${escHtmlPP(cat.name)}','${cat.emoji}')">+ Log Spending</button>
-            <button class="cat-history-btn" onclick="openHistory('${cat.id}','${escHtmlPP(cat.name)}','${cat.emoji}')">📋</button>
-            <button class="cat-budget-btn" onclick="openBudget('${cat.id}','${escHtmlPP(cat.name)}')">${budget>0?'$'+budget+' budget':'Set budget'}</button>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-  `;
+  </div>`;
 }
 
-// ── Bill paid toggle ─────────────────────────────────────────────────
-function toggleBillPaid(periodKey, billId) {
-  const paid = getBillsPaid();
-  paid[periodKey+'_'+billId] = !paid[periodKey+'_'+billId];
-  setBillsPaid(paid);
-  renderPayPeriod();
-  showPPToast(paid[periodKey+'_'+billId] ? '✓ Marked as paid!!' : 'Marked unpaid');
+// ─────────────────────────────────────────────────────────────────────────────
+// EVENTS
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleCheck(pid,idx,el){
+  const row=document.getElementById(`row-${pid}-${idx}`);
+  const newVal=!getCheck(pid,idx);
+  setCheck(pid,idx,newVal);
+  el.classList.toggle('done',newVal);
+  row.classList.toggle('checked',newVal);
 }
 
-// ── Log spending ──────────────────────────────────────────────────────
-let logCatId = null;
-function openLog(catId, catName, emoji) {
-  logCatId = catId;
-  document.getElementById('logModalTitle').textContent = `${emoji} Log ${catName}`;
-  document.getElementById('logModalSub').textContent   = 'How much did you spend?';
-  document.getElementById('logAmount').value  = '';
-  document.getElementById('logNote').value    = '';
-  document.getElementById('logNote').style.display = 'none';
-  document.getElementById('noteToggle').textContent = '+ Add a note';
-  document.getElementById('logDate').value = todayPPStr();
-  document.getElementById('logOverlay').style.display = 'flex';
-  setTimeout(() => document.getElementById('logAmount').focus(), 100);
-}
-function closeLog()   { document.getElementById('logOverlay').style.display='none'; logCatId=null; }
-function toggleNote() {
-  const n=document.getElementById('logNote'), t=document.getElementById('noteToggle');
-  const show = n.style.display==='none'||!n.style.display;
-  n.style.display  = show?'block':'none';
-  t.textContent    = show?'– Hide note':'+ Add a note';
-}
-function saveLog() {
-  const amt  = parseFloat(document.getElementById('logAmount').value);
-  const note = document.getElementById('logNote').value.trim();
-  const date = document.getElementById('logDate').value || todayPPStr();
-  if (!amt || amt<=0) { showPPToast('⚠️ Enter an amount!!'); return; }
-  const txns = getPPTxns();
-  txns.push({ id:'tx_'+Date.now(), catId:logCatId, amount:amt, note:note||null, date });
-  setPPTxns(txns);
-  closeLog();
-  renderPayPeriod();
-  showPPToast(`💰 $${amt.toFixed(2)} logged!!`);
+function updateSpent(pid,idx,input,budget){
+  const val=input.value;
+  setSpent(pid,idx,val);
+  const spentNum=parseFloat(val)||0;
+  const pct=Math.min(budget>0?(spentNum/budget)*100:0,100);
+  const over=spentNum>budget;
+  const fill=document.getElementById(`vf-${pid}-${idx}`);
+  const status=document.getElementById(`vs-${pid}-${idx}`);
+  if(fill){fill.style.width=pct+'%';fill.className='var-fill'+(over?' over':'');}
+  if(status)status.textContent=spentNum>0?(over?`⚠️ $${(spentNum-budget).toFixed(2)} over`:`$${(budget-spentNum).toFixed(2)} left`):'not started';
 }
 
-// ── Budget ─────────────────────────────────────────────────────────────
-let budgetCatId = null;
-function openBudget(catId, catName) {
-  budgetCatId = catId;
-  document.getElementById('bmSub').textContent  = `Spending limit for ${catName} per pay period`;
-  document.getElementById('bmInput').value      = getPPBudgets()[catId] || '';
-  document.getElementById('budgetOverlay').style.display = 'flex';
-}
-function closeBudget() { document.getElementById('budgetOverlay').style.display='none'; budgetCatId=null; }
-function saveBudget()  {
-  const val=parseFloat(document.getElementById('bmInput').value)||0;
-  const b=getPPBudgets(); b[budgetCatId]=val>0?val:0; setPPBudgets(b);
-  closeBudget(); renderPayPeriod();
-  showPPToast(val>0?`🎯 Budget set to $${val}!!`:'Budget removed');
-}
-function clearBudget() {
-  const b=getPPBudgets(); delete b[budgetCatId]; setPPBudgets(b);
-  closeBudget(); renderPayPeriod(); showPPToast('Budget removed — tracking only');
+function switchPeriod(pid){
+  activePid=pid;
+  renderTabs();
+  renderPeriod(pid);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── History ────────────────────────────────────────────────────────────
-let historyCatId = null;
-function openHistory(catId, catName, emoji) {
-  historyCatId = catId;
-  const period = getCurrentPeriod();
-  const txns   = getTxnsForPeriod(catId, period);
-  document.getElementById('historyTitle').textContent = `${emoji} ${catName} History`;
-  document.getElementById('historySub').textContent   = `${fmtPPDate(period.start)} – ${fmtPPDate(period.end)}`;
-  renderTxList(txns);
-  document.getElementById('historyOverlay').style.display = 'flex';
-}
-function closeHistory() { document.getElementById('historyOverlay').style.display='none'; }
-function renderTxList(txns) {
-  const el = document.getElementById('txList');
-  if (!txns.length) { el.innerHTML='<div class="tx-empty">Nothing logged yet this period!! 🐺</div>'; return; }
-  el.innerHTML = [...txns].reverse().map(t => `
-    <div class="tx-item">
-      <span class="tx-date">${formatTxDate(t.date)}</span>
-      <span class="tx-note">${t.note?escHtmlPP(t.note):'—'}</span>
-      <span class="tx-amount">${fmtDollar(t.amount)}</span>
-      <button class="tx-del" onclick="deleteTx('${t.id}')">✕</button>
-    </div>`).join('');
-}
-function deleteTx(id) {
-  setPPTxns(getPPTxns().filter(t=>t.id!==id));
-  const txns = getTxnsForPeriod(historyCatId, getCurrentPeriod());
-  renderTxList(txns); renderPayPeriod(); showPPToast('Entry deleted');
-}
-function formatTxDate(d) {
-  if (!d) return '—';
-  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-}
-
-// ── Income edit ─────────────────────────────────────────────────────────
-function openIncome() {
-  document.getElementById('incomeInput').value  = getBBSIncome();
-  document.getElementById('incomeInput2').value = getKTIncome();
-  document.getElementById('incomeOverlay').style.display = 'flex';
-}
-function closeIncome() { document.getElementById('incomeOverlay').style.display='none'; }
-function saveIncome() {
-  const bbs = parseFloat(document.getElementById('incomeInput').value)  || 0;
-  const kt  = parseFloat(document.getElementById('incomeInput2').value) || 0;
-  setBBSIncome(bbs); setKTIncome(kt);
-  closeIncome(); renderPayPeriod();
-  showPPToast(`💵 Income updated: ${fmtDollar(bbs+kt)}/period!!`);
-}
-
-// ── Toast ────────────────────────────────────────────────────────────────
-function showPPToast(msg) {
-  let t = document.getElementById('ppToast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'ppToast';
-    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:linear-gradient(135deg,var(--green),var(--green2));color:#000;padding:10px 22px;border-radius:999px;font-size:.82rem;font-weight:800;z-index:500;transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 20px var(--green-glow);white-space:nowrap;font-family:Syne,sans-serif';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.transform = 'translateX(-50%) translateY(0)';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; }, 2800);
-}
-
-function escHtmlPP(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-
-// ── Enid Loader ───────────────────────────────────────────────────────
-const _LOADER_MSGS=['loading your data, sparklepup!!','fetching your stuff 🐾','almost there, glowbug!!','one sec, roomie!! 🐺','pulling it all together 💜','making magic happen ✨','hang tight, bestie!! 🌸'];
-function showEnidLoader(msg){const el=document.getElementById('enidLoader'),tx=document.getElementById('enidLoaderText');if(!el)return;if(tx)tx.textContent=msg||_LOADER_MSGS[Math.floor(Math.random()*_LOADER_MSGS.length)];el.classList.add('visible');}
-function hideEnidLoader(){const el=document.getElementById('enidLoader');if(el)el.classList.remove('visible');}
-
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT — scroll active tab into view
+// ─────────────────────────────────────────────────────────────────────────────
+renderTabs();
+renderPeriod(activePid);
+setTimeout(()=>{
+  const el=document.querySelector('.period-tab.active');
+  if(el)el.scrollIntoView({inline:'center',behavior:'smooth'});
+},100);
 </script>
-
-<!-- Log spending modal -->
-<div class="log-overlay" id="logOverlay" style="display:none" onclick="if(event.target.id==='logOverlay')closeLog()">
-  <div class="log-modal">
-    <div class="lm-title" id="logModalTitle">Log Spending</div>
-    <div class="lm-sub" id="logModalSub"></div>
-    <div class="lm-amount-row">
-      <span class="lm-dollar">$</span>
-      <input class="lm-input" id="logAmount" type="number" step="0.01" min="0" placeholder="0.00" autofocus>
-    </div>
-    <div class="lm-note-toggle" id="noteToggle" onclick="toggleNote()">+ Add a note</div>
-    <textarea class="lm-note" id="logNote" placeholder="What was it for?" style="display:none"></textarea>
-    <div class="lm-date-row">
-      <span class="lm-date-label">Date:</span>
-      <input class="lm-date-input" id="logDate" type="date">
-    </div>
-    <div class="lm-actions">
-      <button class="lm-cancel" onclick="closeLog()">Cancel</button>
-      <button class="lm-save" onclick="saveLog()">Log it 💰</button>
-    </div>
-  </div>
-</div>
-
-<!-- Budget set modal -->
-<div class="budget-overlay" id="budgetOverlay" style="display:none" onclick="if(event.target.id==='budgetOverlay')closeBudget()">
-  <div class="budget-modal">
-    <div class="bm-title">Set Budget 🎯</div>
-    <div class="bm-sub" id="bmSub"></div>
-    <input class="bm-input" id="bmInput" type="number" step="1" min="0" placeholder="e.g. 150">
-    <div class="bm-hint">Leave blank / 0 to track without a limit</div>
-    <div class="bm-actions">
-      <button class="bm-clear" onclick="clearBudget()">No limit</button>
-      <button class="bm-cancel" onclick="closeBudget()">Cancel</button>
-      <button class="bm-save" onclick="saveBudget()">Save 🎯</button>
-    </div>
-  </div>
-</div>
-
-<!-- Tx history modal -->
-<div class="log-overlay" id="historyOverlay" style="display:none" onclick="if(event.target.id==='historyOverlay')closeHistory()">
-  <div class="log-modal" style="max-width:460px">
-    <div class="lm-title" id="historyTitle"></div>
-    <div class="lm-sub" id="historySub"></div>
-    <div class="tx-list" id="txList"></div>
-    <div style="text-align:right">
-      <button class="lm-cancel" style="display:inline-block" onclick="closeHistory()">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Income edit modal -->
-<div class="income-overlay" id="incomeOverlay" style="display:none" onclick="if(event.target.id==='incomeOverlay')closeIncome()">
-  <div class="income-modal">
-    <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--green2);margin-bottom:4px">Update Income 💵</div>
-    <div style="font-size:.75rem;color:var(--text2);margin-bottom:14px">Update each pay period with actual amounts</div>
-    <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:5px">BBS Salary</div>
-    <input class="um-input" id="incomeInput" type="number" step="0.01" min="0" placeholder="e.g. 1543.17" style="margin-bottom:10px">
-    <div style="font-size:.62rem;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:12px">⚠️ Drops to $1,428.31 from Apr 10 onward</div>
-    <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:5px">Kwik Trip (actual this period)</div>
-    <input class="um-input" id="incomeInput2" type="number" step="0.01" min="0" placeholder="e.g. 375.00 (variable $300–$450)" style="margin-bottom:10px">
-    <div class="um-actions">
-      <button class="um-cancel" onclick="closeIncome()">Cancel</button>
-      <button class="um-save" onclick="saveIncome()">Save 💵</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>

@@ -97,6 +97,19 @@ body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.025;
 .apr-zero{background:var(--green-dim);color:var(--green2);border:1px solid var(--border2)}
 .final-badge{font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--green-dim);color:var(--green2);border:1px solid var(--border2);white-space:nowrap}
 
+/* CC dual-checkbox */
+.cc-checks{display:flex;gap:10px;flex-shrink:0;align-items:center}
+.cc-check-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.cc-cb{width:18px;height:18px;border:2px solid var(--text3);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .18s;background:transparent;user-select:none}
+.cc-cb.sched{border-color:var(--amber);background:rgba(252,211,77,.12)}
+.cc-cb.sched::after{content:'📅';font-size:.55rem;line-height:1}
+.cc-cb.cleared{border-color:var(--green2);background:var(--green-dim)}
+.cc-cb.cleared::after{content:'✓';font-size:.7rem;color:var(--green2);font-weight:800}
+.cc-cb-lbl{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-family:var(--mono);white-space:nowrap}
+.cc-check-item:has(.cc-cb.sched) .cc-cb-lbl{color:var(--amber)}
+.cc-check-item:has(.cc-cb.cleared) .cc-cb-lbl{color:var(--green2)}
+.item-row.cc-cleared{opacity:.45;background:transparent}
+
 /* Variable spending rows */
 .var-row{flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px}
 .var-top{display:flex;align-items:center;gap:10px}
@@ -673,6 +686,10 @@ function getCheck(pid,idx){return(getState()[pid]?.c||{})[idx]||false}
 function setCheck(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].c)s[pid].c={};s[pid].c[idx]=val;saveState(s)}
 function getSpent(pid,idx){return(getState()[pid]?.s||{})[idx]||''}
 function setSpent(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].s)s[pid].s={};s[pid].s[idx]=val;saveState(s)}
+function getSched(pid,idx){return(getState()[pid]?.sc||{})[idx]||false}
+function setSched(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].sc)s[pid].sc={};s[pid].sc[idx]=val;saveState(s)}
+function getCleared(pid,idx){return(getState()[pid]?.cl||{})[idx]||false}
+function setCleared(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].cl)s[pid].cl={};s[pid].cl[idx]=val;saveState(s)}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -761,6 +778,7 @@ function renderPaidOff(item){
 }
 
 function renderFixed(item,pid,idx){
+  if(item.cat==='cc') return renderCC(item,pid,idx);
   const checked=getCheck(pid,idx);
   const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
   const finalBadge=item.final?`<span class="final-badge">🎉 FINAL</span>`:'';
@@ -770,6 +788,28 @@ function renderFixed(item,pid,idx){
     ${aprBadge}${finalBadge}
     <div class="item-due">${item.due}</div>
     <div class="item-amount ${item.final?'final-pay':''}">${fmt(item.amount)}</div>
+  </div>`;
+}
+
+function renderCC(item,pid,idx){
+  const sched=getSched(pid,idx);
+  const cleared=getCleared(pid,idx);
+  const aprBadge=item.apr?`<span class="apr-badge ${aprCls(item.apr)}">${item.apr}</span>`:'';
+  return`<div class="item-row ${cleared?'cc-cleared':''}" id="row-${pid}-${idx}">
+    <div class="item-name">${item.name}${item.note?`<span class="item-note">${item.note}</span>`:''}</div>
+    ${aprBadge}
+    <div class="item-due">${item.due}</div>
+    <div class="item-amount">${fmt(item.amount)}</div>
+    <div class="cc-checks">
+      <div class="cc-check-item" onclick="toggleSched('${pid}',${idx},this)" title="Mark as scheduled">
+        <div class="cc-cb ${sched?'sched':''}"></div>
+        <span class="cc-cb-lbl">Sched</span>
+      </div>
+      <div class="cc-check-item" onclick="toggleCleared('${pid}',${idx},this)" title="Mark as cleared">
+        <div class="cc-cb ${cleared?'cleared':''}"></div>
+        <span class="cc-cb-lbl">Cleared</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -808,6 +848,26 @@ function toggleCheck(pid,idx,el){
   setCheck(pid,idx,newVal);
   el.classList.toggle('done',newVal);
   row.classList.toggle('checked',newVal);
+}
+
+function toggleSched(pid,idx,el){
+  const newVal=!getSched(pid,idx);
+  setSched(pid,idx,newVal);
+  el.querySelector('.cc-cb').classList.toggle('sched',newVal);
+}
+
+function toggleCleared(pid,idx,el){
+  const row=document.getElementById(`row-${pid}-${idx}`);
+  const newVal=!getCleared(pid,idx);
+  setCleared(pid,idx,newVal);
+  el.querySelector('.cc-cb').classList.toggle('cleared',newVal);
+  row.classList.toggle('cc-cleared',newVal);
+  // auto-mark scheduled too when cleared
+  if(newVal){
+    setSched(pid,idx,true);
+    const schedEl=row.querySelector('.cc-check-item:first-child .cc-cb');
+    if(schedEl)schedEl.classList.add('sched');
+  }
 }
 
 function updateSpent(pid,idx,input,budget){

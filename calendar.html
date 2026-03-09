@@ -346,13 +346,82 @@ body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.025;
 </div>
 
 <script>
-// ── Storage ───────────────────────────────────────────────────────────────────
-const EVENTS_KEY = 'enid_calendar_v1';
+// ── Supabase ──────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+const USER_ID  = 'Enid';
 
-function loadEvents()  { return JSON.parse(localStorage.getItem(EVENTS_KEY)||'[]'); }
-function saveEvents(e) {
-  localStorage.setItem(EVENTS_KEY, JSON.stringify(e));
-  writeWidget(e);
+async function sbGet(table, params='') {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,
+    {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  return r.json();
+}
+async function sbUpsert(table, body, onConflict) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}?on_conflict=${onConflict}`,
+    {method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation,resolution=merge-duplicates'},body:JSON.stringify(body)});
+  return r.json();
+}
+async function sbDelete(table, params) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,
+    {method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  return r.ok;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+const EVENTS_KEY = 'enid_calendar_v1'; // kept only for one-time migration read
+
+function eventToRow(ev) {
+  return {
+    id:       ev.id,
+    user_id:  USER_ID,
+    title:    ev.title,
+    type:     ev.type     || 'event',
+    date:     ev.date,
+    end_date: ev.endDate  || null,
+    time:     ev.time     || null,
+    repeat:   ev.repeat   || 'none',
+    notes:    ev.notes    || null,
+  };
+}
+
+function rowToEvent(r) {
+  return {
+    id:      r.id,
+    title:   r.title,
+    type:    r.type,
+    date:    r.date,
+    endDate: r.end_date,
+    time:    r.time,
+    repeat:  r.repeat,
+    notes:   r.notes,
+  };
+}
+
+async function loadEventsFromDB() {
+  const rows = await sbGet('calendar_events', `?user_id=eq.${USER_ID}&order=date.asc`);
+  return Array.isArray(rows) ? rows.map(rowToEvent) : [];
+}
+
+async function saveEvent_DB(ev) {
+  await sbUpsert('calendar_events', eventToRow(ev), 'id');
+}
+
+async function deleteEvent_DB(id) {
+  await sbDelete('calendar_events', `?id=eq.${id}&user_id=eq.${USER_ID}`);
+}
+
+// One-time migration: push localStorage events into Supabase if DB is empty
+async function migrateFromLocalStorage() {
+  const raw = localStorage.getItem(EVENTS_KEY);
+  if (!raw) return;
+  const local = JSON.parse(raw);
+  if (!local.length) return;
+  const existing = await sbGet('calendar_events', `?user_id=eq.${USER_ID}&select=id&limit=1`);
+  if (Array.isArray(existing) && existing.length > 0) return;
+  for (const ev of local) {
+    await sbUpsert('calendar_events', eventToRow(ev), 'id');
+  }
+  localStorage.removeItem(EVENTS_KEY);
 }
 
 // Write simplified widget data for the tracker to read
@@ -371,7 +440,7 @@ function offsetDate(dateStr, days) {
 }
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let EVENTS       = loadEvents();
+let EVENTS       = [];
 let viewYear     = new Date().getFullYear();
 let viewMonth    = new Date().getMonth(); // 0-based
 let selectedDate = null;
@@ -661,7 +730,7 @@ function selectRepeat(r) {
   });
 }
 
-function saveEvent() {
+async function saveEvent() {
   const title = document.getElementById('fTitle').value.trim();
   const date  = document.getElementById('fDate').value;
   if (!title) { showToast('⚠️ Give it a title first!!'); return; }
@@ -685,7 +754,8 @@ function saveEvent() {
     EVENTS.push(ev);
   }
 
-  saveEvents(EVENTS);
+  await saveEvent_DB(ev);
+  writeWidget(EVENTS);
   closeModal();
 
   // Jump to that month
@@ -699,10 +769,11 @@ function saveEvent() {
   showToast(editingId ? '✏️ Event updated!!' : `📅 "${title}" added!!`);
 }
 
-function deleteEvent(id) {
+async function deleteEvent(id) {
   if (!confirm('Delete this event?')) return;
   EVENTS = EVENTS.filter(e => e.id !== id);
-  saveEvents(EVENTS);
+  await deleteEvent_DB(id);
+  writeWidget(EVENTS);
   renderCalendar();
   if (selectedDate) renderDayPanel(selectedDate);
   showToast('Event deleted');
@@ -744,9 +815,13 @@ function showToast(msg) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-renderCalendar();
-// Auto-select today on load
-selectDay(TODAY);
+async function init() {
+  await migrateFromLocalStorage();
+  EVENTS = await loadEventsFromDB();
+  renderCalendar();
+  selectDay(TODAY);
+}
+init();
 
 // ── Enid Loader ───────────────────────────────────────────────────────
 const _LOADER_MSGS=['loading your data, sparklepup!!','fetching your stuff 🐾','almost there, glowbug!!','one sec, roomie!! 🐺','pulling it all together 💜','making magic happen ✨','hang tight, bestie!! 🌸'];

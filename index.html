@@ -91,6 +91,51 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .nm-save{padding:9px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px var(--pink-glow);transition:all .18s}
 .nm-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,78,160,.35)}
 
+/* ── Notification settings modal ──────────────────────────────────────────── */
+.ns-overlay{position:fixed;inset:0;background:rgba(45,27,61,.5);z-index:250;display:flex;align-items:flex-start;justify-content:center;padding:20px 16px;backdrop-filter:blur(8px);animation:overlayIn .2s ease;overflow-y:auto}
+.ns-modal{background:var(--card-bg);border:1.5px solid rgba(232,78,160,.22);border-radius:24px;padding:28px 24px;width:100%;max-width:520px;box-shadow:0 24px 64px rgba(45,27,61,.28);backdrop-filter:blur(20px);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)}
+.ns-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px}
+.ns-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.ns-subtitle{font-size:.74rem;color:var(--text-light);margin-top:3px}
+.ns-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-light);transition:color .2s;line-height:1;padding:4px;flex-shrink:0}
+.ns-close:hover{color:var(--pink)}
+.ns-body{max-height:70vh;overflow-y:auto;padding-right:4px}
+.ns-body::-webkit-scrollbar{width:4px}
+.ns-body::-webkit-scrollbar-thumb{background:rgba(232,78,160,.3);border-radius:4px}
+.ns-group{margin-bottom:16px}
+.ns-group-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);padding:4px 0 8px;border-bottom:1px solid rgba(168,85,247,.1);margin-bottom:8px}
+.ns-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:13px;cursor:pointer;transition:background .18s;border:1px solid transparent}
+.ns-row:hover{background:rgba(232,78,160,.05);border-color:rgba(232,78,160,.12)}
+.ns-row-info{flex:1;min-width:0}
+.ns-row-label{font-size:.83rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ns-row-meta{font-size:.72rem;color:var(--text-soft);margin-top:2px}
+.ns-chevron{font-size:1.2rem;color:var(--text-light);transition:transform .2s;flex-shrink:0;user-select:none}
+.ns-type-tag{display:inline-block;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:999px;margin-left:5px;vertical-align:middle}
+.ns-type-conditional{background:rgba(245,158,11,.15);color:#B45309;border:1px solid rgba(245,158,11,.3)}
+.ns-type-monthly{background:rgba(59,130,246,.12);color:#1D4ED8;border:1px solid rgba(59,130,246,.2)}
+/* Toggle switch */
+.ns-toggle{position:relative;display:flex;align-items:center;flex-shrink:0;cursor:pointer}
+.ns-toggle input{position:absolute;opacity:0;width:0;height:0}
+.ns-toggle-track{width:36px;height:20px;border-radius:10px;background:rgba(168,85,247,.2);transition:background .2s;cursor:pointer;display:block;position:relative}
+.ns-toggle input:checked+.ns-toggle-track{background:linear-gradient(135deg,var(--pink),var(--purple))}
+.ns-toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.ns-toggle input:checked+.ns-toggle-track::after{transform:translateX(16px)}
+/* Inline editor */
+.ns-editor-row{padding:12px 12px 14px;margin:0 0 6px;background:rgba(168,85,247,.04);border:1.5px solid rgba(232,78,160,.14);border-radius:0 0 13px 13px;animation:noteSlideIn .2s ease}
+.ns-edit-input,.ns-edit-textarea{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid rgba(168,85,247,.2);background:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:8px;box-sizing:border-box}
+.ns-edit-input:focus,.ns-edit-textarea:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px var(--pink-glow)}
+.ns-edit-textarea{min-height:64px;resize:vertical;line-height:1.5}
+.ns-edit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ns-edit-time{padding:7px 10px;border-radius:9px;border:1.5px solid rgba(168,85,247,.2);background:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s}
+.ns-edit-time:focus{border-color:var(--pink-soft);box-shadow:0 0 0 3px var(--pink-glow)}
+.ns-edit-days-label{font-size:.72rem;color:var(--text-soft);font-weight:600}
+.ns-day-cb{display:inline-flex;align-items:center;cursor:pointer;font-size:.7rem;color:var(--text-soft)}
+.ns-day-cb input{display:none}
+.ns-day-cb span{padding:3px 6px;border-radius:5px;border:1.5px solid rgba(168,85,247,.18);background:transparent;transition:all .15s;font-weight:600}
+.ns-day-cb input:checked+span{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border-color:transparent}
+.ns-save-btn{width:100%;padding:9px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s}
+.ns-save-btn:hover{opacity:.88;transform:translateY(-1px)}
+
 /* Daily pep quote */
 .pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}.pep-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
 .movie-widget{background:linear-gradient(135deg,rgba(232,35,42,.08),rgba(168,85,247,.05));border:1.5px solid rgba(232,35,42,.2);border-radius:18px;padding:18px 20px;margin-bottom:18px;animation:fadeUp .4s ease both}
@@ -1298,49 +1343,6 @@ async function saveNote() {
 
 // ── PWA & Notifications ───────────────────────────────────────────────────────
 
-// Enid-coded messages — rotate daily so you never see the same one twice in a row
-const NOTIF_MESSAGES = {
-  morning: [
-    { title:"Rise & shine sparklepup!! ☀️🐺", body:"8AM means GO time. Your morning routine is waiting and it's not gonna do itself. You've got this!! 💜" },
-    { title:"Good MORNING glowbug!! 🌅", body:"The version of you with her life together wakes up and does the thing. Be her today!! 🐾✨" },
-    { title:"HEY. It's 8AM. 🐺☀️", body:"Make your bed first — two minutes, first win of the day. Then keep going. Open the app!! 🛏️💜" },
-    { title:"Roomie wake UP!! ☀️🌸", body:"Today has never happened before!! You get to decide what kind of day it becomes. Start RIGHT NOW. 🌈🐺" },
-    { title:"Morning kickoff time!! 🌅🔥", body:"Every morning you complete this list is a vote for the life you're building. Cast that vote!! 💪💜" },
-    { title:"☀️ 8AM and you KNOW what that means!!", body:"Rise, grind, and slay your morning routine. Wash your face. Make your bed. EAT SOMETHING. 🐺🌸" },
-    { title:"WAKE UP BESTIE 🐺✨", body:"The morning routine won't complete itself!! You've done this before and felt so good after. DO IT AGAIN!! 💜☀️" },
-  ],
-  afterwork: [
-    { title:"Work mode OFF!! 🎉💼", body:"First thing: change out of those work clothes RIGHT NOW. Signal your brain it's YOUR time. Then open the app!! 👟💜" },
-    { title:"Hey sparklepup — you survived the day!! 🐺", body:"Now it's after-work routine time. Clothes off, comfy outfit on, yoga OR walk — just pick ONE!! 🧘💜" },
-    { title:"5:30 and the after-work check-in is calling!! ✨", body:"Work is DONE. Decompress the right way. Change, move your body, one work block. You got this!! 🐺🔥" },
-    { title:"Clocking out and INTO your routine 🐾", body:"The after-work habits are your transition from work-you to home-you. Change your clothes first!! 👗💜" },
-    { title:"IT'S AFTER WORK TIME ROOMIE!! 🌆🐺", body:"Yoga OR walk — you only need ONE. Then an hour of work and 15 minutes reading. So doable!! 📖✨" },
-  ],
-  evening: [
-    { title:"10:30PM — evening routine time!! 🌙🐺", body:"Start heading home if you're out!! Lights out at 11:45. The routine starts NOW, not when you get home. 💜" },
-    { title:"Hey!! It's 10:30PM glowbug 🌙✨", body:"Begin heading home. Wash your face. Brush your teeth. TV off by 11:20. You always feel better when you do this!! 🐺💜" },
-    { title:"🌙 Evening routine warning sparklepup!!", body:"15 minutes to wrap up!! Home by 11, face washed, teeth brushed, lights out at 11:45. You've GOT this!! 🐾" },
-    { title:"Night routine o'clock!! 🌙🐺💜", body:"Your sleep MATTERS. Start heading home now. Wash up, TV off, read a little, lights out. Future you will be so grateful!! ✨" },
-    { title:"10:30 and your future self is watching 👀🌙", body:"She needs you to do the evening routine RIGHT NOW. Head home. Wash face. TV off 11:20. Lights out 11:45!! 🐺💜" },
-    { title:"🌙 Evening routine time!!", body:"I know you wanna stay up but your sleep is part of the life you're building!! Wind down now. You did today!! 🌸🐺" },
-    { title:"BEDTIME ROUTINE TIME glowbug!! 🌙💜", body:"10:30PM means the clock is ticking!! Head home. Wash up. TV off by 11:20. Lights out 11:45. You crushed today!! 🐾✨" },
-  ],
-  weekend: [
-    { title:"Weekend essentials check-in!! 📋🐺", body:"Financial review, calendar reset, laundry, and Walk Semper!! Don't let Sunday panic hit — do it NOW!! 💜" },
-    { title:"Hey sparklepup — weekend tasks!! 📋🌸", body:"Semper needs his walk. Your wallet needs a review. Your calendar needs a reset. Your laundry is waiting!! 🐕💜" },
-    { title:"🐕 Semper says it's weekend routine time!!", body:"Walk that good boy AND do your financial review, calendar reset, and laundry!! You've got this!! 💰🐺" },
-    { title:"Weekend essentials are calling roomie!! 📋🐺", body:"Financial review. Calendar reset. Laundry. Walk Semper. 30 minutes of effort, whole week of peace!! 💜🌈" },
-    { title:"It's the weekend and the list awaits!! 🌸📋", body:"Future-you on Monday NEEDS you to do the weekend essentials today!! So doable. Open the app!! 🐺💜✨" },
-  ],
-};
-
-function getDailyMessage(type) {
-  const msgs = NOTIF_MESSAGES[type];
-  const today = new Date();
-  const seed = today.getFullYear()*10000 + (today.getMonth()+1)*100 + today.getDate();
-  return msgs[seed % msgs.length];
-}
-
 // ── Service Worker registration ───────────────────────────────────────────────
 let swRegistration = null;
 
@@ -1396,19 +1398,28 @@ function showToast(msg) {
 }
 
 // ── Notification scheduler ────────────────────────────────────────────────────
-// Uses setInterval to check the time every minute and fire when it matches
-// Works when the app is open; SW handles display
+// Uses setInterval to check the time every 30s and fire when it matches.
+// Schedule is loaded from Supabase at init — editable via notification settings modal.
+// Works when the app is open; SW handles display.
 let schedulerInterval = null;
-
-const SCHEDULE = [
-  { type:'morning',  hour:8,  minute:0,  days:[1,2,3,4,5] }, // Mon-Fri 8:00 AM
-  { type:'afterwork',hour:17, minute:30, days:[1,2,3,4,5] }, // Mon-Fri 5:30 PM
-  { type:'evening',  hour:22, minute:30, days:[0,1,2,3,4,5,6] }, // Every day 10:30 PM
-  { type:'weekend',  hour:11, minute:0,  days:[0,6] },        // Sat-Sun 11:00 AM
-];
+let NOTIF_SCHEDULE   = [];   // loaded from Supabase at init
 
 // Track which notifications already fired today so we don't double-fire
 const firedToday = new Set();
+
+// ── Load notification schedule from Supabase ─────────────────────────────────
+async function loadNotifications() {
+  const rows = await sb('GET', 'notifications', null,
+    `?user_id=eq.${USER_ID}&order=hour.asc,minute.asc`);
+  if (rows && rows.length) NOTIF_SCHEDULE = rows;
+  else console.warn('🐺 No notification schedule found — run migration 002 in Supabase');
+}
+
+// ── Save a single notification row back to Supabase ───────────────────────────
+async function saveNotification(notif) {
+  return sb('POST', 'notifications', notif);
+  // sb() sends Prefer: resolution=merge-duplicates → upserts by PK
+}
 
 function scheduleNotifications() {
   if (Notification.permission !== 'granted') return;
@@ -1420,10 +1431,12 @@ function scheduleNotifications() {
 }
 
 function checkSchedule() {
-  const now   = new Date();
-  const dow   = now.getDay();
-  const hour  = now.getHours();
-  const min   = now.getMinutes();
+  if (!NOTIF_SCHEDULE.length) return;
+
+  const now      = new Date();
+  const dow      = now.getDay();
+  const hour     = now.getHours();
+  const min      = now.getMinutes();
   const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
 
   // Reset fired set at midnight
@@ -1431,55 +1444,193 @@ function checkSchedule() {
   firedToday.add('__date__');
   firedToday.add(todayKey);
 
-  SCHEDULE.forEach(s => {
-    const key = `${todayKey}_${s.type}`;
-    if (firedToday.has(key)) return;           // already fired today
-    if (!s.days.includes(dow)) return;          // wrong day of week
-    if (hour !== s.hour || min !== s.minute) return; // wrong time
+  NOTIF_SCHEDULE.forEach(n => {
+    if (!n.enabled) return;
 
-    // Fire it!!
+    const key = `${todayKey}_${n.id}`;
+    if (firedToday.has(key)) return;
+    if (hour !== n.hour || min !== n.minute) return;
+
+    // Monthly: only fires on the last calendar day of the month
+    if (n.notif_type === 'monthly') {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      if (tomorrow.getMonth() === now.getMonth()) return; // not last day
+    } else {
+      if (!n.days.includes(dow)) return;
+    }
+
+    // Conditional: suppress nudge if any habits already completed today
+    if (n.notif_type === 'conditional') {
+      if (dayCompletions.size > 0) return;
+    }
+
     firedToday.add(key);
-    fireNotification(s.type);
+    fireNotification(n);
   });
 }
 
-function fireNotification(type) {
-  const msg = getDailyMessage(type);
-  const urls = {
-    morning:   '/enid-life-hub/',
-    afterwork: '/enid-life-hub/',
-    evening:   '/enid-life-hub/',
-    weekend:   '/enid-life-hub/',
-  };
-
+function fireNotification(notif) {
   if (swRegistration) {
-    // Send to service worker to display
     navigator.serviceWorker.controller?.postMessage({
       type:  'SHOW_NOTIFICATION',
-      title: msg.title,
-      body:  msg.body,
-      tag:   `enid-${type}`,
-      url:   urls[type],
+      title: notif.title,
+      body:  notif.body,
+      tag:   `enid-${notif.id}`,
+      url:   '/enid-life-hub/',
     });
   } else {
-    // Fallback: direct browser notification
-    new Notification(msg.title, {
-      body: msg.body,
+    new Notification(notif.title, {
+      body: notif.body,
       icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"%3E%3Crect width="192" height="192" rx="40" fill="%23E84EA0"/%3E%3Ctext y="140" x="96" text-anchor="middle" font-size="120"%3E🐺%3C/text%3E%3C/svg%3E',
-      tag:  `enid-${type}`,
+      tag:  `enid-${notif.id}`,
     });
   }
 }
 
-// ── Notification settings page (accessible from header) ──────────────────────
+// ── Notification settings modal ───────────────────────────────────────────────
 function openNotifSettings() {
-  const perm = !('Notification' in window) ? 'unsupported' : Notification.permission;
-  const msg = perm === 'granted'
-    ? '🐺 Notifications are ON!! You\'re all set. Reminders fire at:\n\n☀️ 8:00 AM — Morning (Mon-Fri)\n💼 5:30 PM — After Work (Mon-Fri)\n🌙 10:30 PM — Evening (Every day)\n📋 11:00 AM — Weekend Essentials (Sat-Sun)'
-    : perm === 'denied'
-    ? '😔 Notifications are blocked. To re-enable: tap the lock icon in your browser address bar → Notifications → Allow. Then reload the app!'
-    : '💜 Tap OK to enable Enid notifications! You\'ll get reminders at 8AM, 5:30PM, 10:30PM and weekend nudges.';
-  alert(msg);
+  if (!('Notification' in window)) { showToast('Notifications not supported in this browser 😔'); return; }
+  if (Notification.permission === 'denied') {
+    showToast('Notifications blocked! Tap the lock icon in your address bar → Notifications → Allow 💜');
+    return;
+  }
+  if (Notification.permission === 'default') { requestNotifPermission(); return; }
+  renderNotifModal();
+  document.getElementById('notifSettingsOverlay').style.display = 'flex';
+}
+
+function closeNotifSettings() {
+  document.getElementById('notifSettingsOverlay').style.display = 'none';
+  document.querySelectorAll('.ns-editor-row').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.ns-chevron').forEach(el => el.style.transform = '');
+}
+
+function renderNotifModal() {
+  if (!NOTIF_SCHEDULE.length) {
+    document.getElementById('nsBody').innerHTML =
+      `<div style="text-align:center;padding:32px 20px;font-family:'Dancing Script',cursive;color:var(--text-soft)">No schedule loaded 🐺<br><small>Run migration 002 in Supabase!</small></div>`;
+    return;
+  }
+
+  const GROUP_ORDER = ['Morning', 'Afternoon', 'Evening', 'Weekend', 'Monthly'];
+  const GROUP_ICONS = { Morning:'☀️', Afternoon:'💼', Evening:'🌙', Weekend:'📋', Monthly:'💰' };
+  const grouped = {};
+  GROUP_ORDER.forEach(g => { grouped[g] = []; });
+  NOTIF_SCHEDULE.forEach(n => { if (grouped[n.group_label]) grouped[n.group_label].push(n); });
+
+  let html = '';
+  GROUP_ORDER.forEach(group => {
+    const rows = grouped[group];
+    if (!rows.length) return;
+    html += `<div class="ns-group"><div class="ns-group-label">${GROUP_ICONS[group]} ${group}</div>`;
+    rows.forEach(n => {
+      const timeStr = `${String(n.hour).padStart(2,'0')}:${String(n.minute).padStart(2,'0')}`;
+      const daysStr = _fmtDaysShort(n.days, n.notif_type);
+      const typeTag = n.notif_type !== 'fixed'
+        ? `<span class="ns-type-tag ns-type-${n.notif_type}">${n.notif_type}</span>` : '';
+      html += `
+        <div class="ns-row" onclick="toggleNotifEditor('${n.id}')">
+          <label class="ns-toggle" onclick="event.stopPropagation()">
+            <input type="checkbox" ${n.enabled ? 'checked' : ''}
+              onchange="toggleNotifEnabled('${n.id}', this.checked)">
+            <span class="ns-toggle-track"></span>
+          </label>
+          <div class="ns-row-info">
+            <div class="ns-row-label">${n.label}${typeTag}</div>
+            <div class="ns-row-meta">${timeStr} · ${daysStr}</div>
+          </div>
+          <div class="ns-chevron" id="nsChevron_${n.id}">›</div>
+        </div>
+        <div class="ns-editor-row" id="nsEditor_${n.id}" style="display:none">
+          <input class="ns-edit-input" id="nsTitle_${n.id}" value="${_escHtml(n.title)}" placeholder="Notification title">
+          <textarea class="ns-edit-textarea" id="nsBodyTxt_${n.id}" placeholder="Notification body">${_escHtml(n.body)}</textarea>
+          <div class="ns-edit-row">
+            <input type="time" class="ns-edit-time" id="nsTime_${n.id}" value="${timeStr}">
+            <span class="ns-edit-days-label">Days:</span>
+            ${_buildDayCheckboxes(n.id, n.days, n.notif_type)}
+          </div>
+          <button class="ns-save-btn" onclick="saveNotifRow('${n.id}')">Save 💜</button>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('nsBody').innerHTML = html;
+}
+
+function toggleNotifEditor(id) {
+  const editor  = document.getElementById(`nsEditor_${id}`);
+  const chevron = document.getElementById(`nsChevron_${id}`);
+  const isOpen  = editor.style.display !== 'none';
+  // Close all
+  document.querySelectorAll('.ns-editor-row').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.ns-chevron').forEach(el => el.style.transform = '');
+  if (!isOpen) {
+    editor.style.display = 'block';
+    if (chevron) chevron.style.transform = 'rotate(90deg)';
+  }
+}
+
+async function toggleNotifEnabled(id, enabled) {
+  const notif = NOTIF_SCHEDULE.find(n => n.id === id);
+  if (!notif) return;
+  notif.enabled = enabled;
+  await saveNotification({ ...notif });
+  if (Notification.permission === 'granted') scheduleNotifications();
+}
+
+async function saveNotifRow(id) {
+  const notif = NOTIF_SCHEDULE.find(n => n.id === id);
+  if (!notif) return;
+  const titleEl = document.getElementById(`nsTitle_${id}`);
+  const bodyEl  = document.getElementById(`nsBodyTxt_${id}`);
+  const timeEl  = document.getElementById(`nsTime_${id}`);
+  const [newHour, newMin] = timeEl.value.split(':').map(Number);
+  const newDays = _getDayCheckboxValues(id, notif.notif_type, notif.days);
+  notif.title  = titleEl.value.trim() || notif.title;
+  notif.body   = bodyEl.value.trim()  || notif.body;
+  notif.hour   = newHour;
+  notif.minute = newMin;
+  notif.days   = newDays;
+  const ok = await saveNotification({ ...notif });
+  if (ok) {
+    showToast('Notification saved!! 💜🐺');
+    renderNotifModal();
+    if (Notification.permission === 'granted') scheduleNotifications();
+  } else {
+    showToast('Save failed 😔 Check your connection');
+  }
+}
+
+function _fmtDaysShort(days, type) {
+  if (type === 'monthly') return 'Last day of month';
+  const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  if (days.length === 7) return 'Every day';
+  const sorted = [...days].sort((a,b)=>a-b);
+  if (JSON.stringify(sorted) === JSON.stringify([1,2,3,4,5])) return 'Mon–Fri';
+  if (JSON.stringify(sorted) === JSON.stringify([0,6])) return 'Sat+Sun';
+  if (JSON.stringify(sorted) === JSON.stringify([0])) return 'Sunday only';
+  return days.map(d => names[d]).join(', ');
+}
+
+function _buildDayCheckboxes(id, activeDays, type) {
+  if (type === 'monthly')
+    return `<span style="font-size:.75rem;color:var(--text-light);font-style:italic">auto: last day of month</span>`;
+  const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  return dayNames.map((name, i) =>
+    `<label class="ns-day-cb"><input type="checkbox" data-nid="${id}" data-day="${i}"${activeDays.includes(i)?' checked':''}><span>${name}</span></label>`
+  ).join('');
+}
+
+function _getDayCheckboxValues(id, type, fallback) {
+  if (type === 'monthly') return fallback;
+  const checked = document.querySelectorAll(`input[data-nid="${id}"][data-day]:checked`);
+  const vals = [...checked].map(el => parseInt(el.dataset.day));
+  return vals.length ? vals : fallback;
+}
+
+function _escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── Movie Widget ──────────────────────────────────────────────────────────────
@@ -1769,11 +1920,13 @@ async function init() {
   showLoading(true);
   document.getElementById('routineContainer').innerHTML=
     `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;
-  await Promise.all([loadDayData(), loadStreaks()]);
+  await Promise.all([loadDayData(), loadStreaks(), loadNotifications()]);
   showLoading(false);
   renderWeeklyReview();
   render(); // render() also calls renderGlance + renderWeeklyReview
   buildDayNav();
+  // Start scheduler now that NOTIF_SCHEDULE is populated
+  if (Notification.permission === 'granted') scheduleNotifications();
 
   // ── Cross-device sync: re-fetch when app regains focus ────────────────────
   document.addEventListener('visibilitychange', async () => {
@@ -1905,6 +2058,23 @@ function drainBadgeQueue() {
     <div class="nm-actions">
       <button class="nm-cancel" onclick="closeReadingLog()">Skip</button>
       <button class="nm-save" onclick="saveReadingLog()">Log it 📖</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Settings Modal -->
+<div class="ns-overlay" id="notifSettingsOverlay" style="display:none"
+     onclick="if(event.target.id==='notifSettingsOverlay')closeNotifSettings()">
+  <div class="ns-modal">
+    <div class="ns-header">
+      <div>
+        <div class="ns-title">🔔 Notification Schedule</div>
+        <div class="ns-subtitle">Tap a row to edit title, body, time &amp; days 💜</div>
+      </div>
+      <button class="ns-close" onclick="closeNotifSettings()">✕</button>
+    </div>
+    <div class="ns-body" id="nsBody">
+      <!-- Rendered by renderNotifModal() -->
     </div>
   </div>
 </div>

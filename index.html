@@ -135,6 +135,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .ns-day-cb input:checked+span{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border-color:transparent}
 .ns-save-btn{width:100%;padding:9px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s}
 .ns-save-btn:hover{opacity:.88;transform:translateY(-1px)}
+/* KT shift schedule day chips */
+.kt-day-chips{display:flex;gap:8px;flex-wrap:wrap}
+.kt-day-chip{padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:transparent;color:var(--text-soft);font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.kt-day-chip:hover{border-color:rgba(232,78,160,.35);color:var(--text)}
+.kt-day-chip.kt-day-on{background:linear-gradient(135deg,#FBBF24,#F59E0B);border-color:transparent;color:#78350F;box-shadow:0 3px 12px rgba(251,191,36,.35)}
 
 /* Daily pep quote */
 .pep-card{background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(232,78,160,.08) 100%);border:1.5px solid rgba(168,85,247,.18);border-radius:18px;padding:15px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);animation:fadeUp .6s .05s ease both;position:relative;overflow:hidden}.pep-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
@@ -426,6 +431,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
       <a href="books.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(200,133,58,.25);background:rgba(200,133,58,.08);color:#E8A855;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(200,133,58,.18)';this.style.borderColor='rgba(200,133,58,.5)'" onmouseout="this.style.background='rgba(200,133,58,.08)';this.style.borderColor='rgba(200,133,58,.25)'">📚 Books</a>
       <a href="calendar.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(56,189,248,.25);background:rgba(56,189,248,.08);color:#38BDF8;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(56,189,248,.18)';this.style.borderColor='rgba(56,189,248,.5)'" onmouseout="this.style.background='rgba(56,189,248,.08)';this.style.borderColor='rgba(56,189,248,.25)'">📅 Calendar</a>
       <a href="cards.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(212,168,67,.25);background:rgba(212,168,67,.08);color:#D4A843;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .22s ease;font-family:'DM Sans',sans-serif;white-space:nowrap" onmouseover="this.style.background='rgba(212,168,67,.18)';this.style.borderColor='rgba(212,168,67,.5)'" onmouseout="this.style.background='rgba(212,168,67,.08)';this.style.borderColor='rgba(212,168,67,.25)'">🃏 Cards</a>
+      <button onclick="openKTSchedule()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);color:#92400E;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(251,191,36,.18)'" onmouseout="this.style.background='rgba(251,191,36,.08)'" title="KT Shift Schedule">🏪</button>
       <button onclick="openNotifSettings()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1.5px solid rgba(168,85,247,.2);background:rgba(168,85,247,.07);color:var(--text-soft);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--purple-soft)';this.style.color='var(--purple-soft)'" onmouseout="this.style.borderColor='rgba(168,85,247,.2)';this.style.color='var(--text-soft)'">🔔</button>
     </div>
   </header>
@@ -597,6 +603,7 @@ let dayCompletions  = new Set();   // habit_ids completed on viewDate
 let weekendCompletions = new Set(); // habit_ids completed this weekend
 let ktPostwork   = false;
 let ktWeekend    = false;
+let ktSchedule   = [];   // recurring weekly KT shift schedule, loaded from Supabase
 let customHabits = {morning:[],postwork:[],weekend:[],evening:[]};
 let streakCache  = {};             // habit_id → streak count (computed from DB)
 let resurrectCache = new Set();    // habit_ids whose streak was just resurrected
@@ -636,11 +643,15 @@ async function loadDayData() {
     `?user_id=eq.${USER_ID}&week_start=eq.${ws}&select=habit_id`);
   weekendCompletions = new Set((wRows||[]).map(r=>r.habit_id));
 
-  // Load KT shifts
+  // Load KT shifts — merge per-date overrides with recurring weekly schedule
   const ktRows = await sb('GET','kt_shifts',null,
     `?user_id=eq.${USER_ID}&shift_date=eq.${dateStr}&select=section`);
-  ktPostwork = (ktRows||[]).some(r=>r.section==='postwork');
-  ktWeekend  = (ktRows||[]).some(r=>r.section==='weekend');
+  const ktDatePostwork = (ktRows||[]).some(r=>r.section==='postwork');
+  const ktDateWeekend  = (ktRows||[]).some(r=>r.section==='weekend');
+  const ktDow = viewDate.getDay();
+  const ktSchedOn = ktSchedule.some(r => r.dow === ktDow && r.enabled);
+  ktPostwork = ktDatePostwork || (ktSchedOn && ktDow >= 1 && ktDow <= 5);
+  ktWeekend  = ktDateWeekend  || (ktSchedOn && (ktDow === 0 || ktDow === 6));
 
   // Load custom habits
   const cRows = await sb('GET','custom_habits',null,
@@ -804,6 +815,69 @@ async function toggleKTDB(type) {
     await sb('POST','kt_shifts',{user_id:USER_ID,shift_date:dateStr,section:type});
     type==='postwork' ? ktPostwork=true : ktWeekend=true;
   }
+}
+
+// ── KT Shift Weekly Schedule ──────────────────────────────────────────────────
+async function loadKTSchedule() {
+  const rows = await sb('GET', 'kt_schedule', null, `?user_id=eq.${USER_ID}`);
+  ktSchedule = rows || [];
+}
+
+async function saveKTSchedule(enabledDows, hour, min) {
+  const rows = [0,1,2,3,4,5,6].map(dow => ({
+    user_id: USER_ID, dow,
+    enabled:    enabledDows.includes(dow),
+    notif_hour: hour,
+    notif_min:  min,
+  }));
+  for (const row of rows) await sb('POST', 'kt_schedule', row);
+  ktSchedule = rows;
+}
+
+function openKTSchedule() {
+  renderKTScheduleModal();
+  document.getElementById('ktScheduleOverlay').style.display = 'flex';
+}
+
+function closeKTSchedule() {
+  document.getElementById('ktScheduleOverlay').style.display = 'none';
+}
+
+function renderKTScheduleModal() {
+  const enabledDows = ktSchedule.filter(r => r.enabled).map(r => r.dow);
+  const firstEnabled = ktSchedule.find(r => r.enabled);
+  const notifHour = firstEnabled ? firstEnabled.notif_hour : 7;
+  const notifMin  = firstEnabled ? firstEnabled.notif_min  : 0;
+  const timeVal   = `${String(notifHour).padStart(2,'0')}:${String(notifMin).padStart(2,'0')}`;
+  const dayNames  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  document.getElementById('ktSchedDays').innerHTML = dayNames.map((name, i) =>
+    `<button class="kt-day-chip${enabledDows.includes(i)?' kt-day-on':''}" onclick="toggleKTDay(${i})" data-dow="${i}">${name}</button>`
+  ).join('');
+  document.getElementById('ktSchedTime').value = timeVal;
+}
+
+function toggleKTDay(dow) {
+  document.querySelector(`.kt-day-chip[data-dow="${dow}"]`).classList.toggle('kt-day-on');
+}
+
+async function saveKTScheduleForm() {
+  const enabledDows = [...document.querySelectorAll('.kt-day-chip.kt-day-on')]
+    .map(el => parseInt(el.dataset.dow));
+  const [h, m] = document.getElementById('ktSchedTime').value.split(':').map(Number);
+  await saveKTSchedule(enabledDows, h, m);
+  closeKTSchedule();
+  // Re-evaluate today's KT state immediately
+  const todayDow = (new Date()).getDay();
+  const ktSchedOn = ktSchedule.some(r => r.dow === todayDow && r.enabled);
+  if (ktSchedOn) {
+    if (todayDow === 0 || todayDow === 6) ktWeekend = true;
+    else ktPostwork = true;
+  } else {
+    // Revert to per-date only — re-read from DB via render
+  }
+  render();
+  if (Notification.permission === 'granted') scheduleNotifications();
+  showToast('KT schedule saved!! 🐺💛');
 }
 
 async function addCustomDB(section) {
@@ -1468,6 +1542,21 @@ function checkSchedule() {
     firedToday.add(key);
     fireNotification(n);
   });
+
+  // KT shift pre-shift notifications (from recurring weekly schedule)
+  ktSchedule.forEach(row => {
+    if (!row.enabled) return;
+    if (row.dow !== dow) return;
+    const key = `${todayKey}_kt-notif-${row.dow}`;
+    if (firedToday.has(key)) return;
+    if (hour !== row.notif_hour || min !== row.notif_min) return;
+    firedToday.add(key);
+    fireNotification({
+      id:    `kt-shift-${row.dow}`,
+      title: 'KT shift today sparklepup!! 🐺💛',
+      body:  'Kwik Trip day!! Smash your morning habits first, then go be amazing at work. You\'ve got this!! 💜🏪',
+    });
+  });
 }
 
 function fireNotification(notif) {
@@ -1920,7 +2009,7 @@ async function init() {
   showLoading(true);
   document.getElementById('routineContainer').innerHTML=
     `<div style="text-align:center;padding:60px 20px;font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--pink)">Loading your routines... 🐺✨</div>`;
-  await Promise.all([loadDayData(), loadStreaks(), loadNotifications()]);
+  await Promise.all([loadDayData(), loadStreaks(), loadNotifications(), loadKTSchedule()]);
   showLoading(false);
   renderWeeklyReview();
   render(); // render() also calls renderGlance + renderWeeklyReview
@@ -2059,6 +2148,30 @@ function drainBadgeQueue() {
       <button class="nm-cancel" onclick="closeReadingLog()">Skip</button>
       <button class="nm-save" onclick="saveReadingLog()">Log it 📖</button>
     </div>
+  </div>
+</div>
+
+<!-- KT Shift Schedule Modal -->
+<div class="ns-overlay" id="ktScheduleOverlay" style="display:none"
+     onclick="if(event.target.id==='ktScheduleOverlay')closeKTSchedule()">
+  <div class="ns-modal">
+    <div class="ns-header">
+      <div>
+        <div class="ns-title">🏪 KT Shift Schedule</div>
+        <div class="ns-subtitle">Tap days to mark shift days · habits auto-disable 💜</div>
+      </div>
+      <button class="ns-close" onclick="closeKTSchedule()">✕</button>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:.75rem;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Your KT shift days</div>
+      <div class="kt-day-chips" id="ktSchedDays"></div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:.75rem;font-weight:700;color:var(--text-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Pre-shift notification time</div>
+      <input type="time" class="ns-edit-time" id="ktSchedTime" value="07:00" style="width:100%;box-sizing:border-box">
+      <div style="font-size:.72rem;color:var(--text-light);margin-top:6px">Fires every morning you have a KT shift 💛</div>
+    </div>
+    <button class="ns-save-btn" onclick="saveKTScheduleForm()">Save Schedule 💜</button>
   </div>
 </div>
 

@@ -1165,15 +1165,46 @@ body.panini-mode .back-btn:hover {
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Supabase ──────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+const USER_ID  = 'Enid';
+
+async function sbUpsertCollection(setKey, data) {
+  await fetch(`${SUPA_URL}/rest/v1/card_collections?on_conflict=user_id,set_key`, {
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal,resolution=merge-duplicates'},
+    body: JSON.stringify({ user_id:USER_ID, set_key:setKey, data, updated_at:new Date().toISOString() })
+  });
+}
+async function sbLoadCollection(setKey) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/card_collections?user_id=eq.${USER_ID}&set_key=eq.${setKey}&select=data`,
+    {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  const rows = await r.json();
+  return (Array.isArray(rows) && rows.length) ? (rows[0].data || {}) : null;
+}
+
 // ── Storage ───────────────────────────────────────────────────────────────────
-const STORE_KEY = 'enid_wednesday_cards_v1';
+const STORE_KEY  = 'enid_wednesday_cards_v1';   // localStorage fallback
 const BANNER_KEY = 'enid_cards_banner_dismissed';
 
-function loadCollection() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)||'{}'); }
-  catch { return {}; }
+// Debounced save to avoid hammering Supabase on every card click
+let _cardSaveTimer = null;
+function _scheduleCardSave(setKey, data) {
+  if (_cardSaveTimer) clearTimeout(_cardSaveTimer);
+  _cardSaveTimer = setTimeout(() => {
+    sbUpsertCollection(setKey, data);
+    localStorage.setItem(setKey === 'wednesday' ? STORE_KEY : STORE_KEY_PANINI, JSON.stringify(data));
+  }, 800);
 }
-function saveCollection(c) { localStorage.setItem(STORE_KEY, JSON.stringify(c)); }
+
+function loadCollectionFromCache() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)||'{}'); } catch { return {}; }
+}
+function saveCollection(c) {
+  collection = c;
+  _scheduleCardSave('wednesday', c);
+}
 
 // ── Card database ─────────────────────────────────────────────────────────────
 // 85-card base set + 65 subset cards = 150 total trackable cards
@@ -1969,14 +2000,16 @@ const PANINI_SUBSETS = {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const STORE_KEY_PANINI = 'enid_panini_cards_v1';
-function loadPaniniCollection() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY_PANINI)||'{}'); }
-  catch { return {}; }
+function loadPaniniCollectionFromCache() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY_PANINI)||'{}'); } catch { return {}; }
 }
-function savePaniniCollection(c) { localStorage.setItem(STORE_KEY_PANINI, JSON.stringify(c)); }
+function savePaniniCollection(c) {
+  paniniCollection = c;
+  _scheduleCardSave('panini', c);
+}
 
-let collection = loadCollection();
-let paniniCollection = loadPaniniCollection();
+let collection      = loadCollectionFromCache();
+let paniniCollection = loadPaniniCollectionFromCache();
 let activeSet = 'cardsmiths'; // 'cardsmiths' | 'panini'
 let activeFilter = 'all';
 let activeSearch = '';
@@ -2447,13 +2480,24 @@ function spawnRunes() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-function init() {
+async function init() {
   spawnRunes();
   if (localStorage.getItem(BANNER_KEY)) {
     document.getElementById('packBanner').style.display='none';
   } else {
-    updateCardsCountdown(); // Show live countdown immediately on load
+    updateCardsCountdown();
   }
+
+  // Load collections from Supabase, fall back to localStorage cache on error
+  try {
+    const [wb, pb] = await Promise.all([
+      sbLoadCollection('wednesday'),
+      sbLoadCollection('panini'),
+    ]);
+    if (wb !== null) { collection = wb; localStorage.setItem(STORE_KEY, JSON.stringify(wb)); }
+    if (pb !== null) { paniniCollection = pb; localStorage.setItem(STORE_KEY_PANINI, JSON.stringify(pb)); }
+  } catch { /* keep localStorage cache values set at declaration */ }
+
   render();
   setTimeout(()=>{
     document.getElementById('enidLoader').classList.remove('visible');

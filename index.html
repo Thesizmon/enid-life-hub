@@ -390,6 +390,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:
 .bt-paws span:nth-child(2){animation-delay:.3s}
 .bt-paws span:nth-child(3){animation-delay:.6s}
 .bt-paws span:nth-child(4){animation-delay:.9s}
+/* ── One-off task items ── */
+.tasks-block{border-color:rgba(232,78,160,.18)}
+.task-item{cursor:default !important}
+.task-item .check-circle{cursor:pointer}
+.task-done-title{text-decoration:line-through;opacity:.5}
+.task-actions{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.task-btn{background:none;border:none;font-size:.9rem;cursor:pointer;padding:4px 6px;border-radius:8px;transition:background .15s;line-height:1;opacity:.55}
+.task-btn:hover{background:rgba(232,78,160,.15);opacity:1}
 </style>
 </head>
 <body>
@@ -601,6 +609,8 @@ const NOW = new Date();
 let viewDate     = new Date(NOW);
 let dayCompletions  = new Set();   // habit_ids completed on viewDate
 let weekendCompletions = new Set(); // habit_ids completed this weekend
+let dayTasks = [];        // one-off tasks for the viewed date
+let _editingTaskId = null;
 let ktPostwork   = false;
 let ktWeekend    = false;
 let ktSchedule   = [];   // recurring weekly KT shift schedule, loaded from Supabase
@@ -663,7 +673,22 @@ async function loadDayData() {
       note:r.note||'Your custom habit 💜', time:r.time_label||'Anytime'
     });
   });
+
+  // Load one-off tasks for this date
+  await loadTasksForDay(dateStr);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONE-OFF DAILY TASKS — Supabase helpers
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadTasksForDay(dateStr) {
+  const rows = await sb('GET','one_off_tasks',null,
+    `?user_id=eq.${USER_ID}&task_date=eq.${dateStr}&order=created_at.asc`);
+  dayTasks = Array.isArray(rows) ? rows : [];
+}
+async function _saveTask(task)          { await sb('POST','one_off_tasks',task); }
+async function _updateTask(id,changes)  { await sb('PATCH','one_off_tasks',changes,`?id=eq.${id}&user_id=eq.${USER_ID}`); }
+async function _deleteTask(id)          { await sb('DELETE','one_off_tasks',null,`?id=eq.${id}&user_id=eq.${USER_ID}`); }
 
 async function loadStreaks() {
   const rows = await sb('GET','habit_completions',null,
@@ -900,6 +925,33 @@ function render() {
   container.innerHTML = '';
   const weekend = isWeekend(viewDate);
 
+  // ── ONE-OFF TASKS ──────────────────────────────────────────────────────
+  const isFutureOrToday = fmtDate(viewDate) >= fmtDate(new Date());
+  const tasksDone  = dayTasks.filter(t=>t.completed).length;
+  const tasksTotal = dayTasks.length;
+  const tasksPct   = tasksTotal > 0 ? (tasksDone/tasksTotal)*100 : 0;
+  const taskBlock  = document.createElement('div');
+  taskBlock.className = 'routine-block tasks-block';
+  taskBlock.innerHTML = `
+    <div class="routine-header">
+      <div class="rh-left"><div class="rh-icon">📌</div>
+        <div><div class="rh-title">Tasks for the Day</div>
+          <div class="rh-sub">${tasksTotal===0?'No tasks yet — add one below':`${tasksDone} of ${tasksTotal} done`}</div>
+        </div>
+      </div>
+      ${tasksTotal>0?`<div class="rh-progress">
+        <div class="rh-frac">${tasksDone}/${tasksTotal}</div>
+        <div class="rh-plabel">complete</div>
+        <div class="rh-bar"><div class="rh-fill" style="width:${tasksPct}%"></div></div>
+      </div>`:''}
+    </div>
+    <div class="habit-list" id="taskList"></div>
+    ${isFutureOrToday?`<div class="add-row" onclick="openAddTask()"><div class="add-icon">+</div><div class="add-label">Add a task...</div></div>`:''}
+  `;
+  container.appendChild(taskBlock);
+  const taskListEl = taskBlock.querySelector('#taskList');
+  dayTasks.forEach(t=>appendTaskItem(taskListEl,t));
+
   // ── MORNING ────────────────────────────────────────────────────────────
   const morningHabits = MORNING_HABITS_WEEKDAY.filter(h=>!h.weekdayOnly||!weekend);
   const weekendPassHabits = MORNING_HABITS_WEEKDAY.filter(h=>h.weekdayOnly&&weekend);
@@ -1083,6 +1135,103 @@ function render() {
   updateSummary();
   renderGlance();
   renderWeeklyReview();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONE-OFF TASK ITEM RENDERER
+// ─────────────────────────────────────────────────────────────────────────────
+function escTask(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function appendTaskItem(listEl, task) {
+  const div = document.createElement('div');
+  div.className = 'habit-item task-item' + (task.completed ? ' done' : '');
+  div.id = `task-${task.id}`;
+  div.innerHTML = `
+    <div class="check-circle" onclick="toggleTask('${task.id}')"><span class="check-icon">✓</span></div>
+    <div class="h-emoji">${task.emoji}</div>
+    <div class="h-body">
+      <div class="h-name${task.completed?' task-done-title':''}">${escTask(task.title)}</div>
+    </div>
+    <div class="h-right task-actions">
+      <button class="task-btn" onclick="openEditTask('${task.id}')">✏️</button>
+      <button class="task-btn" onclick="confirmDeleteTask('${task.id}')">🗑️</button>
+    </div>
+  `;
+  listEl.appendChild(div);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ONE-OFF TASK ACTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+function openAddTask() {
+  _editingTaskId = null;
+  document.getElementById('taskModalTitle').textContent = '+ Add Task';
+  document.getElementById('taskEmoji').value = '📌';
+  document.getElementById('taskTitle').value = '';
+  document.getElementById('taskDate').value = fmtDate(viewDate);
+  document.getElementById('taskModal').style.display = 'flex';
+  setTimeout(()=>document.getElementById('taskTitle').focus(), 50);
+}
+
+function openEditTask(id) {
+  const task = dayTasks.find(t=>t.id===id);
+  if (!task) return;
+  _editingTaskId = id;
+  document.getElementById('taskModalTitle').textContent = 'Edit Task';
+  document.getElementById('taskEmoji').value = task.emoji;
+  document.getElementById('taskTitle').value = task.title;
+  document.getElementById('taskDate').value = task.task_date;
+  document.getElementById('taskModal').style.display = 'flex';
+  setTimeout(()=>document.getElementById('taskTitle').focus(), 50);
+}
+
+function closeTaskModal() {
+  document.getElementById('taskModal').style.display = 'none';
+  _editingTaskId = null;
+}
+
+async function submitTask() {
+  const title    = document.getElementById('taskTitle').value.trim();
+  const emoji    = document.getElementById('taskEmoji').value.trim() || '📌';
+  const taskDate = document.getElementById('taskDate').value;
+  if (!title || !taskDate) { showToast('Please enter a title and date 💜'); return; }
+
+  if (_editingTaskId) {
+    await _updateTask(_editingTaskId, {title, emoji});
+    const t = dayTasks.find(t=>t.id===_editingTaskId);
+    if (t) { t.title=title; t.emoji=emoji; }
+    closeTaskModal();
+    render();
+    showToast('Task updated ✏️');
+  } else {
+    const task = {
+      id:`task_${Date.now()}`, user_id:USER_ID,
+      task_date:taskDate, title, emoji,
+      completed:false, created_at:new Date().toISOString()
+    };
+    await _saveTask(task);
+    if (taskDate === fmtDate(viewDate)) dayTasks.push(task);
+    closeTaskModal();
+    render();
+    showToast(taskDate===fmtDate(viewDate) ? 'Task added! 📌' : `Task saved for ${taskDate} 📌`);
+  }
+}
+
+async function toggleTask(id) {
+  const task = dayTasks.find(t=>t.id===id);
+  if (!task) return;
+  task.completed = !task.completed;
+  await _updateTask(id, {completed: task.completed});
+  render();
+}
+
+async function confirmDeleteTask(id) {
+  if (!confirm('Delete this task?')) return;
+  await _deleteTask(id);
+  dayTasks = dayTasks.filter(t=>t.id!==id);
+  render();
+  showToast('Task deleted 🗑️');
 }
 
 function appendHabitItem(listEl,h,blockClass,section) {
@@ -2148,6 +2297,42 @@ function drainBadgeQueue() {
       <button class="nm-cancel" onclick="closeReadingLog()">Skip</button>
       <button class="nm-save" onclick="saveReadingLog()">Log it 📖</button>
     </div>
+  </div>
+</div>
+
+<!-- One-Off Task Modal -->
+<div id="taskModal" style="display:none;position:fixed;inset:0;background:rgba(45,27,61,.55);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)"
+     onclick="if(event.target.id==='taskModal')closeTaskModal()">
+  <div style="background:#1a1030;border:1.5px solid rgba(232,78,160,.3);border-radius:24px;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(232,78,160,.25);animation:modalPop .3s cubic-bezier(.34,1.56,.64,1)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div id="taskModalTitle" style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff">+ Add Task</div>
+      <button onclick="closeTaskModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:rgba(255,255,255,.5);line-height:1">✕</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex-shrink:0">
+        <label style="font-size:.7rem;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Emoji</label>
+        <input id="taskEmoji" type="text" maxlength="4" placeholder="📌"
+          style="width:54px;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(232,78,160,.25);font-size:1.2rem;text-align:center;outline:none;background:rgba(255,255,255,.07);color:#fff"
+          onfocus="this.style.borderColor='var(--pink)'" onblur="this.style.borderColor='rgba(232,78,160,.25)'">
+      </div>
+      <div style="flex:1">
+        <label style="font-size:.7rem;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Task</label>
+        <input id="taskTitle" type="text" placeholder="e.g. Call dentist, pick up meds..."
+          style="width:100%;padding:10px 14px;border-radius:12px;border:1.5px solid rgba(232,78,160,.25);font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;background:rgba(255,255,255,.07);color:#fff"
+          onfocus="this.style.borderColor='var(--pink)'" onblur="this.style.borderColor='rgba(232,78,160,.25)'"
+          onkeydown="if(event.key==='Enter')submitTask()">
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:.7rem;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Date</label>
+      <input id="taskDate" type="date"
+        style="width:100%;padding:10px 14px;border-radius:12px;border:1.5px solid rgba(232,78,160,.25);font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;background:rgba(255,255,255,.07);color:#fff;box-sizing:border-box"
+        onfocus="this.style.borderColor='var(--pink)'" onblur="this.style.borderColor='rgba(232,78,160,.25)'">
+    </div>
+    <button onclick="submitTask()"
+      style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:.95rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+      Save Task 💜
+    </button>
   </div>
 </div>
 

@@ -780,26 +780,91 @@ const PERIODS = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STATE (localStorage)
+// SUPABASE — finance_state table stores entire JSON blob per user
 // ─────────────────────────────────────────────────────────────────────────────
-function getState(){try{return JSON.parse(localStorage.getItem('enid_finance_v2')||'{}')}catch{return{}}}
-function saveState(s){localStorage.setItem('enid_finance_v2',JSON.stringify(s))}
-function getCheck(pid,idx){return(getState()[pid]?.c||{})[idx]||false}
-function setCheck(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].c)s[pid].c={};s[pid].c[idx]=val;saveState(s)}
-function getSpent(pid,idx){return(getState()[pid]?.s||{})[idx]||''}
-function setSpent(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].s)s[pid].s={};s[pid].s[idx]=val;saveState(s)}
-function getSched(pid,idx){return(getState()[pid]?.sc||{})[idx]||false}
-function setSched(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].sc)s[pid].sc={};s[pid].sc[idx]=val;saveState(s)}
-function getCleared(pid,idx){return(getState()[pid]?.cl||{})[idx]||false}
-function setCleared(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].cl)s[pid].cl={};s[pid].cl[idx]=val;saveState(s)}
-function getStartBal(pid){return(getState()[pid]?.sb)??''}
-function setStartBal(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].sb=val;saveState(s)}
-function getBBSActual(pid,def){const v=getState()[pid]?.bbs;return v!==undefined&&v!==''?v:def}
-function setBBSActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].bbs=val;saveState(s)}
-function getKTActual(pid){return(getState()[pid]?.kt)??''}
-function setKTActual(pid,val){const s=getState();if(!s[pid])s[pid]={};s[pid].kt=val;saveState(s)}
-function getCCBal(pid,idx){return(getState()[pid]?.bal||{})[idx]||''}
-function setCCBal(pid,idx,val){const s=getState();if(!s[pid])s[pid]={};if(!s[pid].bal)s[pid].bal={};s[pid].bal[idx]=val;saveState(s)}
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+const USER_ID  = 'Enid';
+const LS_KEY   = 'enid_finance_v2'; // localStorage fallback/cache key
+
+// In-memory state cache — loaded once on init, written to Supabase on change
+let _state = {};
+
+// Debounced Supabase write (avoids hammering on every checkbox click)
+let _saveTimer = null;
+function _scheduleSave() {
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_flushToSupabase, 800);
+}
+async function _flushToSupabase() {
+  // Write to Supabase
+  await fetch(`${SUPA_URL}/rest/v1/finance_state?on_conflict=user_id`, {
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal,resolution=merge-duplicates'},
+    body: JSON.stringify({ user_id:USER_ID, data:_state, updated_at:new Date().toISOString() })
+  });
+  // Keep localStorage as fast offline cache
+  localStorage.setItem(LS_KEY, JSON.stringify(_state));
+}
+
+async function _loadState() {
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/finance_state?user_id=eq.${USER_ID}&select=data`,
+      {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+    const rows = await r.json();
+    if (Array.isArray(rows) && rows.length && rows[0].data && Object.keys(rows[0].data).length > 0) {
+      _state = rows[0].data;
+      localStorage.setItem(LS_KEY, JSON.stringify(_state)); // refresh cache
+      return;
+    }
+  } catch(e) { /* fall through to localStorage */ }
+  // Fall back to localStorage (offline or first load)
+  try { _state = JSON.parse(localStorage.getItem(LS_KEY)||'{}'); } catch { _state = {}; }
+}
+
+async function _migrateFromLocalStorage() {
+  // If Supabase row already exists, skip migration
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/finance_state?user_id=eq.${USER_ID}&select=user_id`,
+      {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+    const rows = await r.json();
+    if (Array.isArray(rows) && rows.length) return; // already migrated
+  } catch { return; }
+  // Push localStorage to Supabase
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (!Object.keys(data).length) return;
+    await fetch(`${SUPA_URL}/rest/v1/finance_state?on_conflict=user_id`, {
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal,resolution=merge-duplicates'},
+      body: JSON.stringify({ user_id:USER_ID, data, updated_at:new Date().toISOString() })
+    });
+  } catch { /* silently skip */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE ACCESSORS — same API as before, now using in-memory _state cache
+// ─────────────────────────────────────────────────────────────────────────────
+function getState(){return _state}
+function saveState(s){_state=s;_scheduleSave()}
+function getCheck(pid,idx){return(_state[pid]?.c||{})[idx]||false}
+function setCheck(pid,idx,val){if(!_state[pid])_state[pid]={};if(!_state[pid].c)_state[pid].c={};_state[pid].c[idx]=val;_scheduleSave()}
+function getSpent(pid,idx){return(_state[pid]?.s||{})[idx]||''}
+function setSpent(pid,idx,val){if(!_state[pid])_state[pid]={};if(!_state[pid].s)_state[pid].s={};_state[pid].s[idx]=val;_scheduleSave()}
+function getSched(pid,idx){return(_state[pid]?.sc||{})[idx]||false}
+function setSched(pid,idx,val){if(!_state[pid])_state[pid]={};if(!_state[pid].sc)_state[pid].sc={};_state[pid].sc[idx]=val;_scheduleSave()}
+function getCleared(pid,idx){return(_state[pid]?.cl||{})[idx]||false}
+function setCleared(pid,idx,val){if(!_state[pid])_state[pid]={};if(!_state[pid].cl)_state[pid].cl={};_state[pid].cl[idx]=val;_scheduleSave()}
+function getStartBal(pid){return(_state[pid]?.sb)??''}
+function setStartBal(pid,val){if(!_state[pid])_state[pid]={};_state[pid].sb=val;_scheduleSave()}
+function getBBSActual(pid,def){const v=_state[pid]?.bbs;return v!==undefined&&v!==''?v:def}
+function setBBSActual(pid,val){if(!_state[pid])_state[pid]={};_state[pid].bbs=val;_scheduleSave()}
+function getKTActual(pid){return(_state[pid]?.kt)??''}
+function setKTActual(pid,val){if(!_state[pid])_state[pid]={};_state[pid].kt=val;_scheduleSave()}
+function getCCBal(pid,idx){return(_state[pid]?.bal||{})[idx]||''}
+function setCCBal(pid,idx,val){if(!_state[pid])_state[pid]={};if(!_state[pid].bal)_state[pid].bal={};_state[pid].bal[idx]=val;_scheduleSave()}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -1156,14 +1221,19 @@ function switchPeriod(pid){
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// INIT — scroll active tab into view
+// INIT — load state from Supabase, then render
 // ─────────────────────────────────────────────────────────────────────────────
-renderTabs();
-renderPeriod(activePid);
-setTimeout(()=>{
-  const el=document.querySelector('.period-tab.active');
-  if(el)el.scrollIntoView({inline:'center',behavior:'smooth'});
-},100);
+async function init() {
+  await _migrateFromLocalStorage();
+  await _loadState();
+  renderTabs();
+  renderPeriod(activePid);
+  setTimeout(()=>{
+    const el=document.querySelector('.period-tab.active');
+    if(el)el.scrollIntoView({inline:'center',behavior:'smooth'});
+  },100);
+}
+init();
 </script>
 </body>
 </html>

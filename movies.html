@@ -327,29 +327,113 @@ async function tmdbGet(path) {
   return res.json();
 }
 
-// ── Storage ───────────────────────────────────────────────────────────────────
-const MY_LIST_KEY = 'enid_movies_v1';
+// ── Supabase ──────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://xpdgptyrcmvylpbcietm.supabase.co';
+const SUPA_KEY = 'sb_publishable_2xI4JaPdY5nzHChYm2-9ig_Of8ooxVu';
+const USER_ID  = 'Enid';
 
-function loadMyList() {
-  return JSON.parse(localStorage.getItem(MY_LIST_KEY)||'[]');
+async function sbGet(table, params='') {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,
+    {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  return r.json();
 }
-function saveMyList(list) {
-  localStorage.setItem(MY_LIST_KEY, JSON.stringify(list));
-  // Also write a simplified version for the tracker widget to read
+async function sbUpsert(table, body, onConflict) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}?on_conflict=${onConflict}`,
+    {method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation,resolution=merge-duplicates'},body:JSON.stringify(body)});
+  return r.json();
+}
+async function sbPatch(table, params, body) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,
+    {method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return r.ok;
+}
+async function sbDelete(table, params) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,
+    {method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  return r.ok;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+const MY_LIST_KEY = 'enid_movies_v1'; // kept only for one-time migration read
+
+// Convert flat localStorage object → Supabase row
+function movieToRow(m) {
+  return {
+    id:           m.id,
+    user_id:      USER_ID,
+    tmdb_id:      m.tmdbId,
+    title:        m.title,
+    poster_path:  m.posterPath  || null,
+    release_date: m.releaseDate || null,
+    showing_date: m.showingDate || null,
+    theatre:      m.theatre     || null,
+    notes:        m.notes       || null,
+    hype:         m.hype        || 3,
+    watched:      m.watched     || false,
+    added_at:     m.addedAt     || Date.now(),
+  };
+}
+
+// Convert Supabase row → in-memory object (camelCase to match existing UI code)
+function rowToMovie(r) {
+  return {
+    id:          r.id,
+    tmdbId:      r.tmdb_id,
+    title:       r.title,
+    posterPath:  r.poster_path,
+    releaseDate: r.release_date,
+    showingDate: r.showing_date,
+    theatre:     r.theatre,
+    notes:       r.notes,
+    hype:        r.hype,
+    watched:     r.watched,
+    addedAt:     r.added_at,
+  };
+}
+
+async function loadMyList() {
+  const rows = await sbGet('movies', `?user_id=eq.${USER_ID}&order=added_at.desc`);
+  if (!Array.isArray(rows)) return [];
+  return rows.map(rowToMovie);
+}
+
+async function saveMovie(entry) {
+  await sbUpsert('movies', movieToRow(entry), 'id');
+  writeWidget(myList);
+}
+
+async function deleteMovieFromDB(id) {
+  await sbDelete('movies', `?id=eq.${id}&user_id=eq.${USER_ID}`);
+  writeWidget(myList);
+}
+
+// Write simplified widget cache to localStorage for tracker dashboard
+function writeWidget(list) {
   const widget = list.filter(m => !m.watched).map(m => ({
-    id: m.id,
-    title: m.title,
-    posterPath: m.posterPath,
-    showingDate: m.showingDate,
-    theatre: m.theatre,
-    releaseDate: m.releaseDate,
-    hype: m.hype,
+    id: m.id, title: m.title, posterPath: m.posterPath,
+    showingDate: m.showingDate, theatre: m.theatre,
+    releaseDate: m.releaseDate, hype: m.hype,
   }));
   localStorage.setItem('enid_movies_widget', JSON.stringify(widget));
 }
 
+// One-time migration: push localStorage data into Supabase if DB is empty
+async function migrateFromLocalStorage() {
+  const raw = localStorage.getItem(MY_LIST_KEY);
+  if (!raw) return;
+  const local = JSON.parse(raw);
+  if (!local.length) return;
+  // Only migrate if Supabase is currently empty for this user
+  const existing = await sbGet('movies', `?user_id=eq.${USER_ID}&select=id&limit=1`);
+  if (Array.isArray(existing) && existing.length > 0) return; // already has data
+  for (const m of local) {
+    await sbUpsert('movies', movieToRow(m), 'id');
+  }
+  localStorage.removeItem(MY_LIST_KEY); // clean up after migration
+}
+
 // ── State ─────────────────────────────────────────────────────────────────────
-let myList = loadMyList();
+let myList = [];
 let pendingMovie = null;   // movie object being added/edited
 let editingId    = null;   // id of movie being edited
 let modalHype    = 3;
@@ -498,7 +582,7 @@ function renderModalHype() {
   });
 }
 
-function saveModal() {
+async function saveModal() {
   const m = pendingMovie;
   if (!m) return;
 
@@ -523,26 +607,26 @@ function saveModal() {
     myList.unshift(entry);
   }
 
-  saveMyList(myList);
+  await saveMovie(entry);
   closeModal();
   renderMyList();
   loadDiscover(); // refresh discover to show updated watchlist flags
 }
 
 // ── Toggle watched ────────────────────────────────────────────────────────────
-function toggleWatched(id) {
+async function toggleWatched(id) {
   const m = myList.find(x=>x.id===id);
   if (!m) return;
   m.watched = !m.watched;
-  saveMyList(myList);
+  await saveMovie(m);
   renderMyList();
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────────
-function deleteMovie(id) {
+async function deleteMovie(id) {
   if (!confirm('Remove this movie from your list?')) return;
   myList = myList.filter(m=>m.id!==id);
-  saveMyList(myList);
+  await deleteMovieFromDB(id);
   renderMyList();
 }
 
@@ -635,8 +719,13 @@ function getDaysUntil(dateStr) {
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
-renderMyList();
-loadDiscover();
+async function init() {
+  await migrateFromLocalStorage();
+  myList = await loadMyList();
+  renderMyList();
+  loadDiscover();
+}
+init();
 
 // ── Enid Loader ───────────────────────────────────────────────────────
 const _LOADER_MSGS=['loading your data, sparklepup!!','fetching your stuff 🐾','almost there, glowbug!!','one sec, roomie!! 🐺','pulling it all together 💜','making magic happen ✨','hang tight, bestie!! 🌸'];

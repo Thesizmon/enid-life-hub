@@ -442,13 +442,69 @@ function olCoverUrl(coverId, size='M') {
   return coverId ? `${OL_COVERS}${coverId}-${size}.jpg` : null;
 }
 
-// ── Storage — books in localStorage, sessions in Supabase ─────────────────────
-const BOOKS_KEY = 'enid_books_v1';
+// ── Storage — books in Supabase, sessions in Supabase ────────────────────────
+const BOOKS_KEY = 'enid_books_v1'; // kept only for one-time migration read
 
-function loadBooks() { return JSON.parse(localStorage.getItem(BOOKS_KEY)||'[]'); }
-function saveBooks(list) {
-  localStorage.setItem(BOOKS_KEY, JSON.stringify(list));
-  // Write widget data for tracker
+function bookToRow(b) {
+  return {
+    id:          b.id,
+    user_id:     USER_ID,
+    ol_key:      b.olKey      || null,
+    title:       b.title,
+    author:      b.author     || null,
+    cover_id:    b.coverId    || null,
+    total_pages: b.totalPages || null,
+    pages_read:  b.pagesRead  || 0,
+    status:      b.status     || 'want',
+    notes:       b.notes      || null,
+    added_at:    b.addedAt    || Date.now(),
+  };
+}
+
+function rowToBook(r) {
+  return {
+    id:         r.id,
+    olKey:      r.ol_key,
+    title:      r.title,
+    author:     r.author,
+    coverId:    r.cover_id,
+    totalPages: r.total_pages,
+    pagesRead:  r.pages_read,
+    status:     r.status,
+    notes:      r.notes,
+    addedAt:    r.added_at,
+  };
+}
+
+async function loadBooksFromDB() {
+  const rows = await sbGet('books', `?user_id=eq.${USER_ID}&order=added_at.desc`);
+  return Array.isArray(rows) ? rows.map(rowToBook) : [];
+}
+
+async function saveBook(b) {
+  await sbUpsert('books', bookToRow(b), 'id');
+  writeBookWidget(BOOKS);
+}
+
+async function deleteBookFromDB(id) {
+  await sbDelete('books', `?id=eq.${id}&user_id=eq.${USER_ID}`);
+  writeBookWidget(BOOKS);
+}
+
+async function updateBookField(id, fields) {
+  // PATCH only the changed fields
+  const row = {};
+  if (fields.pagesRead  !== undefined) row.pages_read  = fields.pagesRead;
+  if (fields.status     !== undefined) row.status      = fields.status;
+  if (fields.notes      !== undefined) row.notes       = fields.notes;
+  if (fields.totalPages !== undefined) row.total_pages = fields.totalPages;
+  if (Object.keys(row).length === 0) return;
+  await sbPatch('books', `?id=eq.${id}&user_id=eq.${USER_ID}`, row);
+  writeBookWidget(BOOKS);
+}
+
+// Write simplified widget cache for tracker dashboard
+function writeBookWidget(list) {
   const widget = list.filter(b=>b.status==='reading').map(b=>({
     id:b.id, title:b.title, author:b.author,
     coverId:b.coverId, pagesRead:b.pagesRead, totalPages:b.totalPages,
@@ -456,7 +512,27 @@ function saveBooks(list) {
   localStorage.setItem('enid_books_widget', JSON.stringify(widget));
 }
 
-let BOOKS = loadBooks();
+// One-time migration: push localStorage books into Supabase if DB is empty
+async function migrateFromLocalStorage() {
+  const raw = localStorage.getItem(BOOKS_KEY);
+  if (!raw) return;
+  const local = JSON.parse(raw);
+  if (!local.length) return;
+  const existing = await sbGet('books', `?user_id=eq.${USER_ID}&select=id&limit=1`);
+  if (Array.isArray(existing) && existing.length > 0) return;
+  for (const b of local) {
+    await sbUpsert('books', bookToRow(b), 'id');
+  }
+  localStorage.removeItem(BOOKS_KEY);
+}
+
+// Legacy saveBooks kept as thin alias so existing call sites still work
+async function saveBooks(list) {
+  // No-op: individual book saves now go through saveBook() / updateBookField()
+  writeBookWidget(list);
+}
+
+let BOOKS = [];
 let SESSIONS = []; // loaded from Supabase
 let pendingOLBook = null;
 let addStatus = 'reading';
@@ -546,27 +622,28 @@ function selectStatus(s) {
 function closeAdd() { document.getElementById('addOverlay').style.display='none'; pendingOLBook=null; }
 function closeAddIfBg(e) { if(e.target.id==='addOverlay') closeAdd(); }
 
-function saveAdd() {
+async function saveAdd() {
   const r = pendingOLBook;
   if (!r) return;
   const entry = {
-    id:       'bk_'+Date.now(),
-    olKey:    r.key,
-    title:    r.title,
-    author:   (r.author_name||[]).join(', ') || 'Unknown',
-    coverId:  r.cover_i || null,
-    totalPages:  parseInt(document.getElementById('amPages').value)||null,
-    pagesRead:   parseInt(document.getElementById('amPagesRead').value)||0,
-    status:   addStatus,
-    notes:    '',
-    addedAt:  Date.now(),
+    id:         'bk_'+Date.now(),
+    olKey:      r.key,
+    title:      r.title,
+    author:     (r.author_name||[]).join(', ') || 'Unknown',
+    coverId:    r.cover_i || null,
+    totalPages: parseInt(document.getElementById('amPages').value)||null,
+    pagesRead:  parseInt(document.getElementById('amPagesRead').value)||0,
+    status:     addStatus,
+    notes:      '',
+    addedAt:    Date.now(),
   };
   BOOKS.unshift(entry);
-  saveBooks(BOOKS);
+  await saveBook(entry);
   closeAdd();
   renderShelves();
   renderHeroStats();
-  renderReadingGoal();  showToast(`📚 "${r.title}" added to your library!!`);
+  renderReadingGoal();
+  showToast(`📚 "${r.title}" added to your library!!`);
 }
 
 // ── Detail modal ──────────────────────────────────────────────────────────────
@@ -654,9 +731,9 @@ async function saveSession() {
   const row = { user_id:USER_ID, book_id:detailBookId, session_date:date, pages_read:pages, note:note||null };
   const saved = await sbPost('reading_sessions', row);
   if (saved?.length || saved?.id) {
-    // Update pages read on book
+    // Update pages read on book in Supabase and in-memory
     b.pagesRead = (b.pagesRead||0) + pages;
-    saveBooks(BOOKS);
+    await updateBookField(b.id, { pagesRead: b.pagesRead });
     await loadSessions();
     document.getElementById('logPages').value='';
     document.getElementById('logNote').value='';
@@ -674,32 +751,35 @@ async function deleteSession(sid) {
   showToast('Session removed');
 }
 
-function changeStatus(s) {
+async function changeStatus(s) {
   const b = BOOKS.find(x=>x.id===detailBookId);
   if (!b) return;
   b.status = s;
-  saveBooks(BOOKS);
+  await updateBookField(b.id, { status: s });
   openDetail(detailBookId);
   renderShelves();
   renderHeroStats();
-  renderReadingGoal();}
+  renderReadingGoal();
+}
 
-function saveNotes() {
+async function saveNotes() {
   const b = BOOKS.find(x=>x.id===detailBookId);
   if (!b) return;
   b.notes = document.getElementById('detailNotes').value.trim();
-  saveBooks(BOOKS);
+  await updateBookField(b.id, { notes: b.notes });
   showToast('Notes saved 📖');
 }
 
-function deleteBook() {
+async function deleteBook() {
   if (!confirm('Remove this book from your library?')) return;
-  BOOKS = BOOKS.filter(x=>x.id!==detailBookId);
-  saveBooks(BOOKS);
+  const id = detailBookId;
+  BOOKS = BOOKS.filter(x=>x.id!==id);
+  await deleteBookFromDB(id);
   closeDetail();
   renderShelves();
   renderHeroStats();
-  renderReadingGoal();  showToast('Book removed from library');
+  renderReadingGoal();
+  showToast('Book removed from library');
 }
 
 function closeDetail() { document.getElementById('detailOverlay').style.display='none'; detailBookId=null; }
@@ -789,29 +869,34 @@ function quickLog(id) {
 }
 
 // ── Reading Goal ────────────────────────────────────────────────────────────
-const GOAL_KEY = 'enid_reading_goal_2026';
+const GOAL_KEY = 'enid_reading_goal_2026'; // localStorage fallback cache key
 
-function getReadingGoal() {
+async function getReadingGoal() {
+  // Try Supabase first, fall back to localStorage cache
+  const rows = await sbGet('user_prefs', `?user_id=eq.${USER_ID}&select=reading_goal_2026`);
+  if (Array.isArray(rows) && rows.length && rows[0].reading_goal_2026) {
+    return rows[0].reading_goal_2026;
+  }
   return parseInt(localStorage.getItem(GOAL_KEY)||'0')||0;
 }
 
-function setReadingGoal() {
-  const current = getReadingGoal();
+async function setReadingGoal() {
+  const current = await getReadingGoal();
   const input = prompt(
     `📚 How many books do you want to read in 2026?\n(current goal: ${current||'not set'})`,
     current || 24
   );
   const val = parseInt(input);
   if (!input || isNaN(val) || val < 1) return;
-  localStorage.setItem(GOAL_KEY, String(val));
+  localStorage.setItem(GOAL_KEY, String(val)); // local cache
+  await sbUpsert('user_prefs', { user_id: USER_ID, reading_goal_2026: val, updated_at: new Date().toISOString() }, 'user_id');
   renderReadingGoal();
 }
 
-function renderReadingGoal() {
+async function renderReadingGoal() {
   const el = document.getElementById('goalBarWrap');
   if (!el) return;
-
-  const goal = getReadingGoal();
+  const goal = await getReadingGoal();
   const done = BOOKS.filter(b=>b.status==='done').length;
 
   if (!goal) {
@@ -877,12 +962,13 @@ function showToast(msg){
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
+  await migrateFromLocalStorage();
+  BOOKS = await loadBooksFromDB();
   await loadSessions();
   renderShelves();
   renderHeroStats();
-  renderReadingGoal();
+  await renderReadingGoal();
   hideEnidLoader();
-
 }
 init();
 
